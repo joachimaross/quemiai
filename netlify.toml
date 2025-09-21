@@ -3,13 +3,6 @@
   publish = "dist"
   functions = "dist/functions"
 
-# Cypress E2E tests are currently failing in the build step because the serverless function
-# is not yet deployed and accessible when Cypress tries to visit it.
-# For E2E tests in CI, consider these approaches:
-# 1. Run Cypress as a post-deploy step against the live deployed URL (recommended for true E2E).
-# 2. Use `netlify dev` to serve functions locally during CI and point Cypress to `http://localhost:8888`.
-# 3. For integration-like tests, mock API responses or use a dedicated test server.
-
 [build.environment]
   NODE_VERSION = "20"
 
@@ -17,3 +10,12 @@
   from = "/*"
   to = "/.netlify/functions/api"
   status = 200
+
+[context.production]
+  environment = { NODE_ENV = "production", LOG_LEVEL = "info", SENTRY_DSN = "your_production_sentry_dsn_here", REDIS_URL = "your_production_redis_url_here" }
+
+[context.deploy-preview]
+  environment = { NODE_ENV = "development", LOG_LEVEL = "debug", SENTRY_DSN = "your_dev_sentry_dsn_here", REDIS_URL = "your_dev_redis_url_here" }
+
+[context.branch-deploy]
+  environment = { NODE_ENV = "development", LOG_LEVEL = "debug", SENTRY_DSN = "your_dev_sentry_dsn_here", REDIS_URL = "your_dev_redis_url_here" }
