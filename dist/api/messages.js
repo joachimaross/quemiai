@@ -3,12 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const router = (0, express_1.Router)();
 // Get all conversations
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
     // TODO: Implement logic to get all conversations
     res.send('Get all conversations');
 });
 // Create a new conversation
-router.post('/', (req, res) => {
+router.post('/', (_req, res) => {
     // TODO: Implement logic to create a new conversation
     res.send('Create a new conversation');
 });

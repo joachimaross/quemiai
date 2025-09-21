@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { db } from '../config';
 import { validate, userValidationRules } from '../middleware/validation';
 import AppError from '../utils/AppError';
@@ -55,7 +55,7 @@ const router = Router();
  *         description: Server error
  */
 // Get user profile
-router.get('/:userId', async (req, res, next) => {
+router.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const doc = await db.collection('users').doc(req.params.userId).get();
     if (!doc.exists) {
@@ -110,7 +110,7 @@ router.get('/:userId', async (req, res, next) => {
  *         description: Server error
  */
 // Update user profile
-router.put('/:userId', validate(userValidationRules), async (req, res, next) => {
+router.put('/:userId', validate(userValidationRules), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params;
     const { username, email, profilePicture, bannerPicture, bio, location, externalLinks, privacySettings, linkedSocialAccounts, preferences } = req.body;
@@ -158,7 +158,7 @@ router.put('/:userId', validate(userValidationRules), async (req, res, next) => 
  *       500:
  *         description: Server error
  */
-router.post('/:userId/follow', async (req, res, next) => {
+router.post('/:userId/follow', async (req: any, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params; // The user to follow
     const followerId = req.user.id; // Assuming req.user.id is set by an auth middleware
@@ -239,7 +239,7 @@ router.post('/:userId/follow', async (req, res, next) => {
  *       500:
  *         description: Server error
  */
-router.post('/:userId/unfollow', async (req, res, next) => {
+router.post('/:userId/unfollow', async (req: any, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params; // The user to unfollow
     const followerId = req.user.id; // Assuming req.user.id is set by an auth middleware
@@ -321,7 +321,7 @@ router.post('/:userId/unfollow', async (req, res, next) => {
  *       500:
  *         description: Server error
  */
-router.get('/:userId/followers', async (req, res, next) => {
+router.get('/:userId/followers', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params;
 
@@ -393,7 +393,7 @@ router.get('/:userId/followers', async (req, res, next) => {
  *       500:
  *         description: Server error
  */
-router.get('/:userId/following', async (req, res, next) => {
+router.get('/:userId/following', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params;
 

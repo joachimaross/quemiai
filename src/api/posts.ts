@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 // import { twitterClient } from '../services/twitter';
 import { db } from '../config';
 import { neon } from '@netlify/neon';
@@ -7,13 +7,13 @@ const router = Router();
 const sql = neon();
 
 // Get all posts
-router.get('/', (req, res) => {
+router.get('/', (_req: Request, res: Response) => {
   // TODO: Implement logic to get all posts
   res.send('Get all posts');
 });
 
 // Create a new post
-router.post('/', (req, res) => {
+router.post('/', (_req: Request, res: Response) => {
   // TODO: Implement logic to create a new post
   res.send('Create a new post');
 });
@@ -33,7 +33,7 @@ router.post('/', (req, res) => {
 }); */
 
 // Schedule a post
-router.post('/schedule', async (req, res, next) => {
+router.post('/schedule', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { content, scheduledTime, platform } = req.body;
     if (!content || !scheduledTime || !platform) {
@@ -48,51 +48,51 @@ router.post('/schedule', async (req, res, next) => {
       createdAt: new Date(),
     });
 
-    res.send({ id: docRef.id, message: 'Post scheduled successfully' });
+    return res.send({ id: docRef.id, message: 'Post scheduled successfully' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Export content
-router.post('/export', (req, res) => {
+router.post('/export', (req: Request, res: Response) => {
   const { videoId, format } = req.body;
   if (!videoId || !format) {
     return res.status(400).send({ error: 'videoId and format are required' });
   }
 
   // This is a placeholder for actual video export logic
-  res.send({ message: `Video ${videoId} exported in ${format} format.` });
+  return res.send({ message: `Video ${videoId} exported in ${format} format.` });
 });
 
 // Get a specific post
-router.get('/:postId', (req, res) => {
+router.get('/:postId', (req: Request, res: Response) => {
   // TODO: Implement logic to get a specific post
   res.send(`Get post ${req.params.postId}`);
 });
 
 // Get a specific post using Netlify Neon
-router.get('/neon/:postId', async (req, res, next) => {
+router.get('/neon/:postId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { postId } = req.params;
     const [post] = await sql`SELECT * FROM posts WHERE id = ${postId}`;
     if (!post) {
       return res.status(404).send({ error: 'Post not found in Neon DB' });
     }
-    res.send(post);
+    return res.send(post);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Update a post
-router.put('/:postId', (req, res) => {
+router.put('/:postId', (req: Request, res: Response) => {
   // TODO: Implement logic to update a post
   res.send(`Update post ${req.params.postId}`);
 });
 
 // Delete a post
-router.delete('/:postId', (req, res) => {
+router.delete('/:postId', (req: Request, res: Response) => {
   // TODO: Implement logic to delete a post
   res.send(`Delete post ${req.params.postId}`);
 });

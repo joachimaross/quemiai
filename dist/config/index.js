@@ -26,6 +26,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = exports.db = exports.auth = void 0;
 require("dotenv/config");
 const admin = __importStar(require("firebase-admin"));
+// TODO: For production, consider using Google Secret Manager to securely retrieve credentials.
+// admin.initializeApp({
+//   credential: admin.credential.applicationDefault(),
+// });
 // Initialize Firebase Admin SDK
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),

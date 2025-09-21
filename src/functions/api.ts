@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import serverless from 'serverless-http';
 import apiRouter from '../api';
 import { errorHandler } from '../middleware/errorHandler';
@@ -26,7 +26,7 @@ app.use(
   swaggerUi.setup(swaggerSpec)
 );
 
-app.get('/.netlify/functions/api', (req, res) => {
+app.get('/.netlify/functions/api', (_req: Request, res: Response) => {
   res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
 });
 

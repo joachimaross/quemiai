@@ -15,7 +15,7 @@ router.post('/improve-text', (req, res, next) => {
   }
 
   const result = improveText(text);
-  res.send(result);
+  return res.send(result);
 });
 
 router.post('/generate-captions', upload.single('file'), async (req, res, next) => {
@@ -25,9 +25,9 @@ router.post('/generate-captions', upload.single('file'), async (req, res, next) 
 
   try {
     const captions = await generateCaptions(req.file.path);
-    res.send({ captions });
+    return res.send({ captions });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -41,9 +41,9 @@ router.post('/advanced-recommendations', async (req, res, next) => {
     const engine = new AdvancedRecommendationEngine();
     await engine.train(posts, likedPosts);
     const recommendations = await engine.getRecommendations(userId, posts);
-    res.send({ recommendations });
+    return res.send({ recommendations });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -55,9 +55,9 @@ router.post('/detect-video-labels', async (req, res, next) => {
 
   try {
     const labels = await detectLabelsInVideo(gcsUri);
-    res.send({ labels });
+    return res.send({ labels });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -68,7 +68,7 @@ router.post('/music-integration', (req, res, next) => {
   }
 
   // This is a placeholder for actual music integration logic
-  res.send({ message: `Music track ${trackId} integrated with video ${videoId}` });
+  return res.send({ message: `Music track ${trackId} integrated with video ${videoId}` });
 });
 
 router.post('/transcode-video', async (req, res, next) => {
@@ -79,9 +79,9 @@ router.post('/transcode-video', async (req, res, next) => {
 
   try {
     const jobName = await createTranscodingJob(inputUri, outputUri);
-    res.send({ jobName, message: 'Transcoding job started' });
+    return res.send({ jobName, message: 'Transcoding job started' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -94,7 +94,7 @@ router.post('/chat-assistant', (req, res, next) => {
   // This is a placeholder for actual AI chat assistant logic
   // In a real application, this would interact with a conversational AI platform (e.g., Dialogflow)
   const response = `You said: "${message}". I am an AI assistant. How can I help you further?`;
-  res.send({ response });
+  return res.send({ response });
 });
 
 export default router;

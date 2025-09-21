@@ -12,14 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 // import { twitterClient } from '../services/twitter';
 const config_1 = require("../config");
+const neon_1 = require("@netlify/neon");
 const router = (0, express_1.Router)();
+const sql = (0, neon_1.neon)();
 // Get all posts
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
     // TODO: Implement logic to get all posts
     res.send('Get all posts');
 });
 // Create a new post
-router.post('/', (req, res) => {
+router.post('/', (_req, res) => {
     // TODO: Implement logic to create a new post
     res.send('Create a new post');
 });
@@ -50,10 +52,10 @@ router.post('/schedule', (req, res, next) => __awaiter(void 0, void 0, void 0, f
             status: 'pending',
             createdAt: new Date(),
         });
-        res.send({ id: docRef.id, message: 'Post scheduled successfully' });
+        return res.send({ id: docRef.id, message: 'Post scheduled successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Export content
@@ -63,13 +65,27 @@ router.post('/export', (req, res) => {
         return res.status(400).send({ error: 'videoId and format are required' });
     }
     // This is a placeholder for actual video export logic
-    res.send({ message: `Video ${videoId} exported in ${format} format.` });
+    return res.send({ message: `Video ${videoId} exported in ${format} format.` });
 });
 // Get a specific post
 router.get('/:postId', (req, res) => {
     // TODO: Implement logic to get a specific post
     res.send(`Get post ${req.params.postId}`);
 });
+// Get a specific post using Netlify Neon
+router.get('/neon/:postId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { postId } = req.params;
+        const [post] = yield sql `SELECT * FROM posts WHERE id = ${postId}`;
+        if (!post) {
+            return res.status(404).send({ error: 'Post not found in Neon DB' });
+        }
+        return res.send(post);
+    }
+    catch (error) {
+        return next(error);
+    }
+}));
 // Update a post
 router.put('/:postId', (req, res) => {
     // TODO: Implement logic to update a post

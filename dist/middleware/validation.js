@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reviewValidationRules = exports.transactionValidationRules = exports.schedulePostValidationRules = exports.postValidationRules = exports.userValidationRules = exports.validate = void 0;
+exports.reviewValidationRules = exports.transactionValidationRules = exports.schedulePostValidationRules = exports.postValidationRules = exports.loginValidationRules = exports.userValidationRules = exports.validate = void 0;
 const express_validator_1 = require("express-validator");
 const validate = (validations) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,11 +27,30 @@ const validate = (validations) => {
 };
 exports.validate = validate;
 exports.userValidationRules = [
-    (0, express_validator_1.body)('username').notEmpty().withMessage('Username is required'),
+    (0, express_validator_1.body)('username').optional().notEmpty().withMessage('Username cannot be empty'),
+    (0, express_validator_1.body)('email').optional().isEmail().withMessage('Invalid email address'),
+    (0, express_validator_1.body)('password').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+    (0, express_validator_1.body)('profilePicture').optional().isURL().withMessage('Profile picture must be a valid URL'),
+    (0, express_validator_1.body)('bannerPicture').optional().isURL().withMessage('Banner picture must be a valid URL'),
+    (0, express_validator_1.body)('bio').optional().isString().withMessage('Bio must be a string'),
+    (0, express_validator_1.body)('location').optional().isString().withMessage('Location must be a string'),
+    (0, express_validator_1.body)('externalLinks').optional().isArray().withMessage('External links must be an array'),
+    (0, express_validator_1.body)('externalLinks.*.type').optional().isString().withMessage('External link type must be a string'),
+    (0, express_validator_1.body)('externalLinks.*.url').optional().isURL().withMessage('External link URL must be a valid URL'),
+    (0, express_validator_1.body)('privacySettings').optional().isObject().withMessage('Privacy settings must be an object'),
+    (0, express_validator_1.body)('privacySettings.profileVisibility').optional().isIn(['public', 'private', 'followers']).withMessage('Invalid profile visibility setting'),
+    (0, express_validator_1.body)('privacySettings.messagePermissions').optional().isIn(['all', 'followers', 'none']).withMessage('Invalid message permissions setting'),
+];
+exports.loginValidationRules = [
     (0, express_validator_1.body)('email').isEmail().withMessage('Invalid email address'),
+    (0, express_validator_1.body)('password').notEmpty().withMessage('Password is required'),
 ];
 exports.postValidationRules = [
     (0, express_validator_1.body)('content').notEmpty().withMessage('Content is required'),
+    (0, express_validator_1.body)('media').optional().isArray().withMessage('Media must be an array'),
+    (0, express_validator_1.body)('media.*.url').optional().isURL().withMessage('Each media item URL must be a valid URL'),
+    (0, express_validator_1.body)('media.*.alt').optional().isString().withMessage('Each media item alt text must be a string'),
+    (0, express_validator_1.body)('platform').optional().isString().withMessage('Platform must be a string'),
 ];
 exports.schedulePostValidationRules = [
     (0, express_validator_1.body)('content').notEmpty().withMessage('Content is required'),

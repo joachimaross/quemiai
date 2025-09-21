@@ -12,12 +12,12 @@ jest.mock('firebase-admin', () => ({
   firestore: () => ({
     collection: jest.fn(() => ({
       where: jest.fn(() => ({
-        get: jest.fn(() => ({
+        get: jest.fn(() => Promise.resolve({
           empty: true,
           docs: [],
         })),
       })),
-      add: jest.fn(() => ({
+      add: jest.fn(() => Promise.resolve({
         id: 'testUserId',
       })),
     })),
@@ -30,7 +30,9 @@ jest.mock('dotenv/config', () => ({}));
 
 // Helper to convert Netlify handler to an Express app for supertest
 const app = require('express')();
-app.use(require('../../functions/api').handler);
+const api = require('../../functions/api');
+app.use(api.handler);
+
 
 describe('Auth API Integration', () => {
   beforeEach(() => {
@@ -40,6 +42,12 @@ describe('Auth API Integration', () => {
 
   describe('POST /register', () => {
     it('should register a new user successfully', async () => {
+      (db.collection as jest.Mock).mockReturnValueOnce({
+        where: jest.fn().mockReturnThis(),
+        get: jest.fn().mockResolvedValue({ empty: true }),
+        add: jest.fn().mockResolvedValue({ id: 'testUserId' })
+      });
+
       const res = await request(app)
         .post('/register')
         .send({
@@ -57,7 +65,7 @@ describe('Auth API Integration', () => {
       // Mock Firestore to return a non-empty snapshot for existing user
       (db.collection as jest.Mock).mockReturnValueOnce({
         where: jest.fn(() => ({
-          get: jest.fn(() => ({
+          get: jest.fn(() => Promise.resolve({
             empty: false,
             docs: [{ data: () => ({ email: 'existing@example.com' }) }],
           })),
@@ -93,16 +101,17 @@ describe('Auth API Integration', () => {
 
   describe('POST /login', () => {
     it('should log in an existing user successfully', async () => {
+      const hashedPassword = await bcrypt.hash('password123', 10);
       // Mock Firestore to return an existing user
       (db.collection as jest.Mock).mockReturnValueOnce({
         where: jest.fn(() => ({
-          get: jest.fn(() => ({
+          get: jest.fn(() => Promise.resolve({
             empty: false,
             docs: [{
               id: 'testUserId',
               data: () => ({
                 email: 'login@example.com',
-                password: await bcrypt.hash('password123', 10),
+                password: hashedPassword,
               }),
             }],
           })),
@@ -122,6 +131,13 @@ describe('Auth API Integration', () => {
     });
 
     it('should return 400 for invalid credentials (user not found)', async () => {
+       (db.collection as jest.Mock).mockReturnValueOnce({
+        where: jest.fn(() => ({
+          get: jest.fn(() => Promise.resolve({
+            empty: true,
+          })),
+        })),
+      });
       // Firestore mock already returns empty for non-existing user by default
       const res = await request(app)
         .post('/login')
@@ -135,16 +151,17 @@ describe('Auth API Integration', () => {
     });
 
     it('should return 400 for invalid credentials (wrong password)', async () => {
+      const hashedPassword = await bcrypt.hash('wrongpassword', 10);
       // Mock Firestore to return an existing user with a different password
       (db.collection as jest.Mock).mockReturnValueOnce({
         where: jest.fn(() => ({
-          get: jest.fn(() => ({
+          get: jest.fn(() => Promise.resolve({
             empty: false,
             docs: [{
               id: 'testUserId',
               data: () => ({
                 email: 'wrongpass@example.com',
-                password: await bcrypt.hash('wrongpassword', 10),
+                password: hashedPassword,
               }),
             }],
           })),

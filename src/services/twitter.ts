@@ -10,4 +10,4 @@ const client = new TwitterApi({
   accessSecret: config.twitter.accessSecret,
 });
 
-// export const twitterClient = client.readWrite;
+export const twitterClient = client.readWrite;

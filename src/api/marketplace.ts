@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { db } from '../config';
 import multer from 'multer';
 import { uploadBuffer, getPublicUrl } from '../services/storage';
@@ -9,31 +9,31 @@ const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all creator profiles
-router.get('/creators', async (req, res, next) => {
+router.get('/creators', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const snapshot = await db.collection('creators').get();
     const creators = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    res.send(creators);
+    return res.send(creators);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Get a specific creator profile
-router.get('/creators/:creatorId', async (req, res, next) => {
+router.get('/creators/:creatorId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const doc = await db.collection('creators').doc(req.params.creatorId).get();
     if (!doc.exists) {
       return next(new AppError('Creator not found', 404));
     }
-    res.send({ id: doc.id, ...doc.data() });
+    return res.send({ id: doc.id, ...doc.data() });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Create a creator profile
-router.post('/creators', async (req, res, next) => {
+router.post('/creators', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId, portfolio, skills, rating } = req.body;
     if (!userId) {
@@ -44,14 +44,14 @@ router.post('/creators', async (req, res, next) => {
       skills: skills || [],
       rating: rating || 0,
     });
-    res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
+    return res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Upload portfolio file
-router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req, res, next) => {
+router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req: Request, res: Response, next: NextFunction) => {
   if (!req.file) {
     return next(new AppError('File is required', 400));
   }
@@ -69,14 +69,14 @@ router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req,
       portfolio: FieldValue.arrayUnion(publicUrl),
     });
 
-    res.send({ url: publicUrl, message: 'File uploaded successfully' });
+    return res.send({ url: publicUrl, message: 'File uploaded successfully' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Submit a review for a creator
-router.post('/creators/:creatorId/reviews', async (req, res, next) => {
+router.post('/creators/:creatorId/reviews', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { creatorId } = req.params;
     const { userId, rating, review } = req.body;
@@ -103,25 +103,25 @@ router.post('/creators/:creatorId/reviews', async (req, res, next) => {
 
     await db.collection('creators').doc(creatorId).update({ rating: averageRating });
 
-    res.status(201).send({ message: 'Review submitted successfully' });
+    return res.status(201).send({ message: 'Review submitted successfully' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Get all listings
-router.get('/listings', async (req, res, next) => {
+router.get('/listings', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const snapshot = await db.collection('listings').get();
     const listings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    res.send(listings);
+    return res.send(listings);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Create a new listing
-router.post('/listings', async (req, res, next) => {
+router.post('/listings', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { creatorId, title, description, price } = req.body;
     if (!creatorId || !title || !description || !price) {
@@ -134,27 +134,27 @@ router.post('/listings', async (req, res, next) => {
       price,
       createdAt: new Date(),
     });
-    res.status(201).send({ id: docRef.id, message: 'Listing created successfully' });
+    return res.status(201).send({ id: docRef.id, message: 'Listing created successfully' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Get a specific listing
-router.get('/listings/:listingId', async (req, res, next) => {
+router.get('/listings/:listingId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const doc = await db.collection('listings').doc(req.params.listingId).get();
     if (!doc.exists) {
       return next(new AppError('Listing not found', 404));
     }
-    res.send({ id: doc.id, ...doc.data() });
+    return res.send({ id: doc.id, ...doc.data() });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Create a new transaction
-router.post('/transactions', async (req, res, next) => {
+router.post('/transactions', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { listingId, buyerId, amount } = req.body;
     if (!listingId || !buyerId || !amount) {
@@ -171,9 +171,9 @@ router.post('/transactions', async (req, res, next) => {
       createdAt: new Date(),
     });
 
-    res.status(201).send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
+    return res.status(201).send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 

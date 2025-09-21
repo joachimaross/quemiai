@@ -13,7 +13,7 @@ const express_1 = require("express");
 const config_1 = require("../config");
 const router = (0, express_1.Router)();
 // Get analytics summary
-router.get('/summary', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/summary', (_req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const snapshot = yield config_1.db.collection('analytics').get();
         const analyticsData = snapshot.docs.map(doc => doc.data());
