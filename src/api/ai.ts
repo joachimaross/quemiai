@@ -5,7 +5,7 @@ import { detectLabelsInVideo } from '../services/video';
 import { createTranscodingJob } from '../services/transcoder';
 
 const router = Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/improve-text', (req, res) => {
   const { text } = req.body;
