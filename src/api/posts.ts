@@ -1,8 +1,10 @@
 import { Router } from 'express';
 // import { twitterClient } from '../services/twitter';
 import { db } from '../config';
+import { neon } from '@netlify/neon';
 
 const router = Router();
+const sql = neon();
 
 // Get all posts
 router.get('/', (req, res) => {
@@ -67,6 +69,20 @@ router.post('/export', (req, res) => {
 router.get('/:postId', (req, res) => {
   // TODO: Implement logic to get a specific post
   res.send(`Get post ${req.params.postId}`);
+});
+
+// Get a specific post using Netlify Neon
+router.get('/neon/:postId', async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const [post] = await sql`SELECT * FROM posts WHERE id = ${postId}`;
+    if (!post) {
+      return res.status(404).send({ error: 'Post not found in Neon DB' });
+    }
+    res.send(post);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Update a post
