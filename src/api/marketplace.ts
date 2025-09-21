@@ -1,15 +1,10 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { db } from '../config';
-import { uploadFile, getPublicUrl } from '../services/storage';
-import fs from 'fs';
-import { promisify } from 'util';
-import * as admin from 'firebase-admin';
-
-const unlinkAsync = promisify(fs.unlink);
+import { uploadBuffer, getPublicUrl } from '../services/storage';
 
 const router = Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all creator profiles
 router.get('/creators', async (req, res, next) => {
@@ -62,8 +57,7 @@ router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req,
   try {
     const { creatorId } = req.params;
     const fileName = `${creatorId}/${req.file.originalname}`;
-    await uploadFile(req.file.path, fileName);
-    await unlinkAsync(req.file.path); // Delete local file after upload
+    await uploadBuffer(req.file.buffer, fileName);
 
     const publicUrl = getPublicUrl(fileName);
 

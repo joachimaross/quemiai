@@ -12,6 +12,12 @@ export const uploadFile = async (filePath: string, destination: string) => {
   console.log(`${filePath} uploaded to ${bucketName}/${destination}`);
 };
 
+export const uploadBuffer = async (buffer: Buffer, destination: string) => {
+  const file = storage.bucket(bucketName).file(destination);
+  await file.save(buffer);
+  console.log(`Buffer uploaded to ${bucketName}/${destination}`);
+};
+
 export const getPublicUrl = (fileName: string) => {
   return `https://storage.googleapis.com/${bucketName}/${fileName}`;
 };
