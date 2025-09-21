@@ -3,6 +3,9 @@
   publish = "dist"
   functions = "dist/functions"
 
+[build.environment]
+  NODE_VERSION = "20"
+
 [[redirects]]
   from = "/*"
   to = "/.netlify/functions/api"
