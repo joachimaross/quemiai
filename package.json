@@ -9,7 +9,8 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@google-cloud/speech": "^7.2.0",
@@ -40,6 +41,7 @@
     "@types/node": "^16.11.12",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
+    "cypress": "^15.2.0",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
