@@ -1,5 +1,6 @@
-describe('My First Test', () => {
-  it('Does not do much!', () => {
-    expect(true).to.equal(true)
-  })
-})
+describe('API Root Test', () => {
+  it('should display welcome message at API root', () => {
+    cy.visit('/.netlify/functions/api');
+    cy.contains('Welcome to the Joachima Social App API!');
+  });
+});

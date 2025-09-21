@@ -4,6 +4,8 @@ import apiRouter from '../api';
 import { errorHandler } from '../middleware/errorHandler';
 import helmet from 'helmet';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from '../config/swagger';
 
 const app = express();
 
@@ -17,8 +19,15 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// Swagger API Documentation
+app.use(
+  '/.netlify/functions/api/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
+
 app.get('/.netlify/functions/api', (req, res) => {
-  res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');');
+  res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
 });
 
 app.use(express.json());
