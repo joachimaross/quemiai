@@ -12,8 +12,13 @@ This document outlines the database schema for the Joachima social media super a
 *   `username`: (String) The user's unique username.
 *   `email`: (String) The user's email address.
 *   `profilePicture`: (String) URL to the user's profile picture.
+*   `bannerPicture`: (String, Optional) URL to the user's banner image.
 *   `bio`: (String) A short user biography.
 *   `location`: (String) The user's geographical location.
+*   `externalLinks`: (Array of Objects, Optional) e.g., `[{ type: 'website', url: '...', title: '...', icon: '...', order: 1 }]`.
+*   `privacySettings`: (Map, Optional) e.g., `{ profileVisibility: 'public' | 'private' | 'followers', messagePermissions: 'all' | 'followers' | 'none' }`.
+*   `followersCount`: (Number) The number of users following this user. Default 0.
+*   `followingCount`: (Number) The number of users this user is following. Default 0.
 *   `linkedSocialAccounts`: (Map) A map of linked social media accounts (e.g., `{ facebook: "...", twitter: "..." }`).
 *   `preferences`: (Map) User preferences (e.g., `{ theme: "dark", notifications: true }`).
 *   `dashboardLayout`: (JSON) Stores the layout of widgets on the dashboard (e.g., position, size of widgets).
@@ -21,6 +26,18 @@ This document outlines the database schema for the Joachima social media super a
 *   `themeSettings`: (JSON) Stores user's theme preferences (e.g., `{ primaryColor: '#FF0000', darkMode: true }`).
 *   `createdAt`: (Timestamp) The timestamp when the user account was created.
 *   `updatedAt`: (Timestamp) The timestamp when the user account was last updated.
+
+## Relationships Collection
+
+*   **Collection:** `relationships`
+*   **Document ID:** `relationshipId` (auto-generated)
+
+**Fields:**
+
+*   `followerId`: (String) The ID of the user who is following.
+*   `followingId`: (String) The ID of the user being followed.
+*   `createdAt`: (Timestamp) The timestamp when the relationship was created.
+*   **Indexes:** `followerId`, `followingId`, `followerId + followingId` (unique compound index)
 
 ## Feeds & Posts Collection
 
@@ -33,15 +50,33 @@ This document outlines the database schema for the Joachima social media super a
 *   `content`: (String) The text content of the post.
 *   `media`: (Array) An array of URLs to images or videos in the post.
 *   `platform`: (String) The platform the post originated from (e.g., "joachima", "facebook", "twitter").
-*   `likes`: (Number) The number of likes on the post.
-*   `comments`: (Number) The number of comments on the post.
-*   `shares`: (Number) The number of shares of the post.
+*   `likes`: (Number) The number of likes on the post. Default 0.
+*   `comments`: (Number) The number of comments on the post. Default 0.
+*   `shares`: (Number) The number of shares of the post. Default 0.
 *   `createdAt`: (Timestamp) The timestamp when the post was created.
+*   `updatedAt`: (Timestamp, Optional) The timestamp when the post was last updated.
 
 **Subcollections:**
 
 *   `comments`: A subcollection of comments on the post.
+    *   **Document ID:** `commentId`
+    *   **Fields:** `userId` (String), `content` (String), `createdAt` (Timestamp)
 *   `likes`: A subcollection of users who liked the post.
+    *   **Document ID:** `likeId` (or `userId` if only one like per user)
+    *   **Fields:** `userId` (String), `createdAt` (Timestamp)
+
+## Reposts Collection
+
+*   **Collection:** `reposts`
+*   **Document ID:** `repostId` (auto-generated)
+
+**Fields:**
+
+*   `userId`: (String) The ID of the user who reposted.
+*   `originalPostId`: (String) The ID of the original post that was reposted.
+*   `repostContent`: (String, Optional) Optional text added by the user when reposting.
+*   `createdAt`: (Timestamp) The timestamp when the post was reposted.
+*   **Indexes:** `userId`, `originalPostId`
 
 ## Messaging
 
@@ -59,6 +94,8 @@ This document outlines the database schema for the Joachima social media super a
 **Subcollections:**
 
 *   `messages`: A subcollection of messages in the conversation.
+    *   **Document ID:** `messageId`
+    *   **Fields:** `senderId` (String), `content` (String), `createdAt` (Timestamp), `readBy` (Array of Strings, Optional)
 
 ## Analytics
 
