@@ -14,6 +14,7 @@
     pkgs.nodejs_20    # A specific version of Node.js
     pkgs.lsof         # A utility to list open files and network connections
     pkgs.psmisc       # A set of tools for managing processes, including 'fuser'
+    pkgs.openssh
   ];
 
   # Configuration for the Firebase Studio IDE.
