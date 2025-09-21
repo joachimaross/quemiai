@@ -1,7 +1,8 @@
-import { Router } from 'express';
-import multer from 'multer';
+import { Request, Response, Router } from 'express';
 import { db } from '../config';
+import multer from 'multer';
 import { uploadBuffer, getPublicUrl } from '../services/storage';
+import { FieldValue } from 'firebase-admin/firestore';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -64,7 +65,7 @@ router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req,
     // Update creator's portfolio in Firestore
     const creatorRef = db.collection('creators').doc(creatorId);
     await creatorRef.update({
-      portfolio: admin.firestore.FieldValue.arrayUnion(publicUrl),
+      portfolio: FieldValue.arrayUnion(publicUrl),
     });
 
     res.send({ url: publicUrl, message: 'File uploaded successfully' });

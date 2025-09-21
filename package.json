@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "PORT=9002 ts-node --transpile-only src/index.ts",
+    "dev": "netlify dev",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
