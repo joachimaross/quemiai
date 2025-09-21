@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import * as admin from 'firebase-admin';
 
 // Initialize Firebase Admin SDK

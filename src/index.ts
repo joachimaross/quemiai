@@ -8,6 +8,10 @@ const app = express();
 // Use the port from the environment, which is automatically provided by the preview service.
 const port = process.env.PORT;
 
+app.get('/', (req, res) => {
+  res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
+});
+
 app.use(express.json());
 app.use('/api/v1', apiRouter);
 

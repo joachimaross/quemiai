@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "ts-node src/index.ts",
+    "dev": "PORT=9002 ts-node --transpile-only src/index.ts",
     "build": "tsc"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "@types/multer": "^2.0.0",
     "@types/ws": "^8.18.1",
     "compromise": "^14.14.4",
+    "dotenv": "^17.2.2",
     "express": "^4.17.1",
     "express-validator": "^7.2.1",
     "firebase-admin": "^13.5.0",

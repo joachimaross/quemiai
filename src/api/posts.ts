@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { twitterClient } from '../services/twitter';
+// import { twitterClient } from '../services/twitter';
 import { db } from '../config';
 
 const router = Router();
@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
 });
 
 // Post a tweet
-router.post('/tweet', async (req, res, next) => {
+/* router.post('/tweet', async (req, res, next) => {
   try {
     const { tweet } = req.body;
     if (!tweet) {
@@ -28,7 +28,7 @@ router.post('/tweet', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+}); */
 
 // Schedule a post
 router.post('/schedule', async (req, res, next) => {
