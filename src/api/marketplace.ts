@@ -12,7 +12,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get('/creators', async (_req, res, next: NextFunction) => {
   try {
     const snapshot = await db.collection('creators').get();
-    const creators = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const creators = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     return res.send(creators);
   } catch (error) {
     return next(error);
@@ -39,11 +39,14 @@ router.post('/creators', async (req, res, next: NextFunction) => {
     if (!userId) {
       return next(new AppError('userId is required', 400));
     }
-    await db.collection('creators').doc(userId).set({
-      portfolio: portfolio || [],
-      skills: skills || [],
-      rating: rating || 0,
-    });
+    await db
+      .collection('creators')
+      .doc(userId)
+      .set({
+        portfolio: portfolio || [],
+        skills: skills || [],
+        rating: rating || 0,
+      });
     return res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
   } catch (error) {
     return next(error);
@@ -51,29 +54,33 @@ router.post('/creators', async (req, res, next: NextFunction) => {
 });
 
 // Upload portfolio file
-router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req, res, next: NextFunction) => {
-  if (!req.file) {
-    return next(new AppError('File is required', 400));
-  }
+router.post(
+  '/creators/:creatorId/portfolio',
+  upload.single('file'),
+  async (req, res, next: NextFunction) => {
+    if (!req.file) {
+      return next(new AppError('File is required', 400));
+    }
 
-  try {
-    const { creatorId } = req.params;
-    const fileName = `${creatorId}/${req.file.originalname}`;
-    await uploadBuffer(req.file.buffer, fileName);
+    try {
+      const { creatorId } = req.params;
+      const fileName = `${creatorId}/${req.file.originalname}`;
+      await uploadBuffer(req.file.buffer, fileName);
 
-    const publicUrl = getPublicUrl(fileName);
+      const publicUrl = getPublicUrl(fileName);
 
-    // Update creator's portfolio in Firestore
-    const creatorRef = db.collection('creators').doc(creatorId);
-    await creatorRef.update({
-      portfolio: FieldValue.arrayUnion(publicUrl),
-    });
+      // Update creator's portfolio in Firestore
+      const creatorRef = db.collection('creators').doc(creatorId);
+      await creatorRef.update({
+        portfolio: FieldValue.arrayUnion(publicUrl),
+      });
 
-    return res.send({ url: publicUrl, message: 'File uploaded successfully' });
-  } catch (error) {
-    return next(error);
-  }
-});
+      return res.send({ url: publicUrl, message: 'File uploaded successfully' });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
 
 // Submit a review for a creator
 router.post('/creators/:creatorId/reviews', async (req, res, next: NextFunction) => {
@@ -94,9 +101,12 @@ router.post('/creators/:creatorId/reviews', async (req, res, next: NextFunction)
     });
 
     // Update creator's average rating
-    const reviewsSnapshot = await db.collection('reviews').where('creatorId', '==', creatorId).get();
+    const reviewsSnapshot = await db
+      .collection('reviews')
+      .where('creatorId', '==', creatorId)
+      .get();
     let totalRating = 0;
-    reviewsSnapshot.docs.forEach(doc => {
+    reviewsSnapshot.docs.forEach((doc) => {
       totalRating += doc.data().rating;
     });
     const averageRating = totalRating / reviewsSnapshot.size;
@@ -113,7 +123,7 @@ router.post('/creators/:creatorId/reviews', async (req, res, next: NextFunction)
 router.get('/listings', async (_req, res, next: NextFunction) => {
   try {
     const snapshot = await db.collection('listings').get();
-    const listings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const listings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     return res.send(listings);
   } catch (error) {
     return next(error);
@@ -171,7 +181,9 @@ router.post('/transactions', async (req, res, next: NextFunction) => {
       createdAt: new Date(),
     });
 
-    return res.status(201).send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
+    return res
+      .status(201)
+      .send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
   } catch (error) {
     return next(error);
   }

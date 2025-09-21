@@ -71,7 +71,7 @@ export const generateCaptions = async (filePath: string) => {
   // Detects speech in the audio file
   const [response] = await speechClient.recognize(request);
   const transcription = response.results
-    ?.map(result => result.alternatives?.[0]?.transcript)
+    ?.map((result) => result.alternatives?.[0]?.transcript)
     .join('\n');
 
   return transcription;
@@ -83,8 +83,13 @@ interface Post {
   userId: string;
 }
 
+interface Recommendation {
+  item: string;
+  score: number;
+}
+
 export class AdvancedRecommendationEngine {
-  private recommender: any;
+  private recommender: any; // js-recommender lacks type definitions
 
   constructor() {
     this.recommender = new Recommender();
@@ -97,7 +102,7 @@ export class AdvancedRecommendationEngine {
       if (!ratings[post.userId]) {
         ratings[post.userId] = {};
       }
-      const liked = likedPosts.some(p => p.id === post.id && p.userId === post.userId);
+      const liked = likedPosts.some((p) => p.id === post.id && p.userId === post.userId);
       ratings[post.userId][post.id] = liked ? 1 : 0;
     }
 
@@ -105,10 +110,10 @@ export class AdvancedRecommendationEngine {
     this.recommender.transform();
   }
 
-  getRecommendations(userId: string, posts: Post[]) {
-    const recommendations = this.recommender.recommend(userId);
-    const recommendedPosts = recommendations.map((recommendation: any) => {
-      return posts.find(post => post.id === recommendation.item);
+  getRecommendations(userId: string, posts: Post[]): (Post | undefined)[] {
+    const recommendations: Recommendation[] = this.recommender.recommend(userId);
+    const recommendedPosts = recommendations.map((recommendation) => {
+      return posts.find((post) => post.id === recommendation.item);
     });
 
     return recommendedPosts;

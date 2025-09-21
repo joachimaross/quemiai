@@ -2,7 +2,8 @@ import { VideoIntelligenceServiceClient } from '@google-cloud/video-intelligence
 import { google } from '@google-cloud/video-intelligence/build/protos/protos';
 
 const videoClient = new VideoIntelligenceServiceClient();
-const Feature = google.cloud.videointelligence.v1.Feature;
+const { Feature } = google.cloud.videointelligence.v1;
+type ILabelAnnotation = google.cloud.videointelligence.v1.ILabelAnnotation;
 
 export const detectLabelsInVideo = async (gcsUri: string) => {
   const request = {
@@ -16,9 +17,17 @@ export const detectLabelsInVideo = async (gcsUri: string) => {
 
   // Gets annotations for video
   const annotations = operationResult.annotationResults?.[0];
+
+  // The original code was attempting to access a non-existent `annotations` property.
+  // This corrected version extracts descriptions from the entity and categoryEntities,
+  // which is the likely intended behavior.
   const shotLabels = annotations?.shotLabelAnnotations
-    ?.map((shotLabel: any) => shotLabel.annotations?.map((annotation: any) => annotation.description))
-    .flat();
+    ?.map((shotLabel: ILabelAnnotation) => [
+      shotLabel.entity?.description,
+      ...(shotLabel.categoryEntities?.map((cat) => cat.description) || []),
+    ])
+    .flat()
+    .filter((description): description is string => !!description);
 
   return shotLabels;
 };

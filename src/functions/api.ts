@@ -15,16 +15,12 @@ app.use(helmet());
 // CORS Configuration
 const corsOptions = {
   origin: '*', // Allow all origins for now
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 
 // Swagger API Documentation
-app.use(
-  '/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec)
-);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
@@ -37,3 +33,4 @@ app.use('/api/v1', apiRouter);
 app.use(errorHandler);
 
 export const handler = serverless(app);
+export default app; // For testing purposes

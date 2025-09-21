@@ -1,6 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 
-export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
+interface ErrorWithStatus extends Error {
+  statusCode?: number;
+  status?: string;
+  isOperational?: boolean;
+}
+
+export const errorHandler = (
+  err: ErrorWithStatus,
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
@@ -29,4 +40,5 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
       });
     }
   }
+  next();
 };

@@ -5,6 +5,11 @@ import AppError from '../utils/AppError';
 
 const router = Router();
 
+// Define a custom request type for authenticated routes
+interface UserRequest extends Request {
+  user?: { id: string };
+}
+
 /**
  * @swagger
  * tags:
@@ -54,7 +59,6 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-// Get user profile
 router.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const doc = await db.collection('users').doc(req.params.userId).get();
@@ -109,29 +113,43 @@ router.get('/:userId', async (req: Request, res: Response, next: NextFunction) =
  *       500:
  *         description: Server error
  */
-// Update user profile
-router.put('/:userId', validate(userValidationRules), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { userId } = req.params;
-    const { username, email, profilePicture, bannerPicture, bio, location, externalLinks, privacySettings, linkedSocialAccounts, preferences } = req.body;
-    await db.collection('users').doc(userId).update({
-      username,
-      email,
-      profilePicture,
-      bannerPicture,
-      bio,
-      location,
-      externalLinks,
-      privacySettings,
-      linkedSocialAccounts,
-      preferences,
-      updatedAt: new Date(),
-    });
-    res.send({ message: 'User profile updated successfully' });
-  } catch (error) {
-    next(error);
-  }
-});
+router.put(
+  '/:userId',
+  validate(userValidationRules),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params;
+      const {
+        username,
+        email,
+        profilePicture,
+        bannerPicture,
+        bio,
+        location,
+        externalLinks,
+        privacySettings,
+        linkedSocialAccounts,
+        preferences,
+      } = req.body;
+      await db.collection('users').doc(userId).update({
+        username,
+        email,
+        profilePicture,
+        bannerPicture,
+        bio,
+        location,
+        externalLinks,
+        privacySettings,
+        linkedSocialAccounts,
+        preferences,
+        updatedAt: new Date(),
+      });
+      res.send({ message: 'User profile updated successfully' });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 /**
  * @swagger
@@ -158,10 +176,14 @@ router.put('/:userId', validate(userValidationRules), async (req: Request, res: 
  *       500:
  *         description: Server error
  */
-router.post('/:userId/follow', async (req: any, res: Response, next: NextFunction) => {
+router.post('/:userId/follow', async (req: UserRequest, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params; // The user to follow
-    const followerId = req.user.id; // Assuming req.user.id is set by an auth middleware
+    const followerId = req.user?.id;
+
+    if (!followerId) {
+      return next(new AppError('Authentication required', 401));
+    }
 
     if (userId === followerId) {
       return next(new AppError('Cannot follow yourself', 400));
@@ -183,7 +205,8 @@ router.post('/:userId/follow', async (req: any, res: Response, next: NextFunctio
     }
 
     // Check if already following
-    const existingRelationship = await db.collection('relationships')
+    const existingRelationship = await db
+      .collection('relationships')
       .where('followerId', '==', followerId)
       .where('followingId', '==', userId)
       .limit(1)
@@ -239,10 +262,14 @@ router.post('/:userId/follow', async (req: any, res: Response, next: NextFunctio
  *       500:
  *         description: Server error
  */
-router.post('/:userId/unfollow', async (req: any, res: Response, next: NextFunction) => {
+router.post('/:userId/unfollow', async (req: UserRequest, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params; // The user to unfollow
-    const followerId = req.user.id; // Assuming req.user.id is set by an auth middleware
+    const followerId = req.user?.id;
+
+    if (!followerId) {
+      return next(new AppError('Authentication required', 401));
+    }
 
     const userToUnfollowRef = db.collection('users').doc(userId);
     const followerRef = db.collection('users').doc(followerId);
@@ -260,7 +287,8 @@ router.post('/:userId/unfollow', async (req: any, res: Response, next: NextFunct
     }
 
     // Find relationship
-    const existingRelationship = await db.collection('relationships')
+    const existingRelationship = await db
+      .collection('relationships')
       .where('followerId', '==', followerId)
       .where('followingId', '==', userId)
       .limit(1)
@@ -330,21 +358,22 @@ router.get('/:userId/followers', async (req: Request, res: Response, next: NextF
       return next(new AppError('User not found', 404));
     }
 
-    const followersSnapshot = await db.collection('relationships')
+    const followersSnapshot = await db
+      .collection('relationships')
       .where('followingId', '==', userId)
       .get();
 
-    const followerIds = followersSnapshot.docs.map(doc => doc.data().followerId);
+    const followerIds = followersSnapshot.docs.map((doc) => doc.data().followerId);
 
     if (followerIds.length === 0) {
       return res.status(200).send([]);
     }
 
     // Fetch follower details
-    const followersPromises = followerIds.map(id => db.collection('users').doc(id).get());
+    const followersPromises = followerIds.map((id) => db.collection('users').doc(id).get());
     const followersDocs = await Promise.all(followersPromises);
 
-    const followers = followersDocs.map(doc => {
+    const followers = followersDocs.map((doc) => {
       const data = doc.data();
       return {
         id: doc.id,
@@ -402,21 +431,22 @@ router.get('/:userId/following', async (req: Request, res: Response, next: NextF
       return next(new AppError('User not found', 404));
     }
 
-    const followingSnapshot = await db.collection('relationships')
+    const followingSnapshot = await db
+      .collection('relationships')
       .where('followerId', '==', userId)
       .get();
 
-    const followingIds = followingSnapshot.docs.map(doc => doc.data().followingId);
+    const followingIds = followingSnapshot.docs.map((doc) => doc.data().followingId);
 
     if (followingIds.length === 0) {
       return res.status(200).send([]);
     }
 
     // Fetch following details
-    const followingPromises = followingIds.map(id => db.collection('users').doc(id).get());
+    const followingPromises = followingIds.map((id) => db.collection('users').doc(id).get());
     const followingDocs = await Promise.all(followingPromises);
 
-    const following = followingDocs.map(doc => {
+    const following = followingDocs.map((doc) => {
       const data = doc.data();
       return {
         id: doc.id,
@@ -430,7 +460,6 @@ router.get('/:userId/following', async (req: Request, res: Response, next: NextF
     next(error);
   }
 });
-
 
 /**
  * @swagger

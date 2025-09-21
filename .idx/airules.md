@@ -13,6 +13,7 @@ This project is a Nix-based environment for Firebase Studio, defined by a `.idx/
 The `.idx/dev.nix` file is the single source of truth for the development environment. Here are some of the most common configuration options:
 
 ### `channel`
+
 The `nixpkgs` channel determines which package versions are available.
 
 ```nix
@@ -22,6 +23,7 @@ The `nixpkgs` channel determines which package versions are available.
 ```
 
 ### `packages`
+
 A list of packages to install from the specified channel. You can search for packages on the [NixOS package search](https://search.nixos.org/packages).
 
 ```nix
@@ -34,6 +36,7 @@ A list of packages to install from the specified channel. You can search for pac
 ```
 
 ### `env`
+
 A set of environment variables to define within the workspace.
 
 ```nix
@@ -45,6 +48,7 @@ A set of environment variables to define within the workspace.
 ```
 
 ### `idx.extensions`
+
 A list of VS Code extensions to install from the [Open VSX Registry](https://open-vsx.org/).
 
 ```nix
@@ -59,6 +63,7 @@ A list of VS Code extensions to install from the [Open VSX Registry](https://ope
 ```
 
 ### `idx.workspace`
+
 Workspace lifecycle hooks.
 
 - **`onCreate`:** Runs when a workspace is first created.
@@ -80,6 +85,7 @@ Workspace lifecycle hooks.
 ```
 
 ### `idx.previews`
+
 Configure a web preview for your application. The `$PORT` variable is dynamically assigned.
 
 ```nix
@@ -103,6 +109,7 @@ Configure a web preview for your application. The `$PORT` variable is dynamicall
 Here are some examples of how to configure your `dev.nix` for common languages and frameworks.
 
 ### Node.js Web Server
+
 This example sets up a Node.js environment, installs dependencies, and runs a development server with a web preview.
 
 ```nix
@@ -132,6 +139,7 @@ This example sets up a Node.js environment, installs dependencies, and runs a de
 ```
 
 ### Python with Flask
+
 This example sets up a Python environment for a Flask web server. Remember to create a `requirements.txt` file with `Flask` in it.
 
 ```nix
@@ -158,6 +166,7 @@ This example sets up a Python environment for a Flask web server. Remember to cr
 ```
 
 ### Go CLI
+
 This example sets up a Go environment for building a command-line interface.
 
 ```nix

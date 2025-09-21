@@ -26,7 +26,7 @@ wss.on('connection', async (ws: AuthenticatedWebSocket, request) => {
     }
   }
 
-  ws.on('message', message => {
+  ws.on('message', (message) => {
     const data = JSON.parse(message.toString());
 
     if (data.type === 'join') {
@@ -35,10 +35,16 @@ wss.on('connection', async (ws: AuthenticatedWebSocket, request) => {
     } else if (data.type === 'message') {
       const room = rooms.get(ws);
       if (room) {
-        wss.clients.forEach(client => {
+        wss.clients.forEach((client) => {
           const authenticatedClient = client as AuthenticatedWebSocket;
-          if (authenticatedClient !== ws && authenticatedClient.readyState === WebSocket.OPEN && rooms.get(authenticatedClient) === room) {
-            authenticatedClient.send(JSON.stringify({ type: 'message', userId: ws.userId, message: data.message }));
+          if (
+            authenticatedClient !== ws &&
+            authenticatedClient.readyState === WebSocket.OPEN &&
+            rooms.get(authenticatedClient) === room
+          ) {
+            authenticatedClient.send(
+              JSON.stringify({ type: 'message', userId: ws.userId, message: data.message }),
+            );
           }
         });
       }

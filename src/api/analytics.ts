@@ -7,7 +7,7 @@ const router = Router();
 router.get('/summary', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const snapshot = await db.collection('analytics').get();
-    const analyticsData = snapshot.docs.map(doc => doc.data());
+    const analyticsData = snapshot.docs.map((doc) => doc.data());
 
     // Basic aggregation for demonstration
     const summary = analyticsData.reduce((acc, data) => {

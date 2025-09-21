@@ -88,7 +88,9 @@ router.post('/register', validate(userValidationRules), async (req, res, next) =
     });
 
     // Generate JWT (for immediate login after registration)
-    const token = jwt.sign({ userId: newUserRef.id }, process.env.JWT_SECRET || 'supersecretkey', { expiresIn: '1h' });
+    const token = jwt.sign({ userId: newUserRef.id }, process.env.JWT_SECRET || 'supersecretkey', {
+      expiresIn: '1h',
+    });
 
     res.status(201).send({ message: 'User registered successfully', token });
   } catch (error) {
@@ -168,7 +170,9 @@ router.post('/login', validate(loginValidationRules), async (req, res, next) => 
     }
 
     // Generate JWT
-    const token = jwt.sign({ userId: userDoc.id }, process.env.JWT_SECRET || 'supersecretkey', { expiresIn: '1h' });
+    const token = jwt.sign({ userId: userDoc.id }, process.env.JWT_SECRET || 'supersecretkey', {
+      expiresIn: '1h',
+    });
 
     res.send({ message: 'Logged in successfully', token });
   } catch (error) {
