@@ -1,5 +1,5 @@
 [build]
-  command = "npm run cypress:run && npm run build"
+  command = "cypress install && npm run cypress:run && npm run build"
   publish = "dist"
   functions = "dist/functions"
 
