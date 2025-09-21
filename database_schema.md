@@ -13,6 +13,7 @@ This document outlines the database schema for the Joachima social media super a
 *   `email`: (String) The user's email address.
 *   `profilePicture`: (String) URL to the user's profile picture.
 *   `bio`: (String) A short user biography.
+*   `location`: (String) The user's geographical location.
 *   `linkedSocialAccounts`: (Map) A map of linked social media accounts (e.g., `{ facebook: "...", twitter: "..." }`).
 *   `preferences`: (Map) User preferences (e.g., `{ theme: "dark", notifications: true }`).
 *   `dashboardLayout`: (JSON) Stores the layout of widgets on the dashboard (e.g., position, size of widgets).
