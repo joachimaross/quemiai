@@ -1,10 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
-// import { twitterClient } from '../services/twitter';
 import { db } from '../config';
-import { neon } from '@netlify/neon';
 
 const router = Router();
-const sql = neon();
 
 // Get all posts
 router.get('/', (_req: Request, res: Response) => {
@@ -17,20 +14,6 @@ router.post('/', (_req: Request, res: Response) => {
   // TODO: Implement logic to create a new post
   res.send('Create a new post');
 });
-
-// Post a tweet
-/* router.post('/tweet', async (req, res, next) => {
-  try {
-    const { tweet } = req.body;
-    if (!tweet) {
-      return res.status(400).send({ error: 'Tweet content is required' });
-    }
-    const result = await twitterClient.v2.tweet(tweet);
-    res.send(result);
-  } catch (error) {
-    next(error);
-  }
-}); */
 
 // Schedule a post
 router.post('/schedule', async (req: Request, res: Response, next: NextFunction) => {
@@ -69,20 +52,6 @@ router.post('/export', (req: Request, res: Response) => {
 router.get('/:postId', (req: Request, res: Response) => {
   // TODO: Implement logic to get a specific post
   res.send(`Get post ${req.params.postId}`);
-});
-
-// Get a specific post using Netlify Neon
-router.get('/neon/:postId', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { postId } = req.params;
-    const [post] = await sql`SELECT * FROM posts WHERE id = ${postId}`;
-    if (!post) {
-      return res.status(404).send({ error: 'Post not found in Neon DB' });
-    }
-    return res.send(post);
-  } catch (error) {
-    return next(error);
-  }
 });
 
 // Update a post

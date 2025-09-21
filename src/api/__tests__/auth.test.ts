@@ -31,7 +31,7 @@ jest.mock('dotenv/config', () => ({}));
 // Helper to convert Netlify handler to an Express app for supertest
 const app = require('express')();
 const api = require('../../functions/api');
-app.use(api.handler);
+app.use(api);
 
 
 describe('Auth API Integration', () => {

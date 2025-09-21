@@ -17,6 +17,15 @@
     pkgs.openssh
   ];
 
+  # Environment variables to define within the workspace.
+  # IMPORTANT: Replace "YOUR_NEW_GITHUB_TOKEN" with your actual GitHub Personal Access Token.
+  # Make sure the token has the 'workflow' scope.
+  # For security, consider creating a new token and revoking it after use.
+  # DO NOT COMMIT THIS FILE WITH THE TOKEN IN IT.
+  env = {
+    GITHUB_TOKEN = "YOUR_NEW_GITHUB_TOKEN";
+  };
+
   # Configuration for the Firebase Studio IDE.
   idx = {
     # A list of VS Code extensions to install from the Open VSX Registry.

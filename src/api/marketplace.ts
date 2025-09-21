@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, NextFunction } from 'express';
 import { db } from '../config';
 import multer from 'multer';
 import { uploadBuffer, getPublicUrl } from '../services/storage';
@@ -9,7 +9,7 @@ const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all creator profiles
-router.get('/creators', async (_req: Request, res: Response, next: NextFunction) => {
+router.get('/creators', async (_req, res, next: NextFunction) => {
   try {
     const snapshot = await db.collection('creators').get();
     const creators = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -20,7 +20,7 @@ router.get('/creators', async (_req: Request, res: Response, next: NextFunction)
 });
 
 // Get a specific creator profile
-router.get('/creators/:creatorId', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/creators/:creatorId', async (req, res, next: NextFunction) => {
   try {
     const doc = await db.collection('creators').doc(req.params.creatorId).get();
     if (!doc.exists) {
@@ -33,7 +33,7 @@ router.get('/creators/:creatorId', async (req: Request, res: Response, next: Nex
 });
 
 // Create a creator profile
-router.post('/creators', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/creators', async (req, res, next: NextFunction) => {
   try {
     const { userId, portfolio, skills, rating } = req.body;
     if (!userId) {
@@ -51,7 +51,7 @@ router.post('/creators', async (req: Request, res: Response, next: NextFunction)
 });
 
 // Upload portfolio file
-router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req: Request, res: Response, next: NextFunction) => {
+router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req, res, next: NextFunction) => {
   if (!req.file) {
     return next(new AppError('File is required', 400));
   }
@@ -76,7 +76,7 @@ router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req:
 });
 
 // Submit a review for a creator
-router.post('/creators/:creatorId/reviews', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/creators/:creatorId/reviews', async (req, res, next: NextFunction) => {
   try {
     const { creatorId } = req.params;
     const { userId, rating, review } = req.body;
@@ -110,7 +110,7 @@ router.post('/creators/:creatorId/reviews', async (req: Request, res: Response, 
 });
 
 // Get all listings
-router.get('/listings', async (_req: Request, res: Response, next: NextFunction) => {
+router.get('/listings', async (_req, res, next: NextFunction) => {
   try {
     const snapshot = await db.collection('listings').get();
     const listings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -121,7 +121,7 @@ router.get('/listings', async (_req: Request, res: Response, next: NextFunction)
 });
 
 // Create a new listing
-router.post('/listings', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/listings', async (req, res, next: NextFunction) => {
   try {
     const { creatorId, title, description, price } = req.body;
     if (!creatorId || !title || !description || !price) {
@@ -141,7 +141,7 @@ router.post('/listings', async (req: Request, res: Response, next: NextFunction)
 });
 
 // Get a specific listing
-router.get('/listings/:listingId', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/listings/:listingId', async (req, res, next: NextFunction) => {
   try {
     const doc = await db.collection('listings').doc(req.params.listingId).get();
     if (!doc.exists) {
@@ -154,7 +154,7 @@ router.get('/listings/:listingId', async (req: Request, res: Response, next: Nex
 });
 
 // Create a new transaction
-router.post('/transactions', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/transactions', async (req, res, next: NextFunction) => {
   try {
     const { listingId, buyerId, amount } = req.body;
     if (!listingId || !buyerId || !amount) {
