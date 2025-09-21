@@ -1,8 +1,9 @@
-import { Request, Response, Router } from 'express';
+import { Router } from 'express';
 import { db } from '../config';
 import multer from 'multer';
 import { uploadBuffer, getPublicUrl } from '../services/storage';
 import { FieldValue } from 'firebase-admin/firestore';
+import AppError from '../utils/AppError';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -23,7 +24,7 @@ router.get('/creators/:creatorId', async (req, res, next) => {
   try {
     const doc = await db.collection('creators').doc(req.params.creatorId).get();
     if (!doc.exists) {
-      return res.status(404).send({ error: 'Creator not found' });
+      return next(new AppError('Creator not found', 404));
     }
     res.send({ id: doc.id, ...doc.data() });
   } catch (error) {
@@ -36,14 +37,14 @@ router.post('/creators', async (req, res, next) => {
   try {
     const { userId, portfolio, skills, rating } = req.body;
     if (!userId) {
-      return res.status(400).send({ error: 'userId is required' });
+      return next(new AppError('userId is required', 400));
     }
     await db.collection('creators').doc(userId).set({
       portfolio: portfolio || [],
       skills: skills || [],
       rating: rating || 0,
     });
-    res.send({ id: userId, message: 'Creator profile created successfully' });
+    res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
   } catch (error) {
     next(error);
   }
@@ -52,7 +53,7 @@ router.post('/creators', async (req, res, next) => {
 // Upload portfolio file
 router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req, res, next) => {
   if (!req.file) {
-    return res.status(400).send({ error: 'File is required' });
+    return next(new AppError('File is required', 400));
   }
 
   try {
@@ -80,7 +81,7 @@ router.post('/creators/:creatorId/reviews', async (req, res, next) => {
     const { creatorId } = req.params;
     const { userId, rating, review } = req.body;
     if (!userId || !rating || !review) {
-      return res.status(400).send({ error: 'userId, rating, and review are required' });
+      return next(new AppError('userId, rating, and review are required', 400));
     }
 
     // Add review to Firestore
@@ -102,7 +103,7 @@ router.post('/creators/:creatorId/reviews', async (req, res, next) => {
 
     await db.collection('creators').doc(creatorId).update({ rating: averageRating });
 
-    res.send({ message: 'Review submitted successfully' });
+    res.status(201).send({ message: 'Review submitted successfully' });
   } catch (error) {
     next(error);
   }
@@ -124,7 +125,7 @@ router.post('/listings', async (req, res, next) => {
   try {
     const { creatorId, title, description, price } = req.body;
     if (!creatorId || !title || !description || !price) {
-      return res.status(400).send({ error: 'creatorId, title, description, and price are required' });
+      return next(new AppError('creatorId, title, description, and price are required', 400));
     }
     const docRef = await db.collection('listings').add({
       creatorId,
@@ -133,7 +134,7 @@ router.post('/listings', async (req, res, next) => {
       price,
       createdAt: new Date(),
     });
-    res.send({ id: docRef.id, message: 'Listing created successfully' });
+    res.status(201).send({ id: docRef.id, message: 'Listing created successfully' });
   } catch (error) {
     next(error);
   }
@@ -144,7 +145,7 @@ router.get('/listings/:listingId', async (req, res, next) => {
   try {
     const doc = await db.collection('listings').doc(req.params.listingId).get();
     if (!doc.exists) {
-      return res.status(404).send({ error: 'Listing not found' });
+      return next(new AppError('Listing not found', 404));
     }
     res.send({ id: doc.id, ...doc.data() });
   } catch (error) {
@@ -157,7 +158,7 @@ router.post('/transactions', async (req, res, next) => {
   try {
     const { listingId, buyerId, amount } = req.body;
     if (!listingId || !buyerId || !amount) {
-      return res.status(400).send({ error: 'listingId, buyerId, and amount are required' });
+      return next(new AppError('listingId, buyerId, and amount are required', 400));
     }
 
     // In a real application, this would trigger a Cloud Function
@@ -170,7 +171,7 @@ router.post('/transactions', async (req, res, next) => {
       createdAt: new Date(),
     });
 
-    res.send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
+    res.status(201).send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
   } catch (error) {
     next(error);
   }

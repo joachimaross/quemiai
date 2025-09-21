@@ -3,14 +3,15 @@ import multer from 'multer';
 import { improveText, generateCaptions, AdvancedRecommendationEngine } from '../services/ai';
 import { detectLabelsInVideo } from '../services/video';
 import { createTranscodingJob } from '../services/transcoder';
+import AppError from '../utils/AppError';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/improve-text', (req, res) => {
+router.post('/improve-text', (req, res, next) => {
   const { text } = req.body;
   if (!text) {
-    return res.status(400).send({ error: 'Text is required' });
+    return next(new AppError('Text is required', 400));
   }
 
   const result = improveText(text);
@@ -19,7 +20,7 @@ router.post('/improve-text', (req, res) => {
 
 router.post('/generate-captions', upload.single('file'), async (req, res, next) => {
   if (!req.file) {
-    return res.status(400).send({ error: 'File is required' });
+    return next(new AppError('File is required', 400));
   }
 
   try {
@@ -33,7 +34,7 @@ router.post('/generate-captions', upload.single('file'), async (req, res, next) 
 router.post('/advanced-recommendations', async (req, res, next) => {
   const { posts, likedPosts, userId } = req.body;
   if (!posts || !likedPosts || !userId) {
-    return res.status(400).send({ error: 'posts, likedPosts, and userId are required' });
+    return next(new AppError('posts, likedPosts, and userId are required', 400));
   }
 
   try {
@@ -49,7 +50,7 @@ router.post('/advanced-recommendations', async (req, res, next) => {
 router.post('/detect-video-labels', async (req, res, next) => {
   const { gcsUri } = req.body;
   if (!gcsUri) {
-    return res.status(400).send({ error: 'Google Cloud Storage URI is required' });
+    return next(new AppError('Google Cloud Storage URI is required', 400));
   }
 
   try {
@@ -60,10 +61,10 @@ router.post('/detect-video-labels', async (req, res, next) => {
   }
 });
 
-router.post('/music-integration', (req, res) => {
+router.post('/music-integration', (req, res, next) => {
   const { trackId, videoId } = req.body;
   if (!trackId || !videoId) {
-    return res.status(400).send({ error: 'trackId and videoId are required' });
+    return next(new AppError('trackId and videoId are required', 400));
   }
 
   // This is a placeholder for actual music integration logic
@@ -73,7 +74,7 @@ router.post('/music-integration', (req, res) => {
 router.post('/transcode-video', async (req, res, next) => {
   const { inputUri, outputUri } = req.body;
   if (!inputUri || !outputUri) {
-    return res.status(400).send({ error: 'inputUri and outputUri are required' });
+    return next(new AppError('inputUri and outputUri are required', 400));
   }
 
   try {
@@ -84,10 +85,10 @@ router.post('/transcode-video', async (req, res, next) => {
   }
 });
 
-router.post('/chat-assistant', (req, res) => {
+router.post('/chat-assistant', (req, res, next) => {
   const { message } = req.body;
   if (!message) {
-    return res.status(400).send({ error: 'Message is required' });
+    return next(new AppError('Message is required', 400));
   }
 
   // This is a placeholder for actual AI chat assistant logic

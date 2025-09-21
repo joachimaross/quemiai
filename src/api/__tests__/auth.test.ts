@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { handler } from '../../functions/api'; // Import the Netlify function handler
 import { db } from '../../config';
+import bcrypt from 'bcryptjs';
 
 // Mock Firebase Admin SDK to prevent actual database calls during tests
 // This is a simplified mock. In a real app, you'd mock specific Firestore methods.
