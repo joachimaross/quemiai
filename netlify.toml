@@ -3,6 +3,9 @@
   publish = "dist"
   functions = "dist/functions"
 
+# TODO: Re-evaluate if Cypress E2E tests are truly necessary during the build phase for every deploy,
+# or if they can be run as a separate CI step for faster deploys.
+
 [build.environment]
   NODE_VERSION = "20"
 

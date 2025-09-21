@@ -2,11 +2,23 @@ import express from 'express';
 import serverless from 'serverless-http';
 import apiRouter from '../api';
 import { errorHandler } from '../middleware/errorHandler';
+import helmet from 'helmet';
+import cors from 'cors';
 
 const app = express();
 
+// Security Middleware
+app.use(helmet());
+
+// CORS Configuration
+const corsOptions = {
+  origin: 'https://your-frontend-domain.com', // TODO: Replace with your actual frontend domain
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+
 app.get('/.netlify/functions/api', (req, res) => {
-  res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
+  res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');');
 });
 
 app.use(express.json());

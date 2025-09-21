@@ -1,6 +1,11 @@
 import 'dotenv/config';
 import * as admin from 'firebase-admin';
 
+// TODO: For production, consider using Google Secret Manager to securely retrieve credentials.
+// admin.initializeApp({
+//   credential: admin.credential.applicationDefault(),
+// });
+
 // Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
