@@ -1,16 +1,6 @@
-# Dependencies
-node_modules
-
-# Build output
-dist
-
-# macOS
-.DS_Store
-
-# Logs
+/node_modules
 *.log
-npm-debug.log
-firebase-debug.log
-
-# Environment variables
 .env
+.env.local
+.DS_Store
+coverage/
