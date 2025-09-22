@@ -85,7 +85,8 @@ interface Recommendation {
 }
 
 export class AdvancedRecommendationEngine {
-  private recommender: Recommender; // js-recommender lacks type definitions
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private recommender: any; // js-recommender lacks type definitions
 
   constructor() {
     this.recommender = new Recommender();
