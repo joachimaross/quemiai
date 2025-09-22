@@ -25,6 +25,7 @@ jest.mock('firebase-admin', () => ({
         }),
       ),
     })),
+    terminate: jest.fn(() => Promise.resolve()), // Mock terminate function
   }),
   auth: () => ({}),
 }));
@@ -35,6 +36,12 @@ jest.mock('dotenv/config', () => ({}));
 describe('Auth API Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterAll(async () => {
+    if (db && typeof db.terminate === 'function') {
+      await db.terminate();
+    }
   });
 
   describe('POST /api/v1/auth/register', () => {
