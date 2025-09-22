@@ -21,34 +21,41 @@ router.post('/improve-text', (req: Request, res: Response, next: NextFunction) =
   }
 });
 
-router.post('/generate-captions', upload.single('file'), async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.file) {
-    return next(new AppError('File is required', 400));
-  }
+router.post(
+  '/generate-captions',
+  upload.single('file'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.file) {
+      return next(new AppError('File is required', 400));
+    }
 
-  try {
-    const captions = await generateCaptions(req.file.path);
-    return res.send({ captions });
-  } catch (error) {
-    return next(error);
-  }
-});
+    try {
+      const captions = await generateCaptions(req.file.path);
+      return res.send({ captions });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
 
-router.post('/advanced-recommendations', async (req: Request, res: Response, next: NextFunction) => {
-  const { posts, likedPosts, userId } = req.body;
-  if (!posts || !likedPosts || !userId) {
-    return next(new AppError('posts, likedPosts, and userId are required', 400));
-  }
+router.post(
+  '/advanced-recommendations',
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { posts, likedPosts, userId } = req.body;
+    if (!posts || !likedPosts || !userId) {
+      return next(new AppError('posts, likedPosts, and userId are required', 400));
+    }
 
-  try {
-    const engine = new AdvancedRecommendationEngine();
-    await engine.train(posts, likedPosts);
-    const recommendations = await engine.getRecommendations(userId, posts);
-    return res.send({ recommendations });
-  } catch (error) {
-    return next(error);
-  }
-});
+    try {
+      const engine = new AdvancedRecommendationEngine();
+      await engine.train(posts, likedPosts);
+      const recommendations = await engine.getRecommendations(userId, posts);
+      return res.send({ recommendations });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
 
 router.post('/detect-video-labels', async (req: Request, res: Response, next: NextFunction) => {
   const { gcsUri } = req.body;
@@ -100,7 +107,7 @@ router.post('/chat-assistant', (req: Request, res: Response, next: NextFunction)
     }
 
     // This is a placeholder for actual AI chat assistant logic
-    const response = `You said: \"${message}\". I am an AI assistant. How can I help you further?`;
+    const response = `You said: "${message}". I am an AI assistant. How can I help you further?`;
     return res.send({ response });
   } catch (error) {
     return next(error);

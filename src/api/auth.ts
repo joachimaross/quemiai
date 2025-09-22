@@ -67,36 +67,44 @@ const router = Router();
  *         description: Server error
  */
 // User Registration
-router.post('/register', validate(userValidationRules), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { email, password } = req.body;
+router.post(
+  '/register',
+  validate(userValidationRules),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = req.body;
 
-    // Check if user already exists
-    const userSnapshot = await db.collection('users').where('email', '==', email).get();
-    if (!userSnapshot.empty) {
-      return next(new AppError('User with that email already exists.', 400));
+      // Check if user already exists
+      const userSnapshot = await db.collection('users').where('email', '==', email).get();
+      if (!userSnapshot.empty) {
+        return next(new AppError('User with that email already exists.', 400));
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Store user in Firestore
+      const newUserRef = await db.collection('users').add({
+        email,
+        password: hashedPassword,
+        createdAt: new Date(),
+      });
+
+      // Generate JWT (for immediate login after registration)
+      const token = jwt.sign(
+        { userId: newUserRef.id },
+        process.env.JWT_SECRET || 'supersecretkey',
+        {
+          expiresIn: '1h',
+        },
+      );
+
+      return res.status(201).send({ message: 'User registered successfully', token });
+    } catch (error) {
+      return next(error);
     }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Store user in Firestore
-    const newUserRef = await db.collection('users').add({
-      email,
-      password: hashedPassword,
-      createdAt: new Date(),
-    });
-
-    // Generate JWT (for immediate login after registration)
-    const token = jwt.sign({ userId: newUserRef.id }, process.env.JWT_SECRET || 'supersecretkey', {
-      expiresIn: '1h',
-    });
-
-    return res.status(201).send({ message: 'User registered successfully', token });
-  } catch (error) {
-    return next(error);
-  }
-});
+  },
+);
 
 /**
  * @swagger
@@ -150,34 +158,38 @@ router.post('/register', validate(userValidationRules), async (req: Request, res
  *         description: Server error
  */
 // User Login
-router.post('/login', validate(loginValidationRules), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { email, password } = req.body;
+router.post(
+  '/login',
+  validate(loginValidationRules),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = req.body;
 
-    // Check if user exists
-    const userSnapshot = await db.collection('users').where('email', '==', email).get();
-    if (userSnapshot.empty) {
-      return next(new AppError('Invalid credentials.', 400));
+      // Check if user exists
+      const userSnapshot = await db.collection('users').where('email', '==', email).get();
+      if (userSnapshot.empty) {
+        return next(new AppError('Invalid credentials.', 400));
+      }
+
+      const userDoc = userSnapshot.docs[0];
+      const user = userDoc.data();
+
+      // Compare passwords
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return next(new AppError('Invalid credentials.', 400));
+      }
+
+      // Generate JWT
+      const token = jwt.sign({ userId: userDoc.id }, process.env.JWT_SECRET || 'supersecretkey', {
+        expiresIn: '1h',
+      });
+
+      return res.send({ message: 'Logged in successfully', token });
+    } catch (error) {
+      return next(error);
     }
-
-    const userDoc = userSnapshot.docs[0];
-    const user = userDoc.data();
-
-    // Compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return next(new AppError('Invalid credentials.', 400));
-    }
-
-    // Generate JWT
-    const token = jwt.sign({ userId: userDoc.id }, process.env.JWT_SECRET || 'supersecretkey', {
-      expiresIn: '1h',
-    });
-
-    return res.send({ message: 'Logged in successfully', token });
-  } catch (error) {
-    return next(error);
-  }
-});
+  },
+);
 
 export default router;

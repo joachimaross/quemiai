@@ -83,41 +83,44 @@ router.post(
 );
 
 // Submit a review for a creator
-router.post('/creators/:creatorId/reviews', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { creatorId } = req.params;
-    const { userId, rating, review } = req.body;
-    if (!userId || !rating || !review) {
-      return next(new AppError('userId, rating, and review are required', 400));
+router.post(
+  '/creators/:creatorId/reviews',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { creatorId } = req.params;
+      const { userId, rating, review } = req.body;
+      if (!userId || !rating || !review) {
+        return next(new AppError('userId, rating, and review are required', 400));
+      }
+
+      // Add review to Firestore
+      await db.collection('reviews').add({
+        creatorId,
+        userId,
+        rating,
+        review,
+        createdAt: new Date(),
+      });
+
+      // Update creator's average rating
+      const reviewsSnapshot = await db
+        .collection('reviews')
+        .where('creatorId', '==', creatorId)
+        .get();
+      let totalRating = 0;
+      reviewsSnapshot.docs.forEach((doc) => {
+        totalRating += doc.data().rating;
+      });
+      const averageRating = totalRating / reviewsSnapshot.size;
+
+      await db.collection('creators').doc(creatorId).update({ rating: averageRating });
+
+      return res.status(201).send({ message: 'Review submitted successfully' });
+    } catch (error) {
+      return next(error);
     }
-
-    // Add review to Firestore
-    await db.collection('reviews').add({
-      creatorId,
-      userId,
-      rating,
-      review,
-      createdAt: new Date(),
-    });
-
-    // Update creator's average rating
-    const reviewsSnapshot = await db
-      .collection('reviews')
-      .where('creatorId', '==', creatorId)
-      .get();
-    let totalRating = 0;
-    reviewsSnapshot.docs.forEach((doc) => {
-      totalRating += doc.data().rating;
-    });
-    const averageRating = totalRating / reviewsSnapshot.size;
-
-    await db.collection('creators').doc(creatorId).update({ rating: averageRating });
-
-    return res.status(201).send({ message: 'Review submitted successfully' });
-  } catch (error) {
-    return next(error);
-  }
-});
+  },
+);
 
 // Get all listings
 router.get('/listings', async (_req: Request, res: Response, next: NextFunction) => {

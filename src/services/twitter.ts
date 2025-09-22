@@ -1,4 +1,3 @@
-
 import { TwitterApi } from 'twitter-api-v2';
 
 // Get the Twitter API keys from environment variables

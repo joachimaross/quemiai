@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 interface ErrorWithStatus extends Error {
   statusCode?: number;
@@ -6,12 +6,7 @@ interface ErrorWithStatus extends Error {
   isOperational?: boolean;
 }
 
-export const errorHandler = (
-  err: ErrorWithStatus,
-  _req: Request,
-  res: Response,
-  _next: NextFunction,
-): Response => {
+export const errorHandler = (err: ErrorWithStatus, _req: Request, res: Response): Response => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 

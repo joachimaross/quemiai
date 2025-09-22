@@ -1,12 +1,12 @@
-import globals from 'globals';
-import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import pluginPrettier from 'eslint-plugin-prettier';
-import configPrettier from 'eslint-config-prettier';
+const globals = require('globals');
+const pluginJs = require('@eslint/js');
+const tseslint = require('typescript-eslint');
+const pluginPrettier = require('eslint-plugin-prettier');
+const configPrettier = require('eslint-config-prettier');
 
-export default [
+module.exports = [
   {
-    ignores: ['dist/**', 'cypress.config.cjs', 'jest.config.cjs'],
+    ignores: ['dist/**', 'cypress.config.cjs', 'jest.config.cjs', 'eslint.config.js'],
   },
   {
     languageOptions: {

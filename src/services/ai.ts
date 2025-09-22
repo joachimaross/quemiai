@@ -85,7 +85,7 @@ interface Recommendation {
 }
 
 export class AdvancedRecommendationEngine {
-  private recommender: any; // js-recommender lacks type definitions
+  private recommender: Recommender; // js-recommender lacks type definitions
 
   constructor() {
     this.recommender = new Recommender();
