@@ -13,9 +13,9 @@ router.get('/creators', async (_req, res, next: NextFunction) => {
   try {
     const snapshot = await db.collection('creators').get();
     const creators = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    return res.send(creators);
+    res.send(creators);
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
 
@@ -24,11 +24,12 @@ router.get('/creators/:creatorId', async (req, res, next: NextFunction) => {
   try {
     const doc = await db.collection('creators').doc(req.params.creatorId).get();
     if (!doc.exists) {
-      return next(new AppError('Creator not found', 404));
+      next(new AppError('Creator not found', 404));
+      return;
     }
-    return res.send({ id: doc.id, ...doc.data() });
+    res.send({ id: doc.id, ...doc.data() });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
 
@@ -37,7 +38,8 @@ router.post('/creators', async (req, res, next: NextFunction) => {
   try {
     const { userId, portfolio, skills, rating } = req.body;
     if (!userId) {
-      return next(new AppError('userId is required', 400));
+      next(new AppError('userId is required', 400));
+      return;
     }
     await db
       .collection('creators')
@@ -47,9 +49,9 @@ router.post('/creators', async (req, res, next: NextFunction) => {
         skills: skills || [],
         rating: rating || 0,
       });
-    return res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
+    res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
 
@@ -59,7 +61,8 @@ router.post(
   upload.single('file'),
   async (req, res, next: NextFunction) => {
     if (!req.file) {
-      return next(new AppError('File is required', 400));
+      next(new AppError('File is required', 400));
+      return;
     }
 
     try {
@@ -75,9 +78,9 @@ router.post(
         portfolio: FieldValue.arrayUnion(publicUrl),
       });
 
-      return res.send({ url: publicUrl, message: 'File uploaded successfully' });
+      res.send({ url: publicUrl, message: 'File uploaded successfully' });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   },
 );
@@ -88,7 +91,8 @@ router.post('/creators/:creatorId/reviews', async (req, res, next: NextFunction)
     const { creatorId } = req.params;
     const { userId, rating, review } = req.body;
     if (!userId || !rating || !review) {
-      return next(new AppError('userId, rating, and review are required', 400));
+      next(new AppError('userId, rating, and review are required', 400));
+      return;
     }
 
     // Add review to Firestore
@@ -113,9 +117,9 @@ router.post('/creators/:creatorId/reviews', async (req, res, next: NextFunction)
 
     await db.collection('creators').doc(creatorId).update({ rating: averageRating });
 
-    return res.status(201).send({ message: 'Review submitted successfully' });
+    res.status(201).send({ message: 'Review submitted successfully' });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
 
@@ -124,9 +128,9 @@ router.get('/listings', async (_req, res, next: NextFunction) => {
   try {
     const snapshot = await db.collection('listings').get();
     const listings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    return res.send(listings);
+    res.send(listings);
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
 
@@ -135,7 +139,8 @@ router.post('/listings', async (req, res, next: NextFunction) => {
   try {
     const { creatorId, title, description, price } = req.body;
     if (!creatorId || !title || !description || !price) {
-      return next(new AppError('creatorId, title, description, and price are required', 400));
+      next(new AppError('creatorId, title, description, and price are required', 400));
+      return;
     }
     const docRef = await db.collection('listings').add({
       creatorId,
@@ -144,9 +149,9 @@ router.post('/listings', async (req, res, next: NextFunction) => {
       price,
       createdAt: new Date(),
     });
-    return res.status(201).send({ id: docRef.id, message: 'Listing created successfully' });
+    res.status(201).send({ id: docRef.id, message: 'Listing created successfully' });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
 
@@ -155,11 +160,12 @@ router.get('/listings/:listingId', async (req, res, next: NextFunction) => {
   try {
     const doc = await db.collection('listings').doc(req.params.listingId).get();
     if (!doc.exists) {
-      return next(new AppError('Listing not found', 404));
+      next(new AppError('Listing not found', 404));
+      return;
     }
-    return res.send({ id: doc.id, ...doc.data() });
+    res.send({ id: doc.id, ...doc.data() });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
 
@@ -168,7 +174,8 @@ router.post('/transactions', async (req, res, next: NextFunction) => {
   try {
     const { listingId, buyerId, amount } = req.body;
     if (!listingId || !buyerId || !amount) {
-      return next(new AppError('listingId, buyerId, and amount are required', 400));
+      next(new AppError('listingId, buyerId, and amount are required', 400));
+      return;
     }
 
     // In a real application, this would trigger a Cloud Function
@@ -181,11 +188,11 @@ router.post('/transactions', async (req, res, next: NextFunction) => {
       createdAt: new Date(),
     });
 
-    return res
+    res
       .status(201)
       .send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
 

@@ -1,5 +1,5 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.multiply = exports.subtract = exports.add = void 0;
 const add = (a, b) => a + b;
 exports.add = add;

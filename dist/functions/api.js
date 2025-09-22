@@ -1,39 +1,34 @@
-'use strict';
-var __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
-Object.defineProperty(exports, '__esModule', { value: true });
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-const express_1 = __importDefault(require('express'));
-const serverless_http_1 = __importDefault(require('serverless-http'));
-const api_1 = __importDefault(require('../api'));
-const errorHandler_1 = require('../middleware/errorHandler');
-const helmet_1 = __importDefault(require('helmet'));
-const cors_1 = __importDefault(require('cors'));
-const swagger_ui_express_1 = __importDefault(require('swagger-ui-express'));
-const swagger_1 = __importDefault(require('../config/swagger'));
+const express_1 = __importDefault(require("express"));
+const serverless_http_1 = __importDefault(require("serverless-http"));
+const api_1 = __importDefault(require("../api"));
+const errorHandler_1 = require("../middleware/errorHandler");
+const helmet_1 = __importDefault(require("helmet"));
+const cors_1 = __importDefault(require("cors"));
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const swagger_1 = __importDefault(require("../config/swagger"));
 const app = (0, express_1.default)();
 // Security Middleware
 app.use((0, helmet_1.default)());
 // CORS Configuration
 const corsOptions = {
-  origin: 'https://your-frontend-domain.com',
-  optionsSuccessStatus: 200,
+    origin: '*',
+    optionsSuccessStatus: 200,
 };
 app.use((0, cors_1.default)(corsOptions));
 // Swagger API Documentation
-app.use(
-  '/.netlify/functions/api/api-docs',
-  swagger_ui_express_1.default.serve,
-  swagger_ui_express_1.default.setup(swagger_1.default),
-);
-app.get('/.netlify/functions/api', (_req, res) => {
-  res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
+app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
+app.get('/', (_req, res) => {
+    res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
 });
 app.use(express_1.default.json());
-app.use('/.netlify/functions/api/v1', api_1.default);
+app.use('/api/v1', api_1.default);
 // Error handling middleware
 app.use(errorHandler_1.errorHandler);
 exports.handler = (0, serverless_http_1.default)(app);
+exports.default = app; // For testing purposes

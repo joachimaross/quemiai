@@ -1,6 +1,5 @@
 import nlp from 'compromise';
 import { SpeechClient } from '@google-cloud/speech';
-import fs from 'fs';
 import { Recommender } from 'js-recommender';
 
 // Creates a client
@@ -52,11 +51,8 @@ export const improveText = (text: string) => {
 };
 
 export const generateCaptions = async (filePath: string) => {
-  const file = fs.readFileSync(filePath);
-  const audioBytes = file.toString('base64');
-
   const audio = {
-    content: audioBytes,
+    uri: filePath,
   };
   const config = {
     encoding: 'LINEAR16' as const,
