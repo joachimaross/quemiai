@@ -1,5 +1,5 @@
 {
-  "name": "joachima",
+  "name": "zeeky",
   "version": "1.0.0",
   "description": "All-in-One Social Media & Messaging Super App",
   "main": "src/index.ts",
@@ -34,6 +34,7 @@
     "express-validator": "^7.2.1",
     "firebase-admin": "^13.5.0",
     "fluent-ffmpeg": "^2.1.3",
+    "framer-motion": "^12.23.16",
     "helmet": "^8.1.0",
     "js-recommender": "^1.0.5",
     "jsonwebtoken": "^9.0.2",

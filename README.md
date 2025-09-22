@@ -1,29 +1,28 @@
-# Joachima Social Media Super App
+# Zeeky Social: Your Pulse on Real Content
 
 ## Project Description
 
-Joachima is an all-in-one social media and messaging super app designed to integrate various social platforms and provide a unified experience. It aims to offer features like user authentication, post management, social media integration (Facebook, Twitter, Instagram), messaging, analytics, and a marketplace for creators.
+Zeeky is an all-in-one social media and messaging super app designed to be a vibrant, immersive social experience. It focuses on connecting users through real content and shared "vibes," moving beyond simple algorithms. The platform features rich media, customizable user profiles ("Zones"), and a focus on real-time engagement.
 
 ## Key Features (Planned/Implemented)
 
-- User Authentication (Signup, Login, Logout)
-- Basic User Profiles
-- Create, Read, Update, Delete Text-based Posts
-- Social Media Account Connection (Facebook, Twitter, Instagram)
-- Cross-platform Content Management
-- Engagement features (Like, Comment, Share)
-- Analytics for User Engagement
-- Creator Marketplace
-- Real-time Messaging (planned)
-- Rich Media Support (planned)
+- **User Authentication** (Signup, Login, Logout)
+- **Customizable User Profiles ("Zones")**
+- **The Zeeky Stream:** An immersive vertical feed for mixed content (videos, music, articles).
+- **The Pulse:** A trending hub showing real-time activity.
+- Create, Read, Update, Delete Posts
+- Engagement features (Likes, Comments, Shares with a "pulse" effect)
+- **Vibes:** Profile customization with color palettes and soundscapes.
+- **3D Avatars** (planned)
+- **Real-time Messaging** (planned)
 
 ## Technologies Used
 
 - **Backend:** Node.js, Express.js, TypeScript
+- **Frontend (Planned):** Next.js, React, Tailwind CSS, Framer Motion, Three.js
 - **Database:** Google Firestore (via Firebase Admin SDK)
 - **Cloud Services:** Google Cloud Storage, Google Cloud Speech, Google Cloud Video Intelligence, Google Cloud Video Transcoder
 - **Authentication:** Firebase Authentication, JWT
-- **Social Integration:** Twitter API v2
 - **Other:** `js-recommender`, `bcryptjs`, `express-validator`, `helmet`, `cors`, `serverless-http`
 - **Testing:** Jest (Unit), Cypress (E2E)
 
@@ -31,29 +30,28 @@ Joachima is an all-in-one social media and messaging super app designed to integ
 
 ### Prerequisites
 
-- Node.js (v20 or higher recommended)
+- Node.js (v18 or higher recommended)
 - npm (Node Package Manager)
-- Google Cloud Project with Firestore, Storage, Speech, Video Intelligence, Video Transcoder APIs enabled.
+- Google Cloud Project with necessary APIs enabled.
 - Firebase Project linked to Google Cloud Project.
-- Twitter Developer Account (for API keys).
-- `.env` file configured with necessary environment variables (see `.env.example`).
+- `.env` file configured with necessary environment variables.
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/joachimaross/JoachimaSocial.git
-   cd JoachimaSocial
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file in the root directory based on `.env.example` and fill in your credentials.
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/joachimaross/JoachimaSocial.git
+    cd JoachimaSocial
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Create a `.env` file in the root directory and fill in your credentials.
 
 ### Running the Application Locally
 
-To run the application locally for development:
+To run the backend API locally for development:
 
 ```bash
 npm start
@@ -73,19 +71,15 @@ npm start
 ## Project Structure
 
 ```
-.env.example
-.eslintrc.json
-.gitignore
-.prettierrc.json
-...
-src/
-├── api/             # API route definitions
-├── config/          # Application configuration (Firebase, GCP, etc.)
-├── functions/       # Serverless function entry point
-├── middleware/      # Express middleware (auth, error handling, validation)
-├── services/        # Business logic and external service integrations
-├── utils/           # Utility functions and custom error classes
-└── index.ts         # Local development entry point
+.
+├── frontend/        # Next.js frontend application
+└── src/             # Node.js backend API
+    ├── api/         # API route definitions
+    ├── config/      # Application configuration
+    ├── functions/   # Serverless function entry point
+    ├── middleware/  # Express middleware
+    ├── services/    # Business logic
+    └── utils/       # Utility functions
 ```
 
 ## Contributing

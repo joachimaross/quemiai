@@ -23,7 +23,7 @@ app.use(cors(corsOptions));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/', (_req: Request, res: Response) => {
-  res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
+  res.send('Welcome to the Zeeky Social App API! Your pulse on real content.');
 });
 
 app.use(express.json());

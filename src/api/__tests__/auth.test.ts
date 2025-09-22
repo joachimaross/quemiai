@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { db } from '../../config';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import app from '../../functions/api'; // Correctly import the app
 
 // Mock Firebase Admin SDK
@@ -37,7 +37,7 @@ describe('Auth API Integration', () => {
     jest.clearAllMocks();
   });
 
-  describe('POST /register', () => {
+  describe('POST /api/v1/auth/register', () => {
     it('should register a new user successfully', async () => {
       (db.collection as jest.Mock).mockReturnValueOnce({
         where: jest.fn().mockReturnThis(),
@@ -45,7 +45,7 @@ describe('Auth API Integration', () => {
         add: jest.fn().mockResolvedValue({ id: 'testUserId' }),
       });
 
-      const res = await request(app).post('/register').send({
+      const res = await request(app).post('/api/v1/auth/register').send({
         email: 'test@example.com',
         password: 'password123',
         username: 'testuser',
@@ -68,7 +68,7 @@ describe('Auth API Integration', () => {
         })),
       });
 
-      const res = await request(app).post('/register').send({
+      const res = await request(app).post('/api/v1/auth/register').send({
         email: 'existing@example.com',
         password: 'password123',
         username: 'existinguser',
@@ -79,7 +79,7 @@ describe('Auth API Integration', () => {
     });
 
     it('should return 400 for invalid input (e.g., short password)', async () => {
-      const res = await request(app).post('/register').send({
+      const res = await request(app).post('/api/v1/auth/register').send({
         email: 'invalid@example.com',
         password: 'short',
         username: 'invaliduser',
@@ -94,7 +94,7 @@ describe('Auth API Integration', () => {
     });
   });
 
-  describe('POST /login', () => {
+  describe('POST /api/v1/auth/login', () => {
     it('should log in an existing user successfully', async () => {
       const hashedPassword = await bcrypt.hash('password123', 10);
       (db.collection as jest.Mock).mockReturnValueOnce({
@@ -116,7 +116,7 @@ describe('Auth API Integration', () => {
         })),
       });
 
-      const res = await request(app).post('/login').send({
+      const res = await request(app).post('/api/v1/auth/login').send({
         email: 'login@example.com',
         password: 'password123',
       });
@@ -137,7 +137,7 @@ describe('Auth API Integration', () => {
         })),
       });
 
-      const res = await request(app).post('/login').send({
+      const res = await request(app).post('/api/v1/auth/login').send({
         email: 'nonexistent@example.com',
         password: 'password123',
       });
@@ -167,7 +167,7 @@ describe('Auth API Integration', () => {
         })),
       });
 
-      const res = await request(app).post('/login').send({
+      const res = await request(app).post('/api/v1/auth/login').send({
         email: 'wrongpass@example.com',
         password: 'password123',
       });
