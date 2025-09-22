@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { db } from '../config';
@@ -67,7 +67,7 @@ const router = Router();
  *         description: Server error
  */
 // User Registration
-router.post('/register', validate(userValidationRules), async (req, res, next) => {
+router.post('/register', validate(userValidationRules), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
@@ -92,9 +92,9 @@ router.post('/register', validate(userValidationRules), async (req, res, next) =
       expiresIn: '1h',
     });
 
-    res.status(201).send({ message: 'User registered successfully', token });
+    return res.status(201).send({ message: 'User registered successfully', token });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -150,7 +150,7 @@ router.post('/register', validate(userValidationRules), async (req, res, next) =
  *         description: Server error
  */
 // User Login
-router.post('/login', validate(loginValidationRules), async (req, res, next) => {
+router.post('/login', validate(loginValidationRules), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
@@ -174,9 +174,9 @@ router.post('/login', validate(loginValidationRules), async (req, res, next) => 
       expiresIn: '1h',
     });
 
-    res.send({ message: 'Logged in successfully', token });
+    return res.send({ message: 'Logged in successfully', token });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 

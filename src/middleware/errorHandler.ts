@@ -10,14 +10,14 @@ export const errorHandler = (
   err: ErrorWithStatus,
   _req: Request,
   res: Response,
-  next: NextFunction,
-) => {
+  _next: NextFunction,
+): Response => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
     console.error(err);
-    res.status(err.statusCode).json({
+    return res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
       stack: err.stack,
@@ -26,7 +26,7 @@ export const errorHandler = (
   } else {
     // Operational, trusted error: send message to client
     if (err.isOperational) {
-      res.status(err.statusCode).json({
+      return res.status(err.statusCode).json({
         status: err.status,
         message: err.message,
       });
@@ -34,11 +34,10 @@ export const errorHandler = (
       // Programming or other unknown error: don't leak error details
     } else {
       console.error('ERROR 💥', err);
-      res.status(500).json({
+      return res.status(500).json({
         status: 'error',
         message: 'Something went very wrong!',
       });
     }
   }
-  next();
 };

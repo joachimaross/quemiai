@@ -25,10 +25,10 @@ router.get('/creators', (_req, res, next) => __awaiter(void 0, void 0, void 0, f
     try {
         const snapshot = yield config_1.db.collection('creators').get();
         const creators = snapshot.docs.map((doc) => (Object.assign({ id: doc.id }, doc.data())));
-        res.send(creators);
+        return res.send(creators);
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Get a specific creator profile
@@ -36,13 +36,12 @@ router.get('/creators/:creatorId', (req, res, next) => __awaiter(void 0, void 0,
     try {
         const doc = yield config_1.db.collection('creators').doc(req.params.creatorId).get();
         if (!doc.exists) {
-            next(new AppError_1.default('Creator not found', 404));
-            return;
+            return next(new AppError_1.default('Creator not found', 404));
         }
-        res.send(Object.assign({ id: doc.id }, doc.data()));
+        return res.send(Object.assign({ id: doc.id }, doc.data()));
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Create a creator profile
@@ -50,8 +49,7 @@ router.post('/creators', (req, res, next) => __awaiter(void 0, void 0, void 0, f
     try {
         const { userId, portfolio, skills, rating } = req.body;
         if (!userId) {
-            next(new AppError_1.default('userId is required', 400));
-            return;
+            return next(new AppError_1.default('userId is required', 400));
         }
         yield config_1.db
             .collection('creators')
@@ -61,17 +59,16 @@ router.post('/creators', (req, res, next) => __awaiter(void 0, void 0, void 0, f
             skills: skills || [],
             rating: rating || 0,
         });
-        res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
+        return res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Upload portfolio file
 router.post('/creators/:creatorId/portfolio', upload.single('file'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.file) {
-        next(new AppError_1.default('File is required', 400));
-        return;
+        return next(new AppError_1.default('File is required', 400));
     }
     try {
         const { creatorId } = req.params;
@@ -83,10 +80,10 @@ router.post('/creators/:creatorId/portfolio', upload.single('file'), (req, res, 
         yield creatorRef.update({
             portfolio: firestore_1.FieldValue.arrayUnion(publicUrl),
         });
-        res.send({ url: publicUrl, message: 'File uploaded successfully' });
+        return res.send({ url: publicUrl, message: 'File uploaded successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Submit a review for a creator
@@ -95,8 +92,7 @@ router.post('/creators/:creatorId/reviews', (req, res, next) => __awaiter(void 0
         const { creatorId } = req.params;
         const { userId, rating, review } = req.body;
         if (!userId || !rating || !review) {
-            next(new AppError_1.default('userId, rating, and review are required', 400));
-            return;
+            return next(new AppError_1.default('userId, rating, and review are required', 400));
         }
         // Add review to Firestore
         yield config_1.db.collection('reviews').add({
@@ -117,10 +113,10 @@ router.post('/creators/:creatorId/reviews', (req, res, next) => __awaiter(void 0
         });
         const averageRating = totalRating / reviewsSnapshot.size;
         yield config_1.db.collection('creators').doc(creatorId).update({ rating: averageRating });
-        res.status(201).send({ message: 'Review submitted successfully' });
+        return res.status(201).send({ message: 'Review submitted successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Get all listings
@@ -128,10 +124,10 @@ router.get('/listings', (_req, res, next) => __awaiter(void 0, void 0, void 0, f
     try {
         const snapshot = yield config_1.db.collection('listings').get();
         const listings = snapshot.docs.map((doc) => (Object.assign({ id: doc.id }, doc.data())));
-        res.send(listings);
+        return res.send(listings);
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Create a new listing
@@ -139,8 +135,7 @@ router.post('/listings', (req, res, next) => __awaiter(void 0, void 0, void 0, f
     try {
         const { creatorId, title, description, price } = req.body;
         if (!creatorId || !title || !description || !price) {
-            next(new AppError_1.default('creatorId, title, description, and price are required', 400));
-            return;
+            return next(new AppError_1.default('creatorId, title, description, and price are required', 400));
         }
         const docRef = yield config_1.db.collection('listings').add({
             creatorId,
@@ -149,10 +144,10 @@ router.post('/listings', (req, res, next) => __awaiter(void 0, void 0, void 0, f
             price,
             createdAt: new Date(),
         });
-        res.status(201).send({ id: docRef.id, message: 'Listing created successfully' });
+        return res.status(201).send({ id: docRef.id, message: 'Listing created successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Get a specific listing
@@ -160,13 +155,12 @@ router.get('/listings/:listingId', (req, res, next) => __awaiter(void 0, void 0,
     try {
         const doc = yield config_1.db.collection('listings').doc(req.params.listingId).get();
         if (!doc.exists) {
-            next(new AppError_1.default('Listing not found', 404));
-            return;
+            return next(new AppError_1.default('Listing not found', 404));
         }
-        res.send(Object.assign({ id: doc.id }, doc.data()));
+        return res.send(Object.assign({ id: doc.id }, doc.data()));
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Create a new transaction
@@ -174,8 +168,7 @@ router.post('/transactions', (req, res, next) => __awaiter(void 0, void 0, void 
     try {
         const { listingId, buyerId, amount } = req.body;
         if (!listingId || !buyerId || !amount) {
-            next(new AppError_1.default('listingId, buyerId, and amount are required', 400));
-            return;
+            return next(new AppError_1.default('listingId, buyerId, and amount are required', 400));
         }
         // In a real application, this would trigger a Cloud Function
         // to handle payment processing with a payment gateway (e.g., Stripe)
@@ -186,12 +179,12 @@ router.post('/transactions', (req, res, next) => __awaiter(void 0, void 0, void 
             status: 'pending',
             createdAt: new Date(),
         });
-        res
+        return res
             .status(201)
             .send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 exports.default = router;

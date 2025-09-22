@@ -15,16 +15,16 @@ router.get('/summary', async (_req: Request, res: Response, next: NextFunction) 
       return acc;
     }, {});
 
-    res.send(summary);
+    return res.send(summary);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
 // Get post analytics
 router.get('/posts/:postId', (req: Request, res: Response) => {
   // TODO: Implement logic to get post analytics
-  res.send(`Get analytics for post ${req.params.postId}`);
+  return res.send(`Get analytics for post ${req.params.postId}`);
 });
 
 export default router;

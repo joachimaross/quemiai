@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import { improveText, generateCaptions, AdvancedRecommendationEngine } from '../services/ai';
 import { detectLabelsInVideo } from '../services/video';
@@ -8,109 +8,102 @@ import AppError from '../utils/AppError';
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/improve-text', (req, res, next) => {
+router.post('/improve-text', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { text } = req.body;
     if (!text) {
-      next(new AppError('Text is required', 400));
-      return;
+      return next(new AppError('Text is required', 400));
     }
     const result = improveText(text);
-    res.send(result);
+    return res.send(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
-router.post('/generate-captions', upload.single('file'), async (req, res, next) => {
+router.post('/generate-captions', upload.single('file'), async (req: Request, res: Response, next: NextFunction) => {
   if (!req.file) {
-    next(new AppError('File is required', 400));
-    return;
+    return next(new AppError('File is required', 400));
   }
 
   try {
     const captions = await generateCaptions(req.file.path);
-    res.send({ captions });
+    return res.send({ captions });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
-router.post('/advanced-recommendations', async (req, res, next) => {
+router.post('/advanced-recommendations', async (req: Request, res: Response, next: NextFunction) => {
   const { posts, likedPosts, userId } = req.body;
   if (!posts || !likedPosts || !userId) {
-    next(new AppError('posts, likedPosts, and userId are required', 400));
-    return;
+    return next(new AppError('posts, likedPosts, and userId are required', 400));
   }
 
   try {
     const engine = new AdvancedRecommendationEngine();
     await engine.train(posts, likedPosts);
     const recommendations = await engine.getRecommendations(userId, posts);
-    res.send({ recommendations });
+    return res.send({ recommendations });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
-router.post('/detect-video-labels', async (req, res, next) => {
+router.post('/detect-video-labels', async (req: Request, res: Response, next: NextFunction) => {
   const { gcsUri } = req.body;
   if (!gcsUri) {
-    next(new AppError('Google Cloud Storage URI is required', 400));
-    return;
+    return next(new AppError('Google Cloud Storage URI is required', 400));
   }
 
   try {
     const labels = await detectLabelsInVideo(gcsUri);
-    res.send({ labels });
+    return res.send({ labels });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
-router.post('/music-integration', (req, res, next) => {
+router.post('/music-integration', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { trackId, videoId } = req.body;
     if (!trackId || !videoId) {
-      next(new AppError('trackId and videoId are required', 400));
-      return;
+      return next(new AppError('trackId and videoId are required', 400));
     }
 
     // This is a placeholder for actual music integration logic
-    res.send({ message: `Music track ${trackId} integrated with video ${videoId}` });
+    return res.send({ message: `Music track ${trackId} integrated with video ${videoId}` });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
-router.post('/transcode-video', async (req, res, next) => {
+router.post('/transcode-video', async (req: Request, res: Response, next: NextFunction) => {
   const { inputUri, outputUri } = req.body;
   if (!inputUri || !outputUri) {
-    next(new AppError('inputUri and outputUri are required', 400));
-    return;
+    return next(new AppError('inputUri and outputUri are required', 400));
   }
 
   try {
     const jobName = await createTranscodingJob(inputUri, outputUri);
-    res.send({ jobName, message: 'Transcoding job started' });
+    return res.send({ jobName, message: 'Transcoding job started' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
-router.post('/chat-assistant', (req, res, next) => {
+router.post('/chat-assistant', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { message } = req.body;
     if (!message) {
-      next(new AppError('Message is required', 400));
-      return;
+      return next(new AppError('Message is required', 400));
     }
 
     // This is a placeholder for actual AI chat assistant logic
     const response = `You said: \"${message}\". I am an AI assistant. How can I help you further?`;
-    res.send({ response });
+    return res.send({ response });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 

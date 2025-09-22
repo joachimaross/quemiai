@@ -98,10 +98,10 @@ router.post('/register', (0, validation_1.validate)(validation_1.userValidationR
         const token = jsonwebtoken_1.default.sign({ userId: newUserRef.id }, process.env.JWT_SECRET || 'supersecretkey', {
             expiresIn: '1h',
         });
-        res.status(201).send({ message: 'User registered successfully', token });
+        return res.status(201).send({ message: 'User registered successfully', token });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 /**
@@ -175,10 +175,10 @@ router.post('/login', (0, validation_1.validate)(validation_1.loginValidationRul
         const token = jsonwebtoken_1.default.sign({ userId: userDoc.id }, process.env.JWT_SECRET || 'supersecretkey', {
             expiresIn: '1h',
         });
-        res.send({ message: 'Logged in successfully', token });
+        return res.send({ message: 'Logged in successfully', token });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 exports.default = router;

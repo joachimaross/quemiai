@@ -15,20 +15,19 @@ const router = (0, express_1.Router)();
 // Get all posts
 router.get('/', (_req, res) => {
     // TODO: Implement logic to get all posts
-    res.send('Get all posts');
+    return res.send('Get all posts');
 });
 // Create a new post
 router.post('/', (_req, res) => {
     // TODO: Implement logic to create a new post
-    res.send('Create a new post');
+    return res.send('Create a new post');
 });
 // Schedule a post
 router.post('/schedule', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { content, scheduledTime, platform } = req.body;
         if (!content || !scheduledTime || !platform) {
-            res.status(400).send({ error: 'Content, scheduledTime, and platform are required' });
-            return;
+            return res.status(400).send({ error: 'Content, scheduledTime, and platform are required' });
         }
         const docRef = yield config_1.db.collection('scheduledPosts').add({
             content,
@@ -37,35 +36,34 @@ router.post('/schedule', (req, res, next) => __awaiter(void 0, void 0, void 0, f
             status: 'pending',
             createdAt: new Date(),
         });
-        res.send({ id: docRef.id, message: 'Post scheduled successfully' });
+        return res.send({ id: docRef.id, message: 'Post scheduled successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Export content
 router.post('/export', (req, res) => {
     const { videoId, format } = req.body;
     if (!videoId || !format) {
-        res.status(400).send({ error: 'videoId and format are required' });
-        return;
+        return res.status(400).send({ error: 'videoId and format are required' });
     }
     // This is a placeholder for actual video export logic
-    res.send({ message: `Video ${videoId} exported in ${format} format.` });
+    return res.send({ message: `Video ${videoId} exported in ${format} format.` });
 });
 // Get a specific post
 router.get('/:postId', (req, res) => {
     // TODO: Implement logic to get a specific post
-    res.send(`Get post ${req.params.postId}`);
+    return res.send(`Get post ${req.params.postId}`);
 });
 // Update a post
 router.put('/:postId', (req, res) => {
     // TODO: Implement logic to update a post
-    res.send(`Update post ${req.params.postId}`);
+    return res.send(`Update post ${req.params.postId}`);
 });
 // Delete a post
 router.delete('/:postId', (req, res) => {
     // TODO: Implement logic to delete a post
-    res.send(`Delete post ${req.params.postId}`);
+    return res.send(`Delete post ${req.params.postId}`);
 });
 exports.default = router;

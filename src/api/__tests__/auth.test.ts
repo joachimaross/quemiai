@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { db } from '../../config';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import app from '../../functions/api'; // Correctly import the app
 
 // Mock Firebase Admin SDK

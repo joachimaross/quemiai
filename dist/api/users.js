@@ -71,10 +71,10 @@ router.get('/:userId', (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         if (!doc.exists) {
             return next(new AppError_1.default('User not found', 404));
         }
-        res.send(Object.assign({ id: doc.id }, doc.data()));
+        return res.send(Object.assign({ id: doc.id }, doc.data()));
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 /**
@@ -136,10 +136,10 @@ router.put('/:userId', (0, validation_1.validate)(validation_1.userValidationRul
             preferences,
             updatedAt: new Date(),
         });
-        res.send({ message: 'User profile updated successfully' });
+        return res.send({ message: 'User profile updated successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 /**
@@ -213,10 +213,10 @@ router.post('/:userId/follow', (req, res, next) => __awaiter(void 0, void 0, voi
         yield followerRef.update({
             followingCount: (((_c = followerDoc.data()) === null || _c === void 0 ? void 0 : _c.followingCount) || 0) + 1,
         });
-        res.status(200).send({ message: 'User followed successfully' });
+        return res.status(200).send({ message: 'User followed successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 /**
@@ -283,10 +283,10 @@ router.post('/:userId/unfollow', (req, res, next) => __awaiter(void 0, void 0, v
         yield followerRef.update({
             followingCount: Math.max(0, (((_f = followerDoc.data()) === null || _f === void 0 ? void 0 : _f.followingCount) || 0) - 1),
         });
-        res.status(200).send({ message: 'User unfollowed successfully' });
+        return res.status(200).send({ message: 'User unfollowed successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 /**
@@ -349,10 +349,10 @@ router.get('/:userId/followers', (req, res, next) => __awaiter(void 0, void 0, v
                 profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture,
             };
         });
-        res.status(200).send(followers);
+        return res.status(200).send(followers);
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 /**
@@ -415,10 +415,10 @@ router.get('/:userId/following', (req, res, next) => __awaiter(void 0, void 0, v
                 profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture,
             };
         });
-        res.status(200).send(following);
+        return res.status(200).send(following);
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 /**
@@ -455,10 +455,10 @@ router.get('/:userId/settings', (req, res, next) => __awaiter(void 0, void 0, vo
             customTabs: ((_h = doc.data()) === null || _h === void 0 ? void 0 : _h.customTabs) || [],
             themeSettings: ((_j = doc.data()) === null || _j === void 0 ? void 0 : _j.themeSettings) || {},
         };
-        res.send(settings);
+        return res.send(settings);
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 /**
@@ -508,10 +508,10 @@ router.put('/:userId/settings', (req, res, next) => __awaiter(void 0, void 0, vo
             themeSettings,
             updatedAt: new Date(),
         });
-        res.send({ message: 'User settings updated successfully' });
+        return res.send({ message: 'User settings updated successfully' });
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 exports.default = router;

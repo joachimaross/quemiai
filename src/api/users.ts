@@ -65,9 +65,9 @@ router.get('/:userId', async (req: Request, res: Response, next: NextFunction) =
     if (!doc.exists) {
       return next(new AppError('User not found', 404));
     }
-    res.send({ id: doc.id, ...doc.data() });
+    return res.send({ id: doc.id, ...doc.data() });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -144,9 +144,9 @@ router.put(
         preferences,
         updatedAt: new Date(),
       });
-      res.send({ message: 'User profile updated successfully' });
+      return res.send({ message: 'User profile updated successfully' });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 );
@@ -231,9 +231,9 @@ router.post('/:userId/follow', async (req: UserRequest, res: Response, next: Nex
       followingCount: (followerDoc.data()?.followingCount || 0) + 1,
     });
 
-    res.status(200).send({ message: 'User followed successfully' });
+    return res.status(200).send({ message: 'User followed successfully' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -309,9 +309,9 @@ router.post('/:userId/unfollow', async (req: UserRequest, res: Response, next: N
       followingCount: Math.max(0, (followerDoc.data()?.followingCount || 0) - 1),
     });
 
-    res.status(200).send({ message: 'User unfollowed successfully' });
+    return res.status(200).send({ message: 'User unfollowed successfully' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -382,9 +382,9 @@ router.get('/:userId/followers', async (req: Request, res: Response, next: NextF
       };
     });
 
-    res.status(200).send(followers);
+    return res.status(200).send(followers);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -455,9 +455,9 @@ router.get('/:userId/following', async (req: Request, res: Response, next: NextF
       };
     });
 
-    res.status(200).send(following);
+    return res.status(200).send(following);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -494,9 +494,9 @@ router.get('/:userId/settings', async (req, res, next) => {
       customTabs: doc.data()?.customTabs || [],
       themeSettings: doc.data()?.themeSettings || {},
     };
-    res.send(settings);
+    return res.send(settings);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -547,9 +547,9 @@ router.put('/:userId/settings', async (req, res, next) => {
       themeSettings,
       updatedAt: new Date(),
     });
-    res.send({ message: 'User settings updated successfully' });
+    return res.send({ message: 'User settings updated successfully' });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 

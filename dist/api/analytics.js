@@ -22,15 +22,15 @@ router.get('/summary', (_req, res, next) => __awaiter(void 0, void 0, void 0, fu
             acc[data.engagementType] = (acc[data.engagementType] || 0) + 1;
             return acc;
         }, {});
-        res.send(summary);
+        return res.send(summary);
     }
     catch (error) {
-        next(error);
+        return next(error);
     }
 }));
 // Get post analytics
 router.get('/posts/:postId', (req, res) => {
     // TODO: Implement logic to get post analytics
-    res.send(`Get analytics for post ${req.params.postId}`);
+    return res.send(`Get analytics for post ${req.params.postId}`);
 });
 exports.default = router;
