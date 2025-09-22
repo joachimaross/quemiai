@@ -1,13 +1,12 @@
 {
   "name": "joachima",
   "version": "1.0.0",
-  "type": "module",
   "description": "All-in-One Social Media & Messaging Super App",
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
     "dev": "ts-node-dev src/index.ts",
-    "build": "tsc",
+    "build": "tsc src/**/*.ts",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
     "test": "jest",
