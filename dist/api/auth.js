@@ -73,7 +73,10 @@ router.post('/register', (0, validation_1.validate)(validation_1.userValidationR
     try {
         const { email, password } = req.body;
         // Check if user already exists
-        const userSnapshot = await config_1.db.collection('users').where('email', '==', email).get();
+        const userSnapshot = await config_1.db
+            .collection('users')
+            .where('email', '==', email)
+            .get();
         if (!userSnapshot.empty) {
             return next(new AppError_1.default('User with that email already exists.', 400));
         }
@@ -89,7 +92,9 @@ router.post('/register', (0, validation_1.validate)(validation_1.userValidationR
         const token = jsonwebtoken_1.default.sign({ userId: newUserRef.id }, process.env.JWT_SECRET || 'supersecretkey', {
             expiresIn: '1h',
         });
-        return res.status(201).send({ message: 'User registered successfully', token });
+        return res
+            .status(201)
+            .send({ message: 'User registered successfully', token });
     }
     catch (error) {
         return next(error);
@@ -151,7 +156,10 @@ router.post('/login', (0, validation_1.validate)(validation_1.loginValidationRul
     try {
         const { email, password } = req.body;
         // Check if user exists
-        const userSnapshot = await config_1.db.collection('users').where('email', '==', email).get();
+        const userSnapshot = await config_1.db
+            .collection('users')
+            .where('email', '==', email)
+            .get();
         if (userSnapshot.empty) {
             return next(new AppError_1.default('Invalid credentials.', 400));
         }

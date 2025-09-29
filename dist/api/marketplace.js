@@ -25,7 +25,10 @@ router.get('/creators', async (_req, res, next) => {
 // Get a specific creator profile
 router.get('/creators/:creatorId', async (req, res, next) => {
     try {
-        const doc = await config_1.db.collection('creators').doc(req.params.creatorId).get();
+        const doc = await config_1.db
+            .collection('creators')
+            .doc(req.params.creatorId)
+            .get();
         if (!doc.exists) {
             return next(new AppError_1.default('Creator not found', 404));
         }
@@ -50,7 +53,9 @@ router.post('/creators', async (req, res, next) => {
             skills: skills || [],
             rating: rating || 0,
         });
-        return res.status(201).send({ id: userId, message: 'Creator profile created successfully' });
+        return res
+            .status(201)
+            .send({ id: userId, message: 'Creator profile created successfully' });
     }
     catch (error) {
         return next(error);
@@ -71,7 +76,10 @@ router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req,
         await creatorRef.update({
             portfolio: firestore_1.FieldValue.arrayUnion(publicUrl),
         });
-        return res.send({ url: publicUrl, message: 'File uploaded successfully' });
+        return res.send({
+            url: publicUrl,
+            message: 'File uploaded successfully',
+        });
     }
     catch (error) {
         return next(error);
@@ -103,7 +111,10 @@ router.post('/creators/:creatorId/reviews', async (req, res, next) => {
             totalRating += doc.data().rating;
         });
         const averageRating = totalRating / reviewsSnapshot.size;
-        await config_1.db.collection('creators').doc(creatorId).update({ rating: averageRating });
+        await config_1.db
+            .collection('creators')
+            .doc(creatorId)
+            .update({ rating: averageRating });
         return res.status(201).send({ message: 'Review submitted successfully' });
     }
     catch (error) {
@@ -135,7 +146,9 @@ router.post('/listings', async (req, res, next) => {
             price,
             createdAt: new Date(),
         });
-        return res.status(201).send({ id: docRef.id, message: 'Listing created successfully' });
+        return res
+            .status(201)
+            .send({ id: docRef.id, message: 'Listing created successfully' });
     }
     catch (error) {
         return next(error);
@@ -144,7 +157,10 @@ router.post('/listings', async (req, res, next) => {
 // Get a specific listing
 router.get('/listings/:listingId', async (req, res, next) => {
     try {
-        const doc = await config_1.db.collection('listings').doc(req.params.listingId).get();
+        const doc = await config_1.db
+            .collection('listings')
+            .doc(req.params.listingId)
+            .get();
         if (!doc.exists) {
             return next(new AppError_1.default('Listing not found', 404));
         }
@@ -170,9 +186,10 @@ router.post('/transactions', async (req, res, next) => {
             status: 'pending', // Status would be updated by the Cloud Function
             createdAt: new Date(),
         });
-        return res
-            .status(201)
-            .send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' });
+        return res.status(201).send({
+            id: docRef.id,
+            message: 'Transaction initiated. Awaiting payment processing.',
+        });
     }
     catch (error) {
         return next(error);

@@ -3,7 +3,10 @@ import { config } from '../config';
 
 const transcoderClient = new TranscoderServiceClient();
 
-export const createTranscodingJob = async (inputUri: string, outputUri: string) => {
+export const createTranscodingJob = async (
+  inputUri: string,
+  outputUri: string,
+) => {
   const projectId = config.gcpProjectId;
   const location = config.gcpLocation;
 

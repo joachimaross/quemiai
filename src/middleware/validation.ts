@@ -15,17 +15,32 @@ export const validate = (validations: ValidationChain[]) => {
 };
 
 export const userValidationRules = [
-  body('username').optional().notEmpty().withMessage('Username cannot be empty'),
+  body('username')
+    .optional()
+    .notEmpty()
+    .withMessage('Username cannot be empty'),
   body('email').optional().isEmail().withMessage('Invalid email address'),
   body('password')
     .optional()
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters long'),
-  body('profilePicture').optional().isURL().withMessage('Profile picture must be a valid URL'),
-  body('bannerPicture').optional().isURL().withMessage('Banner picture must be a valid URL'),
+  body('profilePicture')
+    .optional()
+    .isURL()
+    .withMessage('Profile picture must be a valid URL'),
+  body('bannerPicture')
+    .optional()
+    .isURL()
+    .withMessage('Banner picture must be a valid URL'),
   body('bio').optional().isString().withMessage('Bio must be a string'),
-  body('location').optional().isString().withMessage('Location must be a string'),
-  body('externalLinks').optional().isArray().withMessage('External links must be an array'),
+  body('location')
+    .optional()
+    .isString()
+    .withMessage('Location must be a string'),
+  body('externalLinks')
+    .optional()
+    .isArray()
+    .withMessage('External links must be an array'),
   body('externalLinks.*.type')
     .optional()
     .isString()
@@ -34,7 +49,10 @@ export const userValidationRules = [
     .optional()
     .isURL()
     .withMessage('External link URL must be a valid URL'),
-  body('privacySettings').optional().isObject().withMessage('Privacy settings must be an object'),
+  body('privacySettings')
+    .optional()
+    .isObject()
+    .withMessage('Privacy settings must be an object'),
   body('privacySettings.profileVisibility')
     .optional()
     .isIn(['public', 'private', 'followers'])
@@ -53,12 +71,18 @@ export const loginValidationRules = [
 export const postValidationRules = [
   body('content').notEmpty().withMessage('Content is required'),
   body('media').optional().isArray().withMessage('Media must be an array'),
-  body('media.*.url').optional().isURL().withMessage('Each media item URL must be a valid URL'),
+  body('media.*.url')
+    .optional()
+    .isURL()
+    .withMessage('Each media item URL must be a valid URL'),
   body('media.*.alt')
     .optional()
     .isString()
     .withMessage('Each media item alt text must be a string'),
-  body('platform').optional().isString().withMessage('Platform must be a string'),
+  body('platform')
+    .optional()
+    .isString()
+    .withMessage('Platform must be a string'),
 ];
 
 export const schedulePostValidationRules = [
@@ -70,11 +94,15 @@ export const schedulePostValidationRules = [
 export const transactionValidationRules = [
   body('listingId').notEmpty().withMessage('Listing ID is required'),
   body('buyerId').notEmpty().withMessage('Buyer ID is required'),
-  body('amount').isFloat({ gt: 0 }).withMessage('Amount must be a positive number'),
+  body('amount')
+    .isFloat({ gt: 0 })
+    .withMessage('Amount must be a positive number'),
 ];
 
 export const reviewValidationRules = [
   body('userId').notEmpty().withMessage('User ID is required'),
-  body('rating').isInt({ min: 1, max: 5 }).withMessage('Rating must be between 1 and 5'),
+  body('rating')
+    .isInt({ min: 1, max: 5 })
+    .withMessage('Rating must be between 1 and 5'),
   body('review').notEmpty().withMessage('Review is required'),
 ];

@@ -266,7 +266,10 @@ router.post('/:userId/unfollow', async (req, res, next) => {
             return next(new AppError_1.default('Not following this user', 400));
         }
         // Delete relationship
-        await config_1.db.collection('relationships').doc(existingRelationship.docs[0].id).delete();
+        await config_1.db
+            .collection('relationships')
+            .doc(existingRelationship.docs[0].id)
+            .delete();
         // Update follower/following counts atomically
         await userToUnfollowRef.update({
             followersCount: Math.max(0, (((_b = userToUnfollowDoc.data()) === null || _b === void 0 ? void 0 : _b.followersCount) || 0) - 1),

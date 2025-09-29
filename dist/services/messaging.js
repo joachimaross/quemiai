@@ -35,7 +35,11 @@ wss.on('connection', async (ws, request) => {
                     if (authenticatedClient !== ws &&
                         authenticatedClient.readyState === ws_1.WebSocket.OPEN &&
                         rooms.get(authenticatedClient) === room) {
-                        authenticatedClient.send(JSON.stringify({ type: 'message', userId: ws.userId, message: data.message }));
+                        authenticatedClient.send(JSON.stringify({
+                            type: 'message',
+                            userId: ws.userId,
+                            message: data.message,
+                        }));
                     }
                 });
             }
