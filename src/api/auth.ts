@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+
 import { db } from '../config';
 import { validate, userValidationRules, loginValidationRules } from '../middleware/validation';
 import AppError from '../utils/AppError';

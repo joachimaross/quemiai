@@ -29,4 +29,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     client.join(data.conversationId);
     client.emit('joinedConversation', { conversationId: data.conversationId });
   }
+  @SubscribeMessage('typing')
+  handleTyping(@MessageBody() data: { conversationId: string; userId: string; isTyping: boolean }, @ConnectedSocket() _client: Socket) {
+    // Broadcast typing indicator to all clients in the conversation room
+    this.server.to(data.conversationId).emit('typing', data);
+  }
 }
