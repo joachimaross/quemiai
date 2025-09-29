@@ -15,7 +15,7 @@ const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage()
 router.get('/creators', async (_req, res, next) => {
     try {
         const snapshot = await config_1.db.collection('creators').get();
-        const creators = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const creators = snapshot.docs.map((doc) => (Object.assign({ id: doc.id }, doc.data())));
         return res.send(creators);
     }
     catch (error) {
@@ -29,7 +29,7 @@ router.get('/creators/:creatorId', async (req, res, next) => {
         if (!doc.exists) {
             return next(new AppError_1.default('Creator not found', 404));
         }
-        return res.send({ id: doc.id, ...doc.data() });
+        return res.send(Object.assign({ id: doc.id }, doc.data()));
     }
     catch (error) {
         return next(error);
@@ -114,7 +114,7 @@ router.post('/creators/:creatorId/reviews', async (req, res, next) => {
 router.get('/listings', async (_req, res, next) => {
     try {
         const snapshot = await config_1.db.collection('listings').get();
-        const listings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const listings = snapshot.docs.map((doc) => (Object.assign({ id: doc.id }, doc.data())));
         return res.send(listings);
     }
     catch (error) {
@@ -148,7 +148,7 @@ router.get('/listings/:listingId', async (req, res, next) => {
         if (!doc.exists) {
             return next(new AppError_1.default('Listing not found', 404));
         }
-        return res.send({ id: doc.id, ...doc.data() });
+        return res.send(Object.assign({ id: doc.id }, doc.data()));
     }
     catch (error) {
         return next(error);
