@@ -192,4 +192,12 @@ router.post(
   },
 );
 
+
+// Protected route example (requires Firebase Auth)
+import { firebaseAuthMiddleware } from '../middleware/firebaseAuth';
+router.get('/me', firebaseAuthMiddleware, async (req: Request, res: Response) => {
+  // The decoded Firebase user is available as req.user
+  res.json({ user: (req as any).user });
+});
+
 export default router;
