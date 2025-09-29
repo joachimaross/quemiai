@@ -4,9 +4,9 @@ import { Server, Socket } from 'socket.io';
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
-  afterInit(server: Server) {
+  afterInit(_server: Server) {
     console.log('WebSocket server initialized');
   }
 
@@ -19,7 +19,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('sendMessage')
-  handleMessage(@MessageBody() data: { conversationId: string; message: string; userId: string }, @ConnectedSocket() client: Socket) {
+  handleMessage(@MessageBody() data: { conversationId: string; message: string; userId: string }, @ConnectedSocket() _client: Socket) {
     // Broadcast to all clients in the conversation room
     this.server.to(data.conversationId).emit('receiveMessage', data);
   }

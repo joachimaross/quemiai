@@ -4,27 +4,26 @@ exports.errorHandler = void 0;
 const errorHandler = (err, _req, res, _next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
+    let errorResponse = {
+        status: err.status,
+        message: err.message,
+    };
     if (process.env.NODE_ENV === 'development') {
         console.error(err);
-        return res.status(err.statusCode).json({
-            status: err.status,
-            message: err.message,
+        errorResponse = {
+            ...errorResponse,
             stack: err.stack,
             error: err,
-        });
+        };
+        res.status(err.statusCode).json(errorResponse);
     }
     else {
-        // Operational, trusted error: send message to client
         if (err.isOperational) {
-            return res.status(err.statusCode).json({
-                status: err.status,
-                message: err.message,
-            });
-            // Programming or other unknown error: don't leak error details
+            res.status(err.statusCode).json(errorResponse);
         }
         else {
             console.error('ERROR 💥', err);
-            return res.status(500).json({
+            res.status(500).json({
                 status: 'error',
                 message: 'Something went very wrong!',
             });

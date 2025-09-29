@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -33,46 +24,46 @@ router.post('/improve-text', (req, res, next) => {
         return next(error);
     }
 });
-router.post('/generate-captions', upload.single('file'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/generate-captions', upload.single('file'), async (req, res, next) => {
     if (!req.file) {
         return next(new AppError_1.default('File is required', 400));
     }
     try {
-        const captions = yield (0, ai_1.generateCaptions)(req.file.path);
+        const captions = await (0, ai_1.generateCaptions)(req.file.path);
         return res.send({ captions });
     }
     catch (error) {
         return next(error);
     }
-}));
-router.post('/advanced-recommendations', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.post('/advanced-recommendations', async (req, res, next) => {
     const { posts, likedPosts, userId } = req.body;
     if (!posts || !likedPosts || !userId) {
         return next(new AppError_1.default('posts, likedPosts, and userId are required', 400));
     }
     try {
         const engine = new ai_1.AdvancedRecommendationEngine();
-        yield engine.train(posts, likedPosts);
-        const recommendations = yield engine.getRecommendations(userId, posts);
+        await engine.train(posts, likedPosts);
+        const recommendations = await engine.getRecommendations(userId, posts);
         return res.send({ recommendations });
     }
     catch (error) {
         return next(error);
     }
-}));
-router.post('/detect-video-labels', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.post('/detect-video-labels', async (req, res, next) => {
     const { gcsUri } = req.body;
     if (!gcsUri) {
         return next(new AppError_1.default('Google Cloud Storage URI is required', 400));
     }
     try {
-        const labels = yield (0, video_1.detectLabelsInVideo)(gcsUri);
+        const labels = await (0, video_1.detectLabelsInVideo)(gcsUri);
         return res.send({ labels });
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 router.post('/music-integration', (req, res, next) => {
     try {
         const { trackId, videoId } = req.body;
@@ -86,19 +77,19 @@ router.post('/music-integration', (req, res, next) => {
         return next(error);
     }
 });
-router.post('/transcode-video', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/transcode-video', async (req, res, next) => {
     const { inputUri, outputUri } = req.body;
     if (!inputUri || !outputUri) {
         return next(new AppError_1.default('inputUri and outputUri are required', 400));
     }
     try {
-        const jobName = yield (0, transcoder_1.createTranscodingJob)(inputUri, outputUri);
+        const jobName = await (0, transcoder_1.createTranscodingJob)(inputUri, outputUri);
         return res.send({ jobName, message: 'Transcoding job started' });
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 router.post('/chat-assistant', (req, res, next) => {
     try {
         const { message } = req.body;
@@ -106,7 +97,7 @@ router.post('/chat-assistant', (req, res, next) => {
             return next(new AppError_1.default('Message is required', 400));
         }
         // This is a placeholder for actual AI chat assistant logic
-        const response = `You said: \"${message}\". I am an AI assistant. How can I help you further?`;
+        const response = `You said: "${message}". I am an AI assistant. How can I help you further?`;
         return res.send({ response });
     }
     catch (error) {

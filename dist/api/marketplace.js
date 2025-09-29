@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -21,37 +12,37 @@ const AppError_1 = __importDefault(require("../utils/AppError"));
 const router = (0, express_1.Router)();
 const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
 // Get all creator profiles
-router.get('/creators', (_req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/creators', async (_req, res, next) => {
     try {
-        const snapshot = yield config_1.db.collection('creators').get();
-        const creators = snapshot.docs.map((doc) => (Object.assign({ id: doc.id }, doc.data())));
+        const snapshot = await config_1.db.collection('creators').get();
+        const creators = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         return res.send(creators);
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 // Get a specific creator profile
-router.get('/creators/:creatorId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/creators/:creatorId', async (req, res, next) => {
     try {
-        const doc = yield config_1.db.collection('creators').doc(req.params.creatorId).get();
+        const doc = await config_1.db.collection('creators').doc(req.params.creatorId).get();
         if (!doc.exists) {
             return next(new AppError_1.default('Creator not found', 404));
         }
-        return res.send(Object.assign({ id: doc.id }, doc.data()));
+        return res.send({ id: doc.id, ...doc.data() });
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 // Create a creator profile
-router.post('/creators', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/creators', async (req, res, next) => {
     try {
         const { userId, portfolio, skills, rating } = req.body;
         if (!userId) {
             return next(new AppError_1.default('userId is required', 400));
         }
-        yield config_1.db
+        await config_1.db
             .collection('creators')
             .doc(userId)
             .set({
@@ -64,20 +55,20 @@ router.post('/creators', (req, res, next) => __awaiter(void 0, void 0, void 0, f
     catch (error) {
         return next(error);
     }
-}));
+});
 // Upload portfolio file
-router.post('/creators/:creatorId/portfolio', upload.single('file'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/creators/:creatorId/portfolio', upload.single('file'), async (req, res, next) => {
     if (!req.file) {
         return next(new AppError_1.default('File is required', 400));
     }
     try {
         const { creatorId } = req.params;
         const fileName = `${creatorId}/${req.file.originalname}`;
-        yield (0, storage_1.uploadBuffer)(req.file.buffer, fileName);
+        await (0, storage_1.uploadBuffer)(req.file.buffer, fileName);
         const publicUrl = (0, storage_1.getPublicUrl)(fileName);
         // Update creator's portfolio in Firestore
         const creatorRef = config_1.db.collection('creators').doc(creatorId);
-        yield creatorRef.update({
+        await creatorRef.update({
             portfolio: firestore_1.FieldValue.arrayUnion(publicUrl),
         });
         return res.send({ url: publicUrl, message: 'File uploaded successfully' });
@@ -85,9 +76,9 @@ router.post('/creators/:creatorId/portfolio', upload.single('file'), (req, res, 
     catch (error) {
         return next(error);
     }
-}));
+});
 // Submit a review for a creator
-router.post('/creators/:creatorId/reviews', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/creators/:creatorId/reviews', async (req, res, next) => {
     try {
         const { creatorId } = req.params;
         const { userId, rating, review } = req.body;
@@ -95,7 +86,7 @@ router.post('/creators/:creatorId/reviews', (req, res, next) => __awaiter(void 0
             return next(new AppError_1.default('userId, rating, and review are required', 400));
         }
         // Add review to Firestore
-        yield config_1.db.collection('reviews').add({
+        await config_1.db.collection('reviews').add({
             creatorId,
             userId,
             rating,
@@ -103,7 +94,7 @@ router.post('/creators/:creatorId/reviews', (req, res, next) => __awaiter(void 0
             createdAt: new Date(),
         });
         // Update creator's average rating
-        const reviewsSnapshot = yield config_1.db
+        const reviewsSnapshot = await config_1.db
             .collection('reviews')
             .where('creatorId', '==', creatorId)
             .get();
@@ -112,32 +103,32 @@ router.post('/creators/:creatorId/reviews', (req, res, next) => __awaiter(void 0
             totalRating += doc.data().rating;
         });
         const averageRating = totalRating / reviewsSnapshot.size;
-        yield config_1.db.collection('creators').doc(creatorId).update({ rating: averageRating });
+        await config_1.db.collection('creators').doc(creatorId).update({ rating: averageRating });
         return res.status(201).send({ message: 'Review submitted successfully' });
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 // Get all listings
-router.get('/listings', (_req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/listings', async (_req, res, next) => {
     try {
-        const snapshot = yield config_1.db.collection('listings').get();
-        const listings = snapshot.docs.map((doc) => (Object.assign({ id: doc.id }, doc.data())));
+        const snapshot = await config_1.db.collection('listings').get();
+        const listings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         return res.send(listings);
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 // Create a new listing
-router.post('/listings', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/listings', async (req, res, next) => {
     try {
         const { creatorId, title, description, price } = req.body;
         if (!creatorId || !title || !description || !price) {
             return next(new AppError_1.default('creatorId, title, description, and price are required', 400));
         }
-        const docRef = yield config_1.db.collection('listings').add({
+        const docRef = await config_1.db.collection('listings').add({
             creatorId,
             title,
             description,
@@ -149,22 +140,22 @@ router.post('/listings', (req, res, next) => __awaiter(void 0, void 0, void 0, f
     catch (error) {
         return next(error);
     }
-}));
+});
 // Get a specific listing
-router.get('/listings/:listingId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/listings/:listingId', async (req, res, next) => {
     try {
-        const doc = yield config_1.db.collection('listings').doc(req.params.listingId).get();
+        const doc = await config_1.db.collection('listings').doc(req.params.listingId).get();
         if (!doc.exists) {
             return next(new AppError_1.default('Listing not found', 404));
         }
-        return res.send(Object.assign({ id: doc.id }, doc.data()));
+        return res.send({ id: doc.id, ...doc.data() });
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 // Create a new transaction
-router.post('/transactions', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/transactions', async (req, res, next) => {
     try {
         const { listingId, buyerId, amount } = req.body;
         if (!listingId || !buyerId || !amount) {
@@ -172,11 +163,11 @@ router.post('/transactions', (req, res, next) => __awaiter(void 0, void 0, void 
         }
         // In a real application, this would trigger a Cloud Function
         // to handle payment processing with a payment gateway (e.g., Stripe)
-        const docRef = yield config_1.db.collection('transactions').add({
+        const docRef = await config_1.db.collection('transactions').add({
             listingId,
             buyerId,
             amount,
-            status: 'pending',
+            status: 'pending', // Status would be updated by the Cloud Function
             createdAt: new Date(),
         });
         return res
@@ -186,5 +177,5 @@ router.post('/transactions', (req, res, next) => __awaiter(void 0, void 0, void 
     catch (error) {
         return next(error);
     }
-}));
+});
 exports.default = router;

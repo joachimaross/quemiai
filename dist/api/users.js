@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -65,18 +56,18 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Server error
  */
-router.get('/:userId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/:userId', async (req, res, next) => {
     try {
-        const doc = yield config_1.db.collection('users').doc(req.params.userId).get();
+        const doc = await config_1.db.collection('users').doc(req.params.userId).get();
         if (!doc.exists) {
             return next(new AppError_1.default('User not found', 404));
         }
-        return res.send(Object.assign({ id: doc.id }, doc.data()));
+        return res.send({ id: doc.id, ...doc.data() });
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 /**
  * @swagger
  * /users/{userId}:
@@ -119,11 +110,11 @@ router.get('/:userId', (req, res, next) => __awaiter(void 0, void 0, void 0, fun
  *       500:
  *         description: Server error
  */
-router.put('/:userId', (0, validation_1.validate)(validation_1.userValidationRules), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.put('/:userId', (0, validation_1.validate)(validation_1.userValidationRules), async (req, res, next) => {
     try {
         const { userId } = req.params;
         const { username, email, profilePicture, bannerPicture, bio, location, externalLinks, privacySettings, linkedSocialAccounts, preferences, } = req.body;
-        yield config_1.db.collection('users').doc(userId).update({
+        await config_1.db.collection('users').doc(userId).update({
             username,
             email,
             profilePicture,
@@ -141,7 +132,7 @@ router.put('/:userId', (0, validation_1.validate)(validation_1.userValidationRul
     catch (error) {
         return next(error);
     }
-}));
+});
 /**
  * @swagger
  * /users/{userId}/follow:
@@ -167,11 +158,10 @@ router.put('/:userId', (0, validation_1.validate)(validation_1.userValidationRul
  *       500:
  *         description: Server error
  */
-router.post('/:userId/follow', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+router.post('/:userId/follow', async (req, res, next) => {
     try {
         const { userId } = req.params; // The user to follow
-        const followerId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const followerId = req.user?.id;
         if (!followerId) {
             return next(new AppError_1.default('Authentication required', 401));
         }
@@ -180,7 +170,7 @@ router.post('/:userId/follow', (req, res, next) => __awaiter(void 0, void 0, voi
         }
         const userToFollowRef = config_1.db.collection('users').doc(userId);
         const followerRef = config_1.db.collection('users').doc(followerId);
-        const [userToFollowDoc, followerDoc] = yield Promise.all([
+        const [userToFollowDoc, followerDoc] = await Promise.all([
             userToFollowRef.get(),
             followerRef.get(),
         ]);
@@ -191,7 +181,7 @@ router.post('/:userId/follow', (req, res, next) => __awaiter(void 0, void 0, voi
             return next(new AppError_1.default('Follower user not found', 404));
         }
         // Check if already following
-        const existingRelationship = yield config_1.db
+        const existingRelationship = await config_1.db
             .collection('relationships')
             .where('followerId', '==', followerId)
             .where('followingId', '==', userId)
@@ -201,24 +191,24 @@ router.post('/:userId/follow', (req, res, next) => __awaiter(void 0, void 0, voi
             return next(new AppError_1.default('Already following this user', 400));
         }
         // Create relationship
-        yield config_1.db.collection('relationships').add({
+        await config_1.db.collection('relationships').add({
             followerId,
             followingId: userId,
             createdAt: new Date(),
         });
         // Update follower/following counts atomically
-        yield userToFollowRef.update({
-            followersCount: (((_b = userToFollowDoc.data()) === null || _b === void 0 ? void 0 : _b.followersCount) || 0) + 1,
+        await userToFollowRef.update({
+            followersCount: (userToFollowDoc.data()?.followersCount || 0) + 1,
         });
-        yield followerRef.update({
-            followingCount: (((_c = followerDoc.data()) === null || _c === void 0 ? void 0 : _c.followingCount) || 0) + 1,
+        await followerRef.update({
+            followingCount: (followerDoc.data()?.followingCount || 0) + 1,
         });
         return res.status(200).send({ message: 'User followed successfully' });
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 /**
  * @swagger
  * /users/{userId}/unfollow:
@@ -244,17 +234,16 @@ router.post('/:userId/follow', (req, res, next) => __awaiter(void 0, void 0, voi
  *       500:
  *         description: Server error
  */
-router.post('/:userId/unfollow', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d, _e, _f;
+router.post('/:userId/unfollow', async (req, res, next) => {
     try {
         const { userId } = req.params; // The user to unfollow
-        const followerId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.id;
+        const followerId = req.user?.id;
         if (!followerId) {
             return next(new AppError_1.default('Authentication required', 401));
         }
         const userToUnfollowRef = config_1.db.collection('users').doc(userId);
         const followerRef = config_1.db.collection('users').doc(followerId);
-        const [userToUnfollowDoc, followerDoc] = yield Promise.all([
+        const [userToUnfollowDoc, followerDoc] = await Promise.all([
             userToUnfollowRef.get(),
             followerRef.get(),
         ]);
@@ -265,7 +254,7 @@ router.post('/:userId/unfollow', (req, res, next) => __awaiter(void 0, void 0, v
             return next(new AppError_1.default('Follower user not found', 404));
         }
         // Find relationship
-        const existingRelationship = yield config_1.db
+        const existingRelationship = await config_1.db
             .collection('relationships')
             .where('followerId', '==', followerId)
             .where('followingId', '==', userId)
@@ -275,20 +264,20 @@ router.post('/:userId/unfollow', (req, res, next) => __awaiter(void 0, void 0, v
             return next(new AppError_1.default('Not following this user', 400));
         }
         // Delete relationship
-        yield config_1.db.collection('relationships').doc(existingRelationship.docs[0].id).delete();
+        await config_1.db.collection('relationships').doc(existingRelationship.docs[0].id).delete();
         // Update follower/following counts atomically
-        yield userToUnfollowRef.update({
-            followersCount: Math.max(0, (((_e = userToUnfollowDoc.data()) === null || _e === void 0 ? void 0 : _e.followersCount) || 0) - 1),
+        await userToUnfollowRef.update({
+            followersCount: Math.max(0, (userToUnfollowDoc.data()?.followersCount || 0) - 1),
         });
-        yield followerRef.update({
-            followingCount: Math.max(0, (((_f = followerDoc.data()) === null || _f === void 0 ? void 0 : _f.followingCount) || 0) - 1),
+        await followerRef.update({
+            followingCount: Math.max(0, (followerDoc.data()?.followingCount || 0) - 1),
         });
         return res.status(200).send({ message: 'User unfollowed successfully' });
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 /**
  * @swagger
  * /users/{userId}/followers:
@@ -323,14 +312,14 @@ router.post('/:userId/unfollow', (req, res, next) => __awaiter(void 0, void 0, v
  *       500:
  *         description: Server error
  */
-router.get('/:userId/followers', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/:userId/followers', async (req, res, next) => {
     try {
         const { userId } = req.params;
-        const userDoc = yield config_1.db.collection('users').doc(userId).get();
+        const userDoc = await config_1.db.collection('users').doc(userId).get();
         if (!userDoc.exists) {
             return next(new AppError_1.default('User not found', 404));
         }
-        const followersSnapshot = yield config_1.db
+        const followersSnapshot = await config_1.db
             .collection('relationships')
             .where('followingId', '==', userId)
             .get();
@@ -340,13 +329,13 @@ router.get('/:userId/followers', (req, res, next) => __awaiter(void 0, void 0, v
         }
         // Fetch follower details
         const followersPromises = followerIds.map((id) => config_1.db.collection('users').doc(id).get());
-        const followersDocs = yield Promise.all(followersPromises);
+        const followersDocs = await Promise.all(followersPromises);
         const followers = followersDocs.map((doc) => {
             const data = doc.data();
             return {
                 id: doc.id,
-                username: data === null || data === void 0 ? void 0 : data.username,
-                profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture,
+                username: data?.username,
+                profilePicture: data?.profilePicture,
             };
         });
         return res.status(200).send(followers);
@@ -354,7 +343,7 @@ router.get('/:userId/followers', (req, res, next) => __awaiter(void 0, void 0, v
     catch (error) {
         return next(error);
     }
-}));
+});
 /**
  * @swagger
  * /users/{userId}/following:
@@ -389,14 +378,14 @@ router.get('/:userId/followers', (req, res, next) => __awaiter(void 0, void 0, v
  *       500:
  *         description: Server error
  */
-router.get('/:userId/following', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/:userId/following', async (req, res, next) => {
     try {
         const { userId } = req.params;
-        const userDoc = yield config_1.db.collection('users').doc(userId).get();
+        const userDoc = await config_1.db.collection('users').doc(userId).get();
         if (!userDoc.exists) {
             return next(new AppError_1.default('User not found', 404));
         }
-        const followingSnapshot = yield config_1.db
+        const followingSnapshot = await config_1.db
             .collection('relationships')
             .where('followerId', '==', userId)
             .get();
@@ -406,13 +395,13 @@ router.get('/:userId/following', (req, res, next) => __awaiter(void 0, void 0, v
         }
         // Fetch following details
         const followingPromises = followingIds.map((id) => config_1.db.collection('users').doc(id).get());
-        const followingDocs = yield Promise.all(followingPromises);
+        const followingDocs = await Promise.all(followingPromises);
         const following = followingDocs.map((doc) => {
             const data = doc.data();
             return {
                 id: doc.id,
-                username: data === null || data === void 0 ? void 0 : data.username,
-                profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture,
+                username: data?.username,
+                profilePicture: data?.profilePicture,
             };
         });
         return res.status(200).send(following);
@@ -420,7 +409,7 @@ router.get('/:userId/following', (req, res, next) => __awaiter(void 0, void 0, v
     catch (error) {
         return next(error);
     }
-}));
+});
 /**
  * @swagger
  * /users/{userId}/settings:
@@ -443,24 +432,23 @@ router.get('/:userId/following', (req, res, next) => __awaiter(void 0, void 0, v
  *         description: Server error
  */
 // Get user personalization settings
-router.get('/:userId/settings', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g, _h, _j;
+router.get('/:userId/settings', async (req, res, next) => {
     try {
-        const doc = yield config_1.db.collection('users').doc(req.params.userId).get();
+        const doc = await config_1.db.collection('users').doc(req.params.userId).get();
         if (!doc.exists) {
             return next(new AppError_1.default('User not found', 404));
         }
         const settings = {
-            dashboardLayout: ((_g = doc.data()) === null || _g === void 0 ? void 0 : _g.dashboardLayout) || {},
-            customTabs: ((_h = doc.data()) === null || _h === void 0 ? void 0 : _h.customTabs) || [],
-            themeSettings: ((_j = doc.data()) === null || _j === void 0 ? void 0 : _j.themeSettings) || {},
+            dashboardLayout: doc.data()?.dashboardLayout || {},
+            customTabs: doc.data()?.customTabs || [],
+            themeSettings: doc.data()?.themeSettings || {},
         };
         return res.send(settings);
     }
     catch (error) {
         return next(error);
     }
-}));
+});
 /**
  * @swagger
  * /users/{userId}/settings:
@@ -498,11 +486,11 @@ router.get('/:userId/settings', (req, res, next) => __awaiter(void 0, void 0, vo
  *         description: Server error
  */
 // Update user personalization settings
-router.put('/:userId/settings', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.put('/:userId/settings', async (req, res, next) => {
     try {
         const { userId } = req.params;
         const { dashboardLayout, customTabs, themeSettings } = req.body;
-        yield config_1.db.collection('users').doc(userId).update({
+        await config_1.db.collection('users').doc(userId).update({
             dashboardLayout,
             customTabs,
             themeSettings,
@@ -513,5 +501,5 @@ router.put('/:userId/settings', (req, res, next) => __awaiter(void 0, void 0, vo
     catch (error) {
         return next(error);
     }
-}));
+});
 exports.default = router;

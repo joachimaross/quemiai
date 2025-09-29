@@ -17,14 +17,14 @@ const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 // CORS Configuration
 const corsOptions = {
-    origin: '*',
+    origin: '*', // Allow all origins for now
     optionsSuccessStatus: 200,
 };
 app.use((0, cors_1.default)(corsOptions));
 // Swagger API Documentation
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
 app.get('/', (_req, res) => {
-    res.send('Welcome to the Joachima Social App API! Visit /api/v1 for the main API routes.');
+    res.send('Welcome to the Zeeky Social App API! Your pulse on real content.');
 });
 app.use(express_1.default.json());
 app.use('/api/v1', api_1.default);

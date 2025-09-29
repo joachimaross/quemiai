@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -78,18 +69,18 @@ const router = (0, express_1.Router)();
  *         description: Server error
  */
 // User Registration
-router.post('/register', (0, validation_1.validate)(validation_1.userValidationRules), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/register', (0, validation_1.validate)(validation_1.userValidationRules), async (req, res, next) => {
     try {
         const { email, password } = req.body;
         // Check if user already exists
-        const userSnapshot = yield config_1.db.collection('users').where('email', '==', email).get();
+        const userSnapshot = await config_1.db.collection('users').where('email', '==', email).get();
         if (!userSnapshot.empty) {
             return next(new AppError_1.default('User with that email already exists.', 400));
         }
         // Hash password
-        const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
+        const hashedPassword = await bcryptjs_1.default.hash(password, 10);
         // Store user in Firestore
-        const newUserRef = yield config_1.db.collection('users').add({
+        const newUserRef = await config_1.db.collection('users').add({
             email,
             password: hashedPassword,
             createdAt: new Date(),
@@ -103,7 +94,7 @@ router.post('/register', (0, validation_1.validate)(validation_1.userValidationR
     catch (error) {
         return next(error);
     }
-}));
+});
 /**
  * @swagger
  * /login:
@@ -156,18 +147,18 @@ router.post('/register', (0, validation_1.validate)(validation_1.userValidationR
  *         description: Server error
  */
 // User Login
-router.post('/login', (0, validation_1.validate)(validation_1.loginValidationRules), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/login', (0, validation_1.validate)(validation_1.loginValidationRules), async (req, res, next) => {
     try {
         const { email, password } = req.body;
         // Check if user exists
-        const userSnapshot = yield config_1.db.collection('users').where('email', '==', email).get();
+        const userSnapshot = await config_1.db.collection('users').where('email', '==', email).get();
         if (userSnapshot.empty) {
             return next(new AppError_1.default('Invalid credentials.', 400));
         }
         const userDoc = userSnapshot.docs[0];
         const user = userDoc.data();
         // Compare passwords
-        const isMatch = yield bcryptjs_1.default.compare(password, user.password);
+        const isMatch = await bcryptjs_1.default.compare(password, user.password);
         if (!isMatch) {
             return next(new AppError_1.default('Invalid credentials.', 400));
         }
@@ -180,5 +171,11 @@ router.post('/login', (0, validation_1.validate)(validation_1.loginValidationRul
     catch (error) {
         return next(error);
     }
-}));
+});
+// Protected route example (requires Firebase Auth)
+const firebaseAuth_1 = require("../middleware/firebaseAuth");
+router.get('/me', firebaseAuth_1.firebaseAuthMiddleware, async (req, res) => {
+    // The decoded Firebase user is available as req.user
+    res.json({ user: req.user });
+});
 exports.default = router;

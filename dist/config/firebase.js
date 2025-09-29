@@ -1,53 +1,21 @@
-'use strict';
-var __createBinding =
-  (this && this.__createBinding) ||
-  (Object.create
-    ? function (o, m, k, k2) {
-        if (k2 === undefined) k2 = k;
-        var desc = Object.getOwnPropertyDescriptor(m, k);
-        if (!desc || ('get' in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-          desc = {
-            enumerable: true,
-            get: function () {
-              return m[k];
-            },
-          };
-        }
-        Object.defineProperty(o, k2, desc);
-      }
-    : function (o, m, k, k2) {
-        if (k2 === undefined) k2 = k;
-        o[k2] = m[k];
-      });
-var __setModuleDefault =
-  (this && this.__setModuleDefault) ||
-  (Object.create
-    ? function (o, v) {
-        Object.defineProperty(o, 'default', { enumerable: true, value: v });
-      }
-    : function (o, v) {
-        o['default'] = v;
-      });
-var __importStar =
-  (this && this.__importStar) ||
-  function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null)
-      for (var k in mod)
-        if (k !== 'default' && Object.prototype.hasOwnProperty.call(mod, k))
-          __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-  };
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.db = exports.auth = void 0;
-const admin = __importStar(require('firebase-admin'));
-// Initialize Firebase Admin SDK
-// Replace with your Firebase project configuration
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-  // databaseURL: 'https://<DATABASE_NAME>.firebaseio.com'
-});
-exports.auth = admin.auth();
-exports.db = admin.firestore();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.firebaseAuth = void 0;
+exports.getFirebaseApp = getFirebaseApp;
+const app_1 = require("firebase-admin/app");
+const auth_1 = require("firebase-admin/auth");
+let app;
+function getFirebaseApp() {
+    if (!app) {
+        app = (0, app_1.initializeApp)({
+            credential: (0, app_1.cert)({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+            }),
+        });
+    }
+    return app;
+}
+const firebaseAuth = () => (0, auth_1.getAuth)(getFirebaseApp());
+exports.firebaseAuth = firebaseAuth;

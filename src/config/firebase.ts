@@ -1,4 +1,4 @@
-import { initializeApp, cert, getApps, App } from 'firebase-admin/app';
+import { initializeApp, cert, App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 
 let app: App | undefined;

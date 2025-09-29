@@ -18,7 +18,7 @@ router.get('/:conversationId', (req, res) => {
     res.send(`Get conversation ${req.params.conversationId}`);
 });
 // Send a message
-router.post('/:conversationId/messages', (req, _res) => {
+router.post('/:conversationId/messages', (req) => {
     // TODO: Implement logic to send a message
     console.log(`Send a message to conversation ${req.params.conversationId}`);
 });
