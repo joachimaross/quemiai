@@ -1,6 +1,6 @@
 import nlp from 'compromise';
 import { SpeechClient } from '@google-cloud/speech';
-import Recommender = require('js-recommender');
+import * as Recommender from 'js-recommender';
 
 // Creates a client
 const speechClient = new SpeechClient();
@@ -89,6 +89,7 @@ export class AdvancedRecommendationEngine {
   private recommender: any; // js-recommender lacks type definitions
 
   constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.recommender = new (Recommender as any).Recommender();
   }
 

@@ -1,5 +1,13 @@
 // Media service stub
-export function uploadMedia(userId: string, file: any) {
+
+interface MediaFile {
+  originalname: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
+
+export function uploadMedia(_userId: string, _file: MediaFile) {
   // Simulate media upload
   return { success: true, url: 'https://cdn.jacameno.com/media/123.jpg' };
 }

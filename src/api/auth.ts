@@ -10,6 +10,16 @@ import {
 } from '../middleware/validation';
 import AppError from '../utils/AppError';
 
+interface FirebaseUser {
+  uid: string;
+  email?: string;
+  [key: string]: unknown;
+}
+
+interface AuthenticatedRequest extends Request {
+  user?: FirebaseUser;
+}
+
 const router = Router();
 
 /**
@@ -216,7 +226,7 @@ router.get(
   firebaseAuthMiddleware,
   async (req: Request, res: Response) => {
     // The decoded Firebase user is available as req.user
-    res.json({ user: (req as any).user });
+    res.json({ user: (req as AuthenticatedRequest).user });
   },
 );
 

@@ -10,6 +10,22 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
+interface MessageData {
+  conversationId: string;
+  message: string;
+  userId: string;
+}
+
+interface JoinData {
+  conversationId: string;
+}
+
+interface TypingData {
+  conversationId: string;
+  userId: string;
+  isTyping: boolean;
+}
+
 @WebSocketGateway({ cors: true })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -32,7 +48,7 @@ export class ChatGateway
   @SubscribeMessage('sendMessage')
   handleMessage(
     @MessageBody()
-    data: { conversationId: string; message: string; userId: string },
+    data: MessageData,
     @ConnectedSocket() _client: Socket,
   ) {
     // Broadcast to all clients in the conversation room
@@ -40,17 +56,14 @@ export class ChatGateway
   }
 
   @SubscribeMessage('joinConversation')
-  handleJoin(
-    @MessageBody() data: { conversationId: string },
-    @ConnectedSocket() client: Socket,
-  ) {
+  handleJoin(@MessageBody() data: JoinData, @ConnectedSocket() client: Socket) {
     client.join(data.conversationId);
     client.emit('joinedConversation', { conversationId: data.conversationId });
   }
   @SubscribeMessage('typing')
   handleTyping(
     @MessageBody()
-    data: { conversationId: string; userId: string; isTyping: boolean },
+    data: TypingData,
     @ConnectedSocket() _client: Socket,
   ) {
     // Broadcast typing indicator to all clients in the conversation room
