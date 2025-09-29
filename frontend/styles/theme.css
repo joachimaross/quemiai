@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #0a0a23;
+  --color-primary: #00ffe7;
+  --color-secondary: #ff00cc;
+  --color-accent: #00ff99;
+  --color-gradient: linear-gradient(90deg, #00ffe7 0%, #ff00cc 100%);
+}
+
+body {
+  background: var(--color-bg);
+  color: white;
+}
+
+.neon-gradient {
+  background: var(--color-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: neon-flicker 2s infinite alternate;
+}
+
+@keyframes neon-flicker {
+  0% { filter: brightness(1.2) drop-shadow(0 0 6px #00ffe7); }
+  100% { filter: brightness(1.5) drop-shadow(0 0 12px #ff00cc); }
+}
