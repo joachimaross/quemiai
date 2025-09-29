@@ -18,7 +18,7 @@ export default function ChatBubble({ message, isOwn, avatarUrl, name }: ChatBubb
       {!isOwn && avatarUrl && (
         <img src={avatarUrl} alt={name} className="w-8 h-8 rounded-full mr-2 border-2 border-accent" />
       )}
-      <div className={`max-w-xs px-4 py-2 rounded-2xl shadow-lg text-sm font-medium ${isOwn ? 'bg-primary text-black ml-2' : 'bg-secondary text-white mr-2'} neon-gradient animate-neon-flicker`}>
+      <div className={`max-w-xs px-4 py-2 rounded-2xl shadow-lg text-sm font-medium ${isOwn ? 'bg-primary text-black ml-2' : 'bg-secondary text-white mr-2'}`}>
         {message}
       </div>
       {isOwn && avatarUrl && (
