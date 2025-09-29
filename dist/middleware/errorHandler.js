@@ -10,11 +10,7 @@ const errorHandler = (err, _req, res, _next) => {
     };
     if (process.env.NODE_ENV === 'development') {
         console.error(err);
-        errorResponse = {
-            ...errorResponse,
-            stack: err.stack,
-            error: err,
-        };
+        errorResponse = Object.assign(Object.assign({}, errorResponse), { stack: err.stack, error: err });
         res.status(err.statusCode).json(errorResponse);
     }
     else {

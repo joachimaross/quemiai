@@ -5,9 +5,10 @@ const config_1 = require("../config");
 const wss = new ws_1.WebSocketServer({ noServer: true });
 const rooms = new Map();
 wss.on('connection', async (ws, request) => {
+    var _a;
     console.log('Client connected');
     // Extract token from query parameter or header
-    const token = request.url?.split('token=')[1];
+    const token = (_a = request.url) === null || _a === void 0 ? void 0 : _a.split('token=')[1];
     if (token) {
         try {
             const decodedToken = await config_1.auth.verifyIdToken(token);

@@ -62,7 +62,7 @@ router.get('/:userId', async (req, res, next) => {
         if (!doc.exists) {
             return next(new AppError_1.default('User not found', 404));
         }
-        return res.send({ id: doc.id, ...doc.data() });
+        return res.send(Object.assign({ id: doc.id }, doc.data()));
     }
     catch (error) {
         return next(error);
@@ -159,9 +159,10 @@ router.put('/:userId', (0, validation_1.validate)(validation_1.userValidationRul
  *         description: Server error
  */
 router.post('/:userId/follow', async (req, res, next) => {
+    var _a, _b, _c;
     try {
         const { userId } = req.params; // The user to follow
-        const followerId = req.user?.id;
+        const followerId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
         if (!followerId) {
             return next(new AppError_1.default('Authentication required', 401));
         }
@@ -198,10 +199,10 @@ router.post('/:userId/follow', async (req, res, next) => {
         });
         // Update follower/following counts atomically
         await userToFollowRef.update({
-            followersCount: (userToFollowDoc.data()?.followersCount || 0) + 1,
+            followersCount: (((_b = userToFollowDoc.data()) === null || _b === void 0 ? void 0 : _b.followersCount) || 0) + 1,
         });
         await followerRef.update({
-            followingCount: (followerDoc.data()?.followingCount || 0) + 1,
+            followingCount: (((_c = followerDoc.data()) === null || _c === void 0 ? void 0 : _c.followingCount) || 0) + 1,
         });
         return res.status(200).send({ message: 'User followed successfully' });
     }
@@ -235,9 +236,10 @@ router.post('/:userId/follow', async (req, res, next) => {
  *         description: Server error
  */
 router.post('/:userId/unfollow', async (req, res, next) => {
+    var _a, _b, _c;
     try {
         const { userId } = req.params; // The user to unfollow
-        const followerId = req.user?.id;
+        const followerId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
         if (!followerId) {
             return next(new AppError_1.default('Authentication required', 401));
         }
@@ -267,10 +269,10 @@ router.post('/:userId/unfollow', async (req, res, next) => {
         await config_1.db.collection('relationships').doc(existingRelationship.docs[0].id).delete();
         // Update follower/following counts atomically
         await userToUnfollowRef.update({
-            followersCount: Math.max(0, (userToUnfollowDoc.data()?.followersCount || 0) - 1),
+            followersCount: Math.max(0, (((_b = userToUnfollowDoc.data()) === null || _b === void 0 ? void 0 : _b.followersCount) || 0) - 1),
         });
         await followerRef.update({
-            followingCount: Math.max(0, (followerDoc.data()?.followingCount || 0) - 1),
+            followingCount: Math.max(0, (((_c = followerDoc.data()) === null || _c === void 0 ? void 0 : _c.followingCount) || 0) - 1),
         });
         return res.status(200).send({ message: 'User unfollowed successfully' });
     }
@@ -334,8 +336,8 @@ router.get('/:userId/followers', async (req, res, next) => {
             const data = doc.data();
             return {
                 id: doc.id,
-                username: data?.username,
-                profilePicture: data?.profilePicture,
+                username: data === null || data === void 0 ? void 0 : data.username,
+                profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture,
             };
         });
         return res.status(200).send(followers);
@@ -400,8 +402,8 @@ router.get('/:userId/following', async (req, res, next) => {
             const data = doc.data();
             return {
                 id: doc.id,
-                username: data?.username,
-                profilePicture: data?.profilePicture,
+                username: data === null || data === void 0 ? void 0 : data.username,
+                profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture,
             };
         });
         return res.status(200).send(following);
@@ -433,15 +435,16 @@ router.get('/:userId/following', async (req, res, next) => {
  */
 // Get user personalization settings
 router.get('/:userId/settings', async (req, res, next) => {
+    var _a, _b, _c;
     try {
         const doc = await config_1.db.collection('users').doc(req.params.userId).get();
         if (!doc.exists) {
             return next(new AppError_1.default('User not found', 404));
         }
         const settings = {
-            dashboardLayout: doc.data()?.dashboardLayout || {},
-            customTabs: doc.data()?.customTabs || [],
-            themeSettings: doc.data()?.themeSettings || {},
+            dashboardLayout: ((_a = doc.data()) === null || _a === void 0 ? void 0 : _a.dashboardLayout) || {},
+            customTabs: ((_b = doc.data()) === null || _b === void 0 ? void 0 : _b.customTabs) || [],
+            themeSettings: ((_c = doc.data()) === null || _c === void 0 ? void 0 : _c.themeSettings) || {},
         };
         return res.send(settings);
     }
