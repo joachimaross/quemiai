@@ -1,0 +1,175 @@
+// Jacameno Prisma schema (starter)
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  avatar    String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  messages      Message[]
+  conversations ConversationMember[]
+  posts         Post[]
+  stories       Story[]
+  followers     Follower[] @relation("UserFollowers")
+  following     Follower[] @relation("UserFollowing")
+  messageReactions MessageReaction[]
+  messageReadStates MessageReadState[]
+  comments      Comment[]
+  likes         Like[]
+  marketplaceItems MarketplaceItem[] @relation("UserMarketplaceItems")
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+  isGroup   Boolean @default(false)
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  members   ConversationMember[]
+  messages  Message[]
+}
+
+model ConversationMember {
+  id              String   @id @default(uuid())
+  userId          String
+  conversationId  String
+  joinedAt        DateTime @default(now())
+  // Relations
+  user            User     @relation(fields: [userId], references: [id])
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model Message {
+  id              String   @id @default(uuid())
+  conversationId  String
+  senderId        String
+  content         String?
+  mediaUrl        String?
+  type            String   // text, image, video, audio, etc.
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  // Relations
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+  sender          User        @relation(fields: [senderId], references: [id])
+  reactions       MessageReaction[]
+  readStates      MessageReadState[]
+}
+
+model MessageReaction {
+  id         String   @id @default(uuid())
+  messageId  String
+  userId     String
+  emoji      String
+  createdAt  DateTime @default(now())
+  // Relations
+  message    Message  @relation(fields: [messageId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model MessageReadState {
+  id         String   @id @default(uuid())
+  messageId  String
+  userId     String
+  readAt     DateTime @default(now())
+  // Relations
+  message    Message  @relation(fields: [messageId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Post {
+  id         String   @id @default(uuid())
+  authorId   String
+  content    String
+  mediaUrl   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  // Relations
+  author     User     @relation(fields: [authorId], references: [id])
+  comments   Comment[]
+  likes      Like[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  postId    String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  // Relations
+  post      Post     @relation(fields: [postId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  // Relations
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Story {
+  id        String   @id @default(uuid())
+  authorId  String
+  mediaUrl  String
+  audioUrl  String?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  // Relations
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model Hashtag {
+  id        String   @id @default(uuid())
+  tag       String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Follower {
+  id         String   @id @default(uuid())
+  followerId String
+  followingId String
+  createdAt  DateTime @default(now())
+  // Relations
+  follower   User     @relation("UserFollowers", fields: [followerId], references: [id])
+  following  User     @relation("UserFollowing", fields: [followingId], references: [id])
+}
+
+model SubscriptionPlan {
+  id        String   @id @default(uuid())
+  name      String
+  price     Float
+  createdAt DateTime @default(now())
+}
+
+model MarketplaceItem {
+  id        String   @id @default(uuid())
+  sellerId  String
+  title     String
+  price     Float
+  mediaUrl  String?
+  createdAt DateTime @default(now())
+  // Relations
+  seller    User     @relation("UserMarketplaceItems", fields: [sellerId], references: [id])
+}
+
+model AdPlacement {
+  id        String   @id @default(uuid())
+  name      String
+  config    String
+  createdAt DateTime @default(now())
+}
