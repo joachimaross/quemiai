@@ -1,5 +1,26 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in your Firebase and backend API credentials:
+
+```
+cp .env.example .env.local
+```
+
+Edit `.env.local`:
+
+- `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, etc. — from your Firebase project settings
+- `NEXT_PUBLIC_API_BASE_URL` — your backend API base URL (e.g., https://api.jacameno.com)
+- (Optional) `STRIPE_PUBLIC_KEY`, `SENTRY_DSN`, etc. for integrations
+
+## Authentication
+
+This app uses Firebase Auth for Google, Apple, and Email sign-in. See `app/auth/page.tsx` for usage.
+
+To protect API routes, ensure your backend validates Firebase ID tokens (see `/backend/src/api/auth.ts`).
+
 ## Getting Started
 
 First, run the development server:
