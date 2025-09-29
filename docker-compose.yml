@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   db:
     image: postgres:15
@@ -18,6 +19,9 @@ services:
       - ./backend:/app
     ports:
       - '3001:3000'
+
+volumes:
+  db_data:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/jacameno
     depends_on:

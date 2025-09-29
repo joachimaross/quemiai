@@ -49,17 +49,22 @@ A full-stack, messaging-first social media app with a modern, cyberpunk-inspired
 - Use commit SHA/version env vars to prevent frontend-backend mismatches.
 
 ## Environment Variables
-See `.env.example` for all required variables.
+Copy `.env.example` to `.env` and fill in your secrets and URLs as needed.
+See `.env.example` for all required variables and descriptions.
 
 ## Features
 - Real-time chat, group messaging, reactions, media, stories, feed, discovery, AI hooks, monetization stubs
 - Modern UI: TikTok, Facebook, Instagram, Apple/Google Messenger inspired
 - Fast, parallel builds and CI-ready
 
+
 ## Scripts
 - `npx turbo run build` — Build all apps in parallel
 - `npx turbo run dev --parallel` — Run all apps in dev mode
 - `npx turbo run lint` — Lint all apps
+- `docker-compose up -d db` — Start local Postgres for development
+
+---
 
 ---
 
