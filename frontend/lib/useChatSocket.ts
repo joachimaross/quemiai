@@ -1,9 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 
+export type ChatMessage = {
+  id: string;
+  conversationId: string;
+  userId: string;
+  content: string;
+  createdAt: string;
+  [key: string]: unknown;
+};
+
 export function useChatSocket(
   conversationId: string,
-  onMessage: (msg: any) => void,
+  onMessage: (msg: ChatMessage) => void,
   onTyping?: (data: { userId: string; isTyping: boolean }) => void
 ) {
   const socketRef = useRef<Socket | null>(null);

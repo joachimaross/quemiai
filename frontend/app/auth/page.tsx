@@ -4,45 +4,57 @@
 import React, { useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, OAuthProvider } from 'firebase/auth';
-import { fetchUserProfile } from '../../src/lib/api';
+import { fetchUserProfile } from '../../lib/api';
 
 // Firebase config from environment variables
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  apiKey: "AIzaSyC2QMrW2OWm1X4vkoOb4ptbVAQUrwBuZng",
+  authDomain: "certain-mission-471900-k4.firebaseapp.com",
+  projectId: "certain-mission-471900-k4",
+  storageBucket: "certain-mission-471900-k4.firebasestorage.app",
+  messagingSenderId: "519838256456",
+  appId: "1:519838256456:web:3e3315cd2bde84c857777d"
 };
 
 // Initialize Firebase app (check if already initialized to avoid errors in hot reload)
+
+type WindowWithFirebaseApp = Window & { _firebaseApp?: ReturnType<typeof initializeApp> };
 const app = (() => {
-  if (typeof window !== "undefined" && (window as any)._firebaseApp) {
-    return (window as any)._firebaseApp;
+  if (typeof window !== "undefined" && (window as WindowWithFirebaseApp)._firebaseApp) {
+    return (window as WindowWithFirebaseApp)._firebaseApp!;
   }
   const newApp = initializeApp(firebaseConfig);
   if (typeof window !== "undefined") {
-    (window as any)._firebaseApp = newApp;
+    (window as WindowWithFirebaseApp)._firebaseApp = newApp;
   }
   return newApp;
 })();
 
 const auth = getAuth(app);
+
+type UserProfile = {
+  id: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  [key: string]: unknown;
+};
+
 export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const handleFetchProfile = async () => {
     setError("");
     setProfile(null);
     try {
       const data = await fetchUserProfile();
-      setProfile(data);
-    } catch (err: any) {
-      setError(err.message);
+      setProfile(data as UserProfile);
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+      else setError("Unknown error");
     }
   };
 
@@ -52,8 +64,9 @@ export default function AuthPage() {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+      else setError("Unknown error");
     } finally {
       setLoading(false);
     }
@@ -65,8 +78,9 @@ export default function AuthPage() {
     try {
       const provider = new OAuthProvider('apple.com');
       await signInWithPopup(auth, provider);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+      else setError("Unknown error");
     } finally {
       setLoading(false);
     }
@@ -78,8 +92,9 @@ export default function AuthPage() {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+      else setError("Unknown error");
     } finally {
       setLoading(false);
     }
@@ -91,8 +106,9 @@ export default function AuthPage() {
     setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+      else setError("Unknown error");
     } finally {
       setLoading(false);
     }

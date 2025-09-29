@@ -1,0 +1,48 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --neon-gradient: linear-gradient(90deg, #00FFD0 0%, #0066FF 50%, #FF00CC 100%);
+  --zeeky-blue: #0066FF;
+  --neon-fuchsia: #FF00CC;
+  --deep-space: #0A0A18;
+  --primary: #00FFD0;
+  --secondary: #1A1A2E;
+  --accent: #FF00CC;
+}
+
+.dark {
+  --background: #0A0A18;
+  --foreground: #ededed;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
+  min-height: 100vh;
+}
+
+.neon-text {
+  background: var(--neon-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: neon-flicker 1.5s infinite alternate;
+}
+
+.neon-bg {
+  background: var(--neon-gradient);
+}
+
+@keyframes neon-flicker {
+  0%, 100% {
+    filter: brightness(1.1);
+  }
+  50% {
+    filter: brightness(1.5) drop-shadow(0 0 8px #00FFD0) drop-shadow(0 0 16px #FF00CC);
+  }
+}
