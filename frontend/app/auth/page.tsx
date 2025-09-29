@@ -2,10 +2,33 @@
 "use client";
 
 import React, { useState } from 'react';
-import { auth } from '../../src/lib/firebase';
-import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, OAuthProvider } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, OAuthProvider } from 'firebase/auth';
 import { fetchUserProfile } from '../../src/lib/api';
 
+// TODO: Replace the following config with your actual Firebase project config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase app (check if already initialized to avoid errors in hot reload)
+const app = (() => {
+  if (typeof window !== "undefined" && (window as any)._firebaseApp) {
+    return (window as any)._firebaseApp;
+  }
+  const newApp = initializeApp(firebaseConfig);
+  if (typeof window !== "undefined") {
+    (window as any)._firebaseApp = newApp;
+  }
+  return newApp;
+})();
+
+const auth = getAuth(app);
 export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
