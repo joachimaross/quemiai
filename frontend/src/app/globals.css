@@ -1,28 +1,49 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background: #ffffff;
+  --foreground: #171717;
+  --neon-gradient: linear-gradient(90deg, #00FFD0 0%, #0066FF 50%, #FF00CC 100%);
+  --zeeky-blue: #0066FF;
+  --neon-fuchsia: #FF00CC;
+  --deep-space: #0A0A18;
+  --primary: #00FFD0;
+  --secondary: #1A1A2E;
+  --accent: #FF00CC;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.dark {
+  --background: #0A0A18;
+  --foreground: #ededed;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: #0A0A18; /* deep-space */
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
+  min-height: 100vh;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+.neon-text {
+  background: var(--neon-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: neon-flicker 1.5s infinite alternate;
+}
+
+.neon-bg {
+  background: var(--neon-gradient);
+}
+
+@keyframes neon-flicker {
+  0%, 100% {
+    filter: brightness(1.1);
+  }
+  50% {
+    filter: brightness(1.5) drop-shadow(0 0 8px #00FFD0) drop-shadow(0 0 16px #FF00CC);
   }
 }
