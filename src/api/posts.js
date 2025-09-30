@@ -58,7 +58,9 @@ router.post('/schedule', function (req, res, next) { return __awaiter(void 0, vo
                 _b.trys.push([0, 2, , 3]);
                 _a = req.body, content = _a.content, scheduledTime = _a.scheduledTime, platform = _a.platform;
                 if (!content || !scheduledTime || !platform) {
-                    return [2 /*return*/, res.status(400).send({ error: 'Content, scheduledTime, and platform are required' })];
+                    return [2 /*return*/, res
+                            .status(400)
+                            .send({ error: 'Content, scheduledTime, and platform are required' })];
                 }
                 return [4 /*yield*/, config_1.db.collection('scheduledPosts').add({
                         content: content,
@@ -69,7 +71,10 @@ router.post('/schedule', function (req, res, next) { return __awaiter(void 0, vo
                     })];
             case 1:
                 docRef = _b.sent();
-                return [2 /*return*/, res.send({ id: docRef.id, message: 'Post scheduled successfully' })];
+                return [2 /*return*/, res.send({
+                        id: docRef.id,
+                        message: 'Post scheduled successfully',
+                    })];
             case 2:
                 error_1 = _b.sent();
                 return [2 /*return*/, next(error_1)];
@@ -84,7 +89,9 @@ router.post('/export', function (req, res) {
         return res.status(400).send({ error: 'videoId and format are required' });
     }
     // This is a placeholder for actual video export logic
-    return res.send({ message: "Video ".concat(videoId, " exported in ").concat(format, " format.") });
+    return res.send({
+        message: "Video ".concat(videoId, " exported in ").concat(format, " format."),
+    });
 });
 // Get a specific post
 router.get('/:postId', function (req, res) {

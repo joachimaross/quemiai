@@ -81,7 +81,10 @@ router.get('/creators/:creatorId', function (req, res, next) { return __awaiter(
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, config_1.db.collection('creators').doc(req.params.creatorId).get()];
+                return [4 /*yield*/, config_1.db
+                        .collection('creators')
+                        .doc(req.params.creatorId)
+                        .get()];
             case 1:
                 doc = _a.sent();
                 if (!doc.exists) {
@@ -116,7 +119,9 @@ router.post('/creators', function (req, res, next) { return __awaiter(void 0, vo
                     })];
             case 1:
                 _b.sent();
-                return [2 /*return*/, res.status(201).send({ id: userId, message: 'Creator profile created successfully' })];
+                return [2 /*return*/, res
+                        .status(201)
+                        .send({ id: userId, message: 'Creator profile created successfully' })];
             case 2:
                 error_3 = _b.sent();
                 return [2 /*return*/, next(error_3)];
@@ -148,7 +153,10 @@ router.post('/creators/:creatorId/portfolio', upload.single('file'), function (r
                     })];
             case 3:
                 _a.sent();
-                return [2 /*return*/, res.send({ url: publicUrl, message: 'File uploaded successfully' })];
+                return [2 /*return*/, res.send({
+                        url: publicUrl,
+                        message: 'File uploaded successfully',
+                    })];
             case 4:
                 error_4 = _a.sent();
                 return [2 /*return*/, next(error_4)];
@@ -190,7 +198,10 @@ router.post('/creators/:creatorId/reviews', function (req, res, next) { return _
                     totalRating_1 += doc.data().rating;
                 });
                 averageRating = totalRating_1 / reviewsSnapshot.size;
-                return [4 /*yield*/, config_1.db.collection('creators').doc(creatorId).update({ rating: averageRating })];
+                return [4 /*yield*/, config_1.db
+                        .collection('creators')
+                        .doc(creatorId)
+                        .update({ rating: averageRating })];
             case 3:
                 _b.sent();
                 return [2 /*return*/, res.status(201).send({ message: 'Review submitted successfully' })];
@@ -240,7 +251,9 @@ router.post('/listings', function (req, res, next) { return __awaiter(void 0, vo
                     })];
             case 1:
                 docRef = _b.sent();
-                return [2 /*return*/, res.status(201).send({ id: docRef.id, message: 'Listing created successfully' })];
+                return [2 /*return*/, res
+                        .status(201)
+                        .send({ id: docRef.id, message: 'Listing created successfully' })];
             case 2:
                 error_7 = _b.sent();
                 return [2 /*return*/, next(error_7)];
@@ -255,7 +268,10 @@ router.get('/listings/:listingId', function (req, res, next) { return __awaiter(
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, config_1.db.collection('listings').doc(req.params.listingId).get()];
+                return [4 /*yield*/, config_1.db
+                        .collection('listings')
+                        .doc(req.params.listingId)
+                        .get()];
             case 1:
                 doc = _a.sent();
                 if (!doc.exists) {
@@ -289,9 +305,10 @@ router.post('/transactions', function (req, res, next) { return __awaiter(void 0
                     })];
             case 1:
                 docRef = _b.sent();
-                return [2 /*return*/, res
-                        .status(201)
-                        .send({ id: docRef.id, message: 'Transaction initiated. Awaiting payment processing.' })];
+                return [2 /*return*/, res.status(201).send({
+                        id: docRef.id,
+                        message: 'Transaction initiated. Awaiting payment processing.',
+                    })];
             case 2:
                 error_9 = _b.sent();
                 return [2 /*return*/, next(error_9)];

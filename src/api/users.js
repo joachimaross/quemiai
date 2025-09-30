@@ -350,7 +350,10 @@ router.post('/:userId/unfollow', function (req, res, next) { return __awaiter(vo
                     return [2 /*return*/, next(new AppError_1.default('Not following this user', 400))];
                 }
                 // Delete relationship
-                return [4 /*yield*/, config_1.db.collection('relationships').doc(existingRelationship.docs[0].id).delete()];
+                return [4 /*yield*/, config_1.db
+                        .collection('relationships')
+                        .doc(existingRelationship.docs[0].id)
+                        .delete()];
             case 3:
                 // Delete relationship
                 _e.sent();
@@ -431,7 +434,9 @@ router.get('/:userId/followers', function (req, res, next) { return __awaiter(vo
                 if (followerIds.length === 0) {
                     return [2 /*return*/, res.status(200).send([])];
                 }
-                followersPromises = followerIds.map(function (id) { return config_1.db.collection('users').doc(id).get(); });
+                followersPromises = followerIds.map(function (id) {
+                    return config_1.db.collection('users').doc(id).get();
+                });
                 return [4 /*yield*/, Promise.all(followersPromises)];
             case 3:
                 followersDocs = _a.sent();
@@ -508,7 +513,9 @@ router.get('/:userId/following', function (req, res, next) { return __awaiter(vo
                 if (followingIds.length === 0) {
                     return [2 /*return*/, res.status(200).send([])];
                 }
-                followingPromises = followingIds.map(function (id) { return config_1.db.collection('users').doc(id).get(); });
+                followingPromises = followingIds.map(function (id) {
+                    return config_1.db.collection('users').doc(id).get();
+                });
                 return [4 /*yield*/, Promise.all(followingPromises)];
             case 3:
                 followingDocs = _a.sent();

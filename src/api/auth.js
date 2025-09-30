@@ -109,7 +109,10 @@ router.post('/register', (0, validation_1.validate)(validation_1.userValidationR
             case 0:
                 _b.trys.push([0, 4, , 5]);
                 _a = req.body, email = _a.email, password = _a.password;
-                return [4 /*yield*/, config_1.db.collection('users').where('email', '==', email).get()];
+                return [4 /*yield*/, config_1.db
+                        .collection('users')
+                        .where('email', '==', email)
+                        .get()];
             case 1:
                 userSnapshot = _b.sent();
                 if (!userSnapshot.empty) {
@@ -128,7 +131,9 @@ router.post('/register', (0, validation_1.validate)(validation_1.userValidationR
                 token = jsonwebtoken_1.default.sign({ userId: newUserRef.id }, process.env.JWT_SECRET || 'supersecretkey', {
                     expiresIn: '1h',
                 });
-                return [2 /*return*/, res.status(201).send({ message: 'User registered successfully', token: token })];
+                return [2 /*return*/, res
+                        .status(201)
+                        .send({ message: 'User registered successfully', token: token })];
             case 4:
                 error_1 = _b.sent();
                 return [2 /*return*/, next(error_1)];
@@ -195,7 +200,10 @@ router.post('/login', (0, validation_1.validate)(validation_1.loginValidationRul
             case 0:
                 _b.trys.push([0, 3, , 4]);
                 _a = req.body, email = _a.email, password = _a.password;
-                return [4 /*yield*/, config_1.db.collection('users').where('email', '==', email).get()];
+                return [4 /*yield*/, config_1.db
+                        .collection('users')
+                        .where('email', '==', email)
+                        .get()];
             case 1:
                 userSnapshot = _b.sent();
                 if (userSnapshot.empty) {

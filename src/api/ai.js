@@ -136,7 +136,9 @@ router.post('/music-integration', function (req, res, next) {
             return next(new AppError_1.default('trackId and videoId are required', 400));
         }
         // This is a placeholder for actual music integration logic
-        return res.send({ message: "Music track ".concat(trackId, " integrated with video ").concat(videoId) });
+        return res.send({
+            message: "Music track ".concat(trackId, " integrated with video ").concat(videoId),
+        });
     }
     catch (error) {
         return next(error);

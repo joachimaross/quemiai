@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdvancedRecommendationEngine = exports.generateCaptions = exports.improveText = void 0;
 var compromise_1 = require("compromise");
 var speech_1 = require("@google-cloud/speech");
-var Recommender = require("js-recommender");
+var js_recommender_1 = require("js-recommender");
 // Creates a client
 var speechClient = new speech_1.SpeechClient();
 var improveText = function (text) {
@@ -110,7 +110,7 @@ var generateCaptions = function (filePath) { return __awaiter(void 0, void 0, vo
 exports.generateCaptions = generateCaptions;
 var AdvancedRecommendationEngine = /** @class */ (function () {
     function AdvancedRecommendationEngine() {
-        this.recommender = new Recommender.Recommender();
+        this.recommender = new js_recommender_1.default();
     }
     AdvancedRecommendationEngine.prototype.train = function (posts, likedPosts) {
         var ratings = {};

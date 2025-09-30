@@ -36,22 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@nestjs/core");
-var app_module_1 = require("./app.module");
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function () {
-        var app;
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, core_1.NestFactory.create(app_module_1.AppModule)];
-                case 1:
-                    app = _b.sent();
-                    return [4 /*yield*/, app.listen((_a = process.env.PORT) !== null && _a !== void 0 ? _a : 4000)];
-                case 2:
-                    _b.sent();
-                    return [2 /*return*/];
-            }
+        return __generator(this, function (_a) {
+            return [2 /*return*/];
         });
     });
 }
