@@ -6,7 +6,7 @@ const redisClient = createClient({
 });
 
 redisClient.on('connect', () => logger.info('Redis client connected'));
-redisClient.on('error', (err) => logger.error('Redis client error', err));
+redisClient.on('error', (err: Error) => logger.error({ err }, 'Redis client error'));
 
 async function connectRedis() {
   if (!redisClient.isOpen) {
