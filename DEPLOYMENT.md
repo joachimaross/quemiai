@@ -1,8 +1,10 @@
 # Deployment Guide
 
-This guide covers deployment strategies for the Quemiai backend application.
+This guide covers deployment strategies for the Quemiai platform, including both the NestJS backend and Next.js frontend applications.
 
 > **📋 See Also:** [ROADMAP.md](ROADMAP.md) for planned enhancements to monitoring, performance, security, and architecture.
+> 
+> **📂 Frontend Documentation:** See [frontend/README.md](frontend/README.md) for detailed Next.js frontend setup and deployment instructions.
 
 ## Table of Contents
 
@@ -106,7 +108,9 @@ docker push your-registry/quemiai:latest
 
 ## Vercel Deployment
 
-### Setup
+### Frontend Deployment (Next.js)
+
+The frontend application is located in the `/frontend` directory and is configured for Vercel deployment with enterprise-grade security and performance settings.
 
 1. Install Vercel CLI:
 ```bash
@@ -118,23 +122,43 @@ npm i -g vercel
 vercel login
 ```
 
-### Deploy
-
+3. Deploy from the frontend directory:
 ```bash
-# Deploy to preview
+cd frontend
 vercel
 
-# Deploy to production
+# Or deploy to production
 vercel --prod
 ```
 
 ### Configuration
 
-The `vercel.json` file is already configured. Make sure to set environment variables in the Vercel dashboard:
+The frontend has been configured with:
 
-- Go to your project settings
-- Navigate to "Environment Variables"
-- Add all required variables from `.env.example`
+- **vercel.json**: Enterprise-grade configuration including:
+  - Security headers (HSTS, X-Frame-Options, CSP, etc.)
+  - Caching strategies for static assets
+  - Clean URLs and trailing slash handling
+  - Placeholder sections for rewrites and redirects
+
+- **next.config.js**: Next.js configuration with:
+  - React Strict Mode
+  - Security headers
+  - Image optimization
+  - Production optimizations
+
+### Vercel Project Settings
+
+**Important**: When setting up your Vercel project:
+
+1. In the Vercel dashboard, go to your project **Settings** → **General**
+2. Set **Root Directory** to `frontend`
+3. The **Build Command** and **Install Command** will be read from `vercel.json`
+4. Add environment variables in **Settings** → **Environment Variables**
+
+### Backend Deployment (Optional)
+
+For deploying the NestJS backend to Vercel as serverless functions, you would need a separate configuration. The current setup is optimized for the Next.js frontend.
 
 ### Custom Domain
 
