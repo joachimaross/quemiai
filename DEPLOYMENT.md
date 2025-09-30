@@ -12,6 +12,7 @@ This guide covers deployment strategies for the Quemiai backend application.
 - [Traditional Server Deployment](#traditional-server-deployment)
 - [Environment Configuration](#environment-configuration)
 - [Production Checklist](#production-checklist)
+- [Observability](#observability)
 - [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
@@ -276,14 +277,16 @@ FIREBASE_PROJECT_ID=...
 
 ### Monitoring Setup
 
-> **Note:** For detailed monitoring and observability implementation, see [ROADMAP.md - PHASE 2.5](ROADMAP.md#phase-25-monitoring--observability).
+> **📘 For detailed monitoring and observability implementation, see the [Observability](#observability) section and [MONITORING_GUIDE.md](MONITORING_GUIDE.md).**
+
+Quick monitoring checklist:
 
 1. **Application Monitoring**
    - Set up error tracking (Sentry, Rollbar)
    - Configure application performance monitoring (APM)
    - Set up log aggregation (ELK Stack, Logtail, Datadog, CloudWatch)
-   - Implement Prometheus metrics (see PHASE 2.5)
-   - Configure Grafana dashboards (see PHASE 2.5)
+   - Implement Prometheus metrics (see [MONITORING_GUIDE.md](MONITORING_GUIDE.md#prometheus-metrics))
+   - Configure Grafana dashboards (see [MONITORING_GUIDE.md](MONITORING_GUIDE.md#grafana-dashboards))
 
 2. **Infrastructure Monitoring**
    - CPU and memory usage
@@ -297,14 +300,15 @@ FIREBASE_PROJECT_ID=...
    - Basic health endpoint: `/health` (status, uptime, environment)
    - Planned: `/health/ready` for readiness probes (database, Redis connectivity)
    - Planned: `/health/live` for liveness probes
-   - See [ROADMAP.md - Health Checks](ROADMAP.md#health-checks) for implementation details
+   - See [MONITORING_GUIDE.md - Health Endpoints](MONITORING_GUIDE.md#health-endpoints) for details
 
-3. **Alerts**
+4. **Alerts**
    - Set up alerts for:
      - High error rates
      - Slow response times
      - Service downtime
      - Resource exhaustion
+   - See [MONITORING_GUIDE.md - Alerting Strategy](MONITORING_GUIDE.md#alerting-strategy) for configuration
 
 ### Scaling Strategies
 
@@ -368,6 +372,228 @@ pm2 restart quemiai
 - Always backup database before migrations
 - Keep migration rollback scripts ready
 - Test rollback procedures in staging
+
+## Observability
+
+### Overview
+
+Observability is critical for maintaining a healthy production system. It enables you to understand system behavior, detect issues early, and respond to incidents quickly.
+
+> **📘 For comprehensive monitoring setup, see [MONITORING_GUIDE.md](MONITORING_GUIDE.md)**
+
+The Quemiai platform implements a multi-layered observability strategy:
+
+1. **Health Checks**: Basic and advanced health endpoints
+2. **Metrics Collection**: Prometheus metrics for performance monitoring
+3. **Error Tracking**: Sentry integration for error monitoring
+4. **Visualization**: Grafana dashboards for metrics visualization
+5. **Log Aggregation**: Centralized logging with ELK Stack, Logtail, or Datadog
+6. **Distributed Tracing**: OpenTelemetry integration (planned)
+
+### Health Monitoring
+
+#### Basic Health Check
+
+The application provides a basic health endpoint that returns application status:
+
+```bash
+# Check application health
+curl http://your-domain.com/health
+```
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "uptime": 3600.5,
+  "environment": "production"
+}
+```
+
+#### Advanced Health Checks (Planned)
+
+Future enhancements include:
+- `/health/ready` - Readiness probe (database, Redis connectivity)
+- `/health/live` - Liveness probe (application responsiveness)
+
+See [MONITORING_GUIDE.md - Health Endpoints](MONITORING_GUIDE.md#health-endpoints) for details.
+
+### Metrics and Monitoring
+
+#### Prometheus Integration (Planned)
+
+Prometheus metrics will be available at `/metrics` endpoint for scraping. Key metrics include:
+
+- **HTTP Metrics**: Request rates, response times, status codes
+- **WebSocket Metrics**: Active connections, message rates
+- **System Metrics**: CPU, memory, event loop lag
+- **Database Metrics**: Query duration, connection pool usage
+- **Redis Metrics**: Operation duration, cache hit rates
+
+See [MONITORING_GUIDE.md - Prometheus Metrics](MONITORING_GUIDE.md#prometheus-metrics) for implementation details.
+
+#### Grafana Dashboards (Planned)
+
+Pre-built Grafana dashboards will be available for:
+- API Overview (request rates, errors, latency)
+- WebSocket Metrics (connections, messages)
+- System Metrics (CPU, memory, disk, network)
+- Database Metrics (queries, connections)
+
+See [MONITORING_GUIDE.md - Grafana Dashboards](MONITORING_GUIDE.md#grafana-dashboards) for setup.
+
+### Error Tracking
+
+#### Sentry Integration (Planned)
+
+Sentry provides real-time error tracking and performance monitoring:
+
+- Automatic error capture
+- Stack traces and context
+- Performance monitoring
+- Release tracking
+- User impact analysis
+
+**Setup Steps:**
+1. Create Sentry account and project
+2. Configure `SENTRY_DSN` environment variable
+3. Install `@sentry/node` package
+4. Initialize Sentry in `main.ts`
+
+See [MONITORING_GUIDE.md - Sentry Error Tracking](MONITORING_GUIDE.md#sentry-error-tracking) for complete setup.
+
+### Log Aggregation
+
+The application uses **Pino** for structured JSON logging. Choose a log aggregation solution based on your infrastructure:
+
+#### Option 1: ELK Stack (Self-Hosted)
+- Elasticsearch for log storage
+- Logstash for log processing
+- Kibana for visualization
+- Best for: On-premise deployments
+
+#### Option 2: Logtail (SaaS)
+- Managed service
+- Real-time log streaming
+- Simple setup
+- Best for: Quick setup, cloud deployments
+
+#### Option 3: Datadog Logs (SaaS)
+- Unified APM and logs
+- Infrastructure correlation
+- Advanced analytics
+- Best for: Enterprise deployments
+
+See [MONITORING_GUIDE.md - Log Aggregation](MONITORING_GUIDE.md#log-aggregation) for detailed setup instructions.
+
+### Post-Deployment Monitoring
+
+After deploying to production, continuously monitor:
+
+#### Application Health
+- [ ] Health endpoint responding correctly
+- [ ] Error rates within acceptable limits (<0.1%)
+- [ ] Response times meeting SLOs (p95 < 200ms)
+- [ ] WebSocket connections stable
+- [ ] Memory and CPU usage within expected ranges
+
+#### Infrastructure Health
+- [ ] Database connections healthy
+- [ ] Redis connections stable
+- [ ] Disk space sufficient (>20% free)
+- [ ] Network latency acceptable
+- [ ] SSL certificates valid
+
+#### Logging and Alerts
+- [ ] Logs being collected properly
+- [ ] Log aggregation system operational
+- [ ] Alert rules configured
+- [ ] Alert channels working (Slack, email, PagerDuty)
+- [ ] Runbooks documented for common issues
+
+### Key Performance Indicators (KPIs)
+
+Track these metrics continuously:
+
+| Metric | Target | Critical Threshold |
+|--------|--------|-------------------|
+| API Availability | >99.9% | <99% |
+| API Response Time (p95) | <200ms | >500ms |
+| Error Rate | <0.1% | >1% |
+| WebSocket Latency | <100ms | >300ms |
+| Database Query Time (p95) | <50ms | >200ms |
+| Memory Usage | <80% | >90% |
+| CPU Usage | <70% | >85% |
+
+### Alerting Strategy
+
+Configure alerts for critical metrics:
+
+**Critical Alerts** (Immediate Response):
+- Service down or unreachable
+- Error rate >5%
+- Database connection failures
+- Memory/CPU >90%
+
+**Warning Alerts** (Response within 30 minutes):
+- Error rate >1%
+- Response time p95 >500ms
+- Disk space >80%
+- Connection pool >80%
+
+**Info Alerts** (Response within 24 hours):
+- Unusual traffic patterns
+- Slow queries detected
+- Cache hit rate <70%
+
+See [MONITORING_GUIDE.md - Alerting Strategy](MONITORING_GUIDE.md#alerting-strategy) for detailed alert configuration.
+
+### Observability Checklist
+
+Before considering your production deployment complete:
+
+**Monitoring Setup:**
+- [ ] Health endpoints configured and accessible
+- [ ] Metrics collection setup (Prometheus or equivalent)
+- [ ] Visualization dashboards created (Grafana or equivalent)
+- [ ] Error tracking configured (Sentry or equivalent)
+- [ ] Log aggregation implemented
+
+**Alert Configuration:**
+- [ ] Critical alerts defined
+- [ ] Alert channels configured (Slack, PagerDuty, email)
+- [ ] Alert escalation policies documented
+- [ ] On-call rotation established
+
+**Documentation:**
+- [ ] Monitoring dashboards documented
+- [ ] Alert runbooks created
+- [ ] Escalation procedures defined
+- [ ] Team trained on observability tools
+
+**Testing:**
+- [ ] Alert testing performed
+- [ ] Dashboard validation completed
+- [ ] Log query testing done
+- [ ] Incident response dry-run executed
+
+### Continuous Improvement
+
+Regularly review and improve your observability:
+
+- **Weekly**: Review alerts and adjust thresholds
+- **Monthly**: Analyze trends and capacity planning
+- **Quarterly**: Update dashboards and metrics
+- **Incident Reviews**: Document learnings and improve runbooks
+
+### Additional Resources
+
+- [MONITORING_GUIDE.md](MONITORING_GUIDE.md) - Comprehensive monitoring setup guide
+- [ROADMAP.md - PHASE 2.5](ROADMAP.md#phase-25-monitoring--observability) - Monitoring roadmap
+- [Prometheus Documentation](https://prometheus.io/docs/)
+- [Grafana Documentation](https://grafana.com/docs/)
+- [Sentry Documentation](https://docs.sentry.io/)
 
 ## Troubleshooting
 
