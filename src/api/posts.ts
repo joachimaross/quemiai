@@ -16,26 +16,34 @@ router.post('/', (_req: Request, res: Response) => {
 });
 
 // Schedule a post
-router.post('/schedule', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { content, scheduledTime, platform } = req.body;
-    if (!content || !scheduledTime || !platform) {
-      return res.status(400).send({ error: 'Content, scheduledTime, and platform are required' });
+router.post(
+  '/schedule',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { content, scheduledTime, platform } = req.body;
+      if (!content || !scheduledTime || !platform) {
+        return res
+          .status(400)
+          .send({ error: 'Content, scheduledTime, and platform are required' });
+      }
+
+      const docRef = await db.collection('scheduledPosts').add({
+        content,
+        scheduledTime: new Date(scheduledTime),
+        platform,
+        status: 'pending',
+        createdAt: new Date(),
+      });
+
+      return res.send({
+        id: docRef.id,
+        message: 'Post scheduled successfully',
+      });
+    } catch (error) {
+      return next(error);
     }
-
-    const docRef = await db.collection('scheduledPosts').add({
-      content,
-      scheduledTime: new Date(scheduledTime),
-      platform,
-      status: 'pending',
-      createdAt: new Date(),
-    });
-
-    return res.send({ id: docRef.id, message: 'Post scheduled successfully' });
-  } catch (error) {
-    return next(error);
-  }
-});
+  },
+);
 
 // Export content
 router.post('/export', (req: Request, res: Response) => {
@@ -45,7 +53,9 @@ router.post('/export', (req: Request, res: Response) => {
   }
 
   // This is a placeholder for actual video export logic
-  return res.send({ message: `Video ${videoId} exported in ${format} format.` });
+  return res.send({
+    message: `Video ${videoId} exported in ${format} format.`,
+  });
 });
 
 // Get a specific post

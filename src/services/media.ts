@@ -1,5 +1,5 @@
 // Media service stub
-export function uploadMedia(userId: string, file: any) {
+export function uploadMedia(_userId: string, _file: Express.Multer.File) {
   // Simulate media upload
   return { success: true, url: 'https://cdn.jacameno.com/media/123.jpg' };
 }
