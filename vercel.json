@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "rootDirectory": "frontend",
   "outputDirectory": "dist",
   "routes": [
     {
