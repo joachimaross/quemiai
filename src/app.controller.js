@@ -47,6 +47,7 @@ var AppController = function () {
     var _classThis;
     var _instanceExtraInitializers = [];
     var _getHello_decorators;
+    var _healthCheck_decorators;
     var AppController = _classThis = /** @class */ (function () {
         function AppController_1(appService) {
             this.appService = (__runInitializers(this, _instanceExtraInitializers), appService);
@@ -54,13 +55,23 @@ var AppController = function () {
         AppController_1.prototype.getHello = function () {
             return this.appService.getHello();
         };
+        AppController_1.prototype.healthCheck = function () {
+            return {
+                status: 'ok',
+                timestamp: new Date().toISOString(),
+                uptime: process.uptime(),
+                environment: process.env.NODE_ENV || 'development',
+            };
+        };
         return AppController_1;
     }());
     __setFunctionName(_classThis, "AppController");
     (function () {
         var _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
         _getHello_decorators = [(0, common_1.Get)()];
+        _healthCheck_decorators = [(0, common_1.Get)('health')];
         __esDecorate(_classThis, null, _getHello_decorators, { kind: "method", name: "getHello", static: false, private: false, access: { has: function (obj) { return "getHello" in obj; }, get: function (obj) { return obj.getHello; } }, metadata: _metadata }, null, _instanceExtraInitializers);
+        __esDecorate(_classThis, null, _healthCheck_decorators, { kind: "method", name: "healthCheck", static: false, private: false, access: { has: function (obj) { return "healthCheck" in obj; }, get: function (obj) { return obj.healthCheck; } }, metadata: _metadata }, null, _instanceExtraInitializers);
         __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
         AppController = _classThis = _classDescriptor.value;
         if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });

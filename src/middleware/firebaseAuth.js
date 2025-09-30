@@ -40,13 +40,14 @@ exports.firebaseAuthMiddleware = firebaseAuthMiddleware;
 var firebase_1 = require("../config/firebase");
 function firebaseAuthMiddleware(req, res, next) {
     return __awaiter(this, void 0, void 0, function () {
-        var authHeader, idToken, decodedToken, error_1;
+        var authHeader, idToken, decodedToken, _error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     authHeader = req.headers.authorization;
                     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-                        return [2 /*return*/, res.status(401).json({ message: 'No token provided' })];
+                        res.status(401).json({ message: 'No token provided' });
+                        return [2 /*return*/];
                     }
                     idToken = authHeader.split(' ')[1];
                     _a.label = 1;
@@ -56,11 +57,11 @@ function firebaseAuthMiddleware(req, res, next) {
                 case 2:
                     decodedToken = _a.sent();
                     req.user = decodedToken;
-                    next();
-                    return [3 /*break*/, 4];
+                    return [2 /*return*/, next()];
                 case 3:
-                    error_1 = _a.sent();
-                    return [2 /*return*/, res.status(401).json({ message: 'Invalid or expired token' })];
+                    _error_1 = _a.sent();
+                    res.status(401).json({ message: 'Invalid or expired token' });
+                    return [2 /*return*/];
                 case 4: return [2 /*return*/];
             }
         });

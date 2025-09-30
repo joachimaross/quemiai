@@ -59,10 +59,7 @@ describe('Auth API Integration', () => {
       });
 
       expect(res.statusCode).toEqual(201);
-      expect(res.body).toHaveProperty(
-        'message',
-        'User registered successfully',
-      );
+      expect(res.body).toHaveProperty('message', 'User registered successfully');
       expect(res.body).toHaveProperty('token');
     });
 
@@ -85,10 +82,7 @@ describe('Auth API Integration', () => {
       });
 
       expect(res.statusCode).toEqual(400);
-      expect(res.body).toHaveProperty(
-        'message',
-        'User with that email already exists.',
-      );
+      expect(res.body).toHaveProperty('message', 'User with that email already exists.');
     });
 
     it('should return 400 for invalid input (e.g., short password)', async () => {

@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
     function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
     var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
@@ -38,49 +49,61 @@ var __setFunctionName = (this && this.__setFunctionName) || function (f, name, p
     return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.AllExceptionsFilter = void 0;
 var common_1 = require("@nestjs/common");
-var config_1 = require("@nestjs/config");
-var throttler_1 = require("@nestjs/throttler");
-var app_controller_1 = require("./app.controller");
-var app_service_1 = require("./app.service");
-var chat_module_1 = require("./modules/chat/chat.module");
-var env_validation_1 = require("./config/env.validation");
-var AppModule = function () {
-    var _classDecorators = [(0, common_1.Module)({
-            imports: [
-                config_1.ConfigModule.forRoot({
-                    isGlobal: true,
-                    validate: env_validation_1.validate,
-                    envFilePath: ['.env.local', '.env'],
-                }),
-                throttler_1.ThrottlerModule.forRoot([
-                    {
-                        ttl: parseInt(process.env.THROTTLE_TTL || '60', 10) * 1000, // Convert seconds to milliseconds
-                        limit: parseInt(process.env.THROTTLE_LIMIT || '100', 10),
-                    },
-                ]),
-                chat_module_1.ChatModule,
-            ],
-            controllers: [app_controller_1.AppController],
-            providers: [app_service_1.AppService],
-        })];
+var logger_1 = require("../config/logger");
+var AllExceptionsFilter = function () {
+    var _classDecorators = [(0, common_1.Catch)()];
     var _classDescriptor;
     var _classExtraInitializers = [];
     var _classThis;
-    var AppModule = _classThis = /** @class */ (function () {
-        function AppModule_1() {
+    var AllExceptionsFilter = _classThis = /** @class */ (function () {
+        function AllExceptionsFilter_1() {
         }
-        return AppModule_1;
+        AllExceptionsFilter_1.prototype.catch = function (exception, host) {
+            var ctx = host.switchToHttp();
+            var response = ctx.getResponse();
+            var request = ctx.getRequest();
+            var status = common_1.HttpStatus.INTERNAL_SERVER_ERROR;
+            var message = 'Internal server error';
+            var errorDetails;
+            if (exception instanceof common_1.HttpException) {
+                status = exception.getStatus();
+                var exceptionResponse = exception.getResponse();
+                message = typeof exceptionResponse === 'string'
+                    ? exceptionResponse
+                    : exceptionResponse.message || message;
+                errorDetails = exceptionResponse;
+            }
+            else if (exception instanceof Error) {
+                message = exception.message;
+                errorDetails = {
+                    name: exception.name,
+                    stack: process.env.NODE_ENV === 'development' ? exception.stack : undefined,
+                };
+            }
+            // Log the error
+            logger_1.default.error({
+                err: exception,
+                req: {
+                    method: request.method,
+                    url: request.url,
+                    ip: request.ip,
+                },
+            }, "".concat(status, " - ").concat(message));
+            // Send response
+            response.status(status).json(__assign({ statusCode: status, timestamp: new Date().toISOString(), path: request.url, message: message }, (process.env.NODE_ENV === 'development' && { details: errorDetails })));
+        };
+        return AllExceptionsFilter_1;
     }());
-    __setFunctionName(_classThis, "AppModule");
+    __setFunctionName(_classThis, "AllExceptionsFilter");
     (function () {
         var _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
         __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        AppModule = _classThis = _classDescriptor.value;
+        AllExceptionsFilter = _classThis = _classDescriptor.value;
         if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         __runInitializers(_classThis, _classExtraInitializers);
     })();
-    return AppModule = _classThis;
+    return AllExceptionsFilter = _classThis;
 }();
-exports.AppModule = AppModule;
+exports.AllExceptionsFilter = AllExceptionsFilter;

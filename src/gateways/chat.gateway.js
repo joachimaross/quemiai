@@ -57,25 +57,21 @@ var ChatGateway = function () {
             this.server = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _server_initializers, void 0));
             __runInitializers(this, _server_extraInitializers);
         }
-        ChatGateway_1.prototype.afterInit = function (_server) {
-            console.log('WebSocket server initialized');
+        ChatGateway_1.prototype.handleConnection = function (_client) {
+            // Handle new connection
         };
-        ChatGateway_1.prototype.handleConnection = function (client) {
-            console.log("Client connected: ".concat(client.id));
-        };
-        ChatGateway_1.prototype.handleDisconnect = function (client) {
-            console.log("Client disconnected: ".concat(client.id));
+        ChatGateway_1.prototype.handleDisconnect = function (_client) {
+            // Handle disconnect
         };
         ChatGateway_1.prototype.handleMessage = function (data, _client) {
-            // Broadcast to all clients in the conversation room
+            // Broadcast message to conversation room
             this.server.to(data.conversationId).emit('receiveMessage', data);
         };
         ChatGateway_1.prototype.handleJoin = function (data, client) {
             client.join(data.conversationId);
-            client.emit('joinedConversation', { conversationId: data.conversationId });
         };
         ChatGateway_1.prototype.handleTyping = function (data, _client) {
-            // Broadcast typing indicator to all clients in the conversation room
+            // Broadcast typing indicator
             this.server.to(data.conversationId).emit('typing', data);
         };
         return ChatGateway_1;

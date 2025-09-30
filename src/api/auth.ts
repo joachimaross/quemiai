@@ -1,20 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { DecodedIdToken } from 'firebase-admin/auth';
 
 import { db } from '../config';
-import {
-  validate,
-  userValidationRules,
-  loginValidationRules,
-} from '../middleware/validation';
+import { validate, userValidationRules, loginValidationRules } from '../middleware/validation';
 import AppError from '../utils/AppError';
-
-// Extend Express Request interface
-interface AuthenticatedRequest extends Request {
-  user?: DecodedIdToken;
-}
 
 const router = Router();
 
@@ -86,10 +76,7 @@ router.post(
       const { email, password } = req.body;
 
       // Check if user already exists
-      const userSnapshot = await db
-        .collection('users')
-        .where('email', '==', email)
-        .get();
+      const userSnapshot = await db.collection('users').where('email', '==', email).get();
       if (!userSnapshot.empty) {
         return next(new AppError('User with that email already exists.', 400));
       }
@@ -113,9 +100,7 @@ router.post(
         },
       );
 
-      return res
-        .status(201)
-        .send({ message: 'User registered successfully', token });
+      return res.status(201).send({ message: 'User registered successfully', token });
     } catch (error) {
       return next(error);
     }
@@ -182,10 +167,7 @@ router.post(
       const { email, password } = req.body;
 
       // Check if user exists
-      const userSnapshot = await db
-        .collection('users')
-        .where('email', '==', email)
-        .get();
+      const userSnapshot = await db.collection('users').where('email', '==', email).get();
       if (userSnapshot.empty) {
         return next(new AppError('Invalid credentials.', 400));
       }
@@ -200,13 +182,9 @@ router.post(
       }
 
       // Generate JWT
-      const token = jwt.sign(
-        { userId: userDoc.id },
-        process.env.JWT_SECRET || 'supersecretkey',
-        {
-          expiresIn: '1h',
-        },
-      );
+      const token = jwt.sign({ userId: userDoc.id }, process.env.JWT_SECRET || 'supersecretkey', {
+        expiresIn: '1h',
+      });
 
       return res.send({ message: 'Logged in successfully', token });
     } catch (error) {
@@ -215,15 +193,12 @@ router.post(
   },
 );
 
+
 // Protected route example (requires Firebase Auth)
 import { firebaseAuthMiddleware } from '../middleware/firebaseAuth';
-router.get(
-  '/me',
-  firebaseAuthMiddleware,
-  async (req: AuthenticatedRequest, res: Response) => {
-    // The decoded Firebase user is available as req.user
-    res.json({ user: req.user });
-  },
-);
+router.get('/me', firebaseAuthMiddleware, async (req: Request, res: Response) => {
+  // The decoded Firebase user is available as req.user
+  res.json({ user: (req as any).user });
+});
 
 export default router;

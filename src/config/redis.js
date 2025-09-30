@@ -45,7 +45,7 @@ var redisClient = (0, redis_1.createClient)({
 });
 exports.redisClient = redisClient;
 redisClient.on('connect', function () { return logger_1.default.info('Redis client connected'); });
-redisClient.on('error', function (err) { return logger_1.default.error('Redis client error', err); });
+redisClient.on('error', function (err) { return logger_1.default.error({ err: err }, 'Redis client error'); });
 function connectRedis() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

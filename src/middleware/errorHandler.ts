@@ -6,12 +6,7 @@ interface ErrorWithStatus extends Error {
   isOperational?: boolean;
 }
 
-export const errorHandler = (
-  err: ErrorWithStatus,
-  _req: Request,
-  res: Response,
-  _next: NextFunction,
-): void => {
+export const errorHandler = (err: ErrorWithStatus, _req: Request, res: Response, _next: NextFunction): void => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
