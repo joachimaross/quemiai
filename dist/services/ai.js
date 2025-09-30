@@ -49,6 +49,7 @@ const improveText = (text) => {
 };
 exports.improveText = improveText;
 const generateCaptions = async (filePath) => {
+    var _a;
     const audio = {
         uri: filePath,
     };
@@ -63,15 +64,11 @@ const generateCaptions = async (filePath) => {
     };
     // Detects speech in the audio file
     const [response] = await speechClient.recognize(request);
-    const transcription = response.results
-        ?.map((result) => result.alternatives?.[0]?.transcript)
-        .join('\n');
+    const transcription = (_a = response.results) === null || _a === void 0 ? void 0 : _a.map((result) => { var _a, _b; return (_b = (_a = result.alternatives) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.transcript; }).join('\n');
     return transcription;
 };
 exports.generateCaptions = generateCaptions;
 class AdvancedRecommendationEngine {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recommender; // js-recommender lacks type definitions
     constructor() {
         this.recommender = new Recommender.Recommender();
     }
