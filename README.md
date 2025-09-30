@@ -55,6 +55,24 @@ npm run test:cov
 npm run test:e2e
 ```
 
+**See [TESTING.md](TESTING.md) for comprehensive testing guide, coverage goals, and best practices.**
+
+### Current Test Coverage
+
+- **Overall Coverage:** ~42% (Target: 75%+)
+- **Unit Tests:** 10 tests passing
+- **Integration Tests:** Included
+- **E2E Tests:** Available
+
+### Coverage Goals
+
+| Metric | Current | Target |
+|--------|---------|--------|
+| Statements | ~42% | 75% |
+| Branches | ~20% | 65% |
+| Functions | ~15% | 70% |
+| Lines | ~41% | 75% |
+
 ## 🧹 Code Quality
 
 ```bash
@@ -117,11 +135,13 @@ See `.env.example` for all required environment variables:
 - ✅ Structured logging with Pino
 - ✅ Global error handling
 - ✅ Request validation
-- ✅ Rate limiting
+- ✅ **Rate limiting with @nestjs/throttler**
+- ✅ **Sentry error tracking and performance monitoring**
 - ✅ CORS configuration
 - ✅ Swagger API documentation (configurable)
 - ✅ Docker support
 - ✅ CI/CD with GitHub Actions
+- ✅ **Enhanced Vercel deployment with security headers**
 
 ## 🐳 Docker
 
@@ -137,13 +157,41 @@ docker run -p 4000:4000 --env-file .env quemiai
 
 ## 🚀 Deployment
 
-### Vercel
+### Vercel (Recommended)
 
-The project is configured for Vercel deployment with `vercel.json`.
+The project is configured for Vercel deployment with enhanced `vercel.json`.
+
+**Key Features:**
+- Automatic HTTPS and security headers
+- Environment variable management
+- Preview deployments for PRs
+- Automatic scaling
+- Built-in analytics
+
+**Quick Deploy:**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
+```
+
+**See [DEPLOYMENT.md](DEPLOYMENT.md) for:**
+- Complete Vercel deployment checklist
+- Sentry integration setup
+- Rate limiting configuration
+- Environment variables guide
+- Troubleshooting and best practices
 
 ### Docker
 
 Use the included `Dockerfile` for containerized deployment on any platform.
+
+```bash
+docker build -t quemiai .
+docker run -p 4000:4000 --env-file .env quemiai
+```
 
 ## 📋 Git Workflow
 
@@ -163,11 +211,13 @@ See `CONTRIBUTING.md` for contribution guidelines.
 - [x] Authentication & OAuth
 - [x] Logging & error handling
 - [x] Docker & CI/CD setup
+- [x] **Rate limiting implementation**
+- [x] **Sentry error tracking integration**
+- [x] **Enhanced Vercel deployment**
 - [ ] Enhanced AI features
 - [ ] Advanced caching strategies
 - [ ] Comprehensive API documentation
-- [ ] Performance monitoring
-- [ ] Rate limiting & security enhancements
+- [ ] **Increase test coverage to 75%+**
 - [ ] Microservices architecture
 
 ## 📝 License
