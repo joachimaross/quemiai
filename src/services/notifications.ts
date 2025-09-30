@@ -4,7 +4,7 @@ export function sendNotification(userId: string, message: string) {
   return { success: true, userId, message };
 }
 
-export function getNotifications(userId: string) {
+export function getNotifications(_userId: string) {
   // Simulate fetching notifications
   return [
     { id: '1', message: 'Welcome to Jacameno!', read: false },

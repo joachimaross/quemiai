@@ -1,6 +1,6 @@
 import nlp from 'compromise';
 import { SpeechClient } from '@google-cloud/speech';
-import Recommender = require('js-recommender');
+import Recommender from 'js-recommender';
 
 // Creates a client
 const speechClient = new SpeechClient();
@@ -85,11 +85,10 @@ interface Recommendation {
 }
 
 export class AdvancedRecommendationEngine {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private recommender: any; // js-recommender lacks type definitions
+  private recommender: Recommender;
 
   constructor() {
-    this.recommender = new (Recommender as any).Recommender();
+    this.recommender = new Recommender();
   }
 
   train(posts: Post[], likedPosts: Post[]) {
@@ -99,7 +98,9 @@ export class AdvancedRecommendationEngine {
       if (!ratings[post.userId]) {
         ratings[post.userId] = {};
       }
-      const liked = likedPosts.some((p) => p.id === post.id && p.userId === post.userId);
+      const liked = likedPosts.some(
+        (p) => p.id === post.id && p.userId === post.userId,
+      );
       ratings[post.userId][post.id] = liked ? 1 : 0;
     }
 
@@ -108,7 +109,8 @@ export class AdvancedRecommendationEngine {
   }
 
   getRecommendations(userId: string, posts: Post[]): (Post | undefined)[] {
-    const recommendations: Recommendation[] = this.recommender.recommend(userId);
+    const recommendations: Recommendation[] =
+      this.recommender.recommend(userId);
     const recommendedPosts = recommendations.map((recommendation) => {
       return posts.find((post) => post.id === recommendation.item);
     });
