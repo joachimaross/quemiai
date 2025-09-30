@@ -67,6 +67,7 @@ npm run format
 
 ## 🏗️ Tech Stack
 
+### Backend
 - **Framework:** NestJS
 - **Language:** TypeScript
 - **Real-time:** Socket.IO (WebSockets)
@@ -76,18 +77,37 @@ npm run format
 - **Database:** PostgreSQL with Prisma ORM
 - **Caching:** Redis
 - **Cloud:** Google Cloud Platform, Firebase
-- **Deployment:** Vercel-ready, Docker support
+
+### Frontend
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **UI Components:** Custom components with Lucide icons
+- **Animation:** Framer Motion
+
+### Deployment
+- **Vercel:** Enterprise-grade configuration for Next.js frontend
+- **Docker:** Containerized deployment support for backend
+- **Traditional Server:** PM2 + Nginx setup
 
 ## 📁 Project Structure
 
 ```
-src/
-├── api/                # API route handlers
-├── config/             # Configuration files (logger, redis, firebase, etc.)
-├── modules/            # Feature modules
-│   └── chat/           # Real-time chat module with WebSocket gateway
-├── middleware/         # Custom middleware (error handling, validation)
-├── services/           # Business logic services
+/
+├── frontend/            # Next.js application
+│   ├── src/
+│   │   ├── app/        # Next.js App Router pages
+│   │   ├── components/ # React components
+│   │   └── lib/        # Utility functions
+│   ├── vercel.json     # Vercel deployment config
+│   ├── next.config.js  # Next.js configuration
+│   └── package.json    # Frontend dependencies
+├── src/                # NestJS backend
+│   ├── api/            # API route handlers
+│   ├── config/         # Configuration files
+│   ├── modules/        # Feature modules
+│   ├── middleware/     # Custom middleware
+│   ├── services/       # Business logic services
 ├── gateways/           # WebSocket gateways
 ├── utils/              # Utility functions
 ├── app.module.ts       # Root application module
@@ -137,13 +157,35 @@ docker run -p 4000:4000 --env-file .env quemiai
 
 ## 🚀 Deployment
 
-### Vercel
+### Next.js Frontend
 
-The project is configured for Vercel deployment with `vercel.json`.
+The Next.js frontend application is located in the `/frontend` directory and is configured for Vercel deployment with enterprise-grade security and performance settings.
 
-### Docker
+```bash
+cd frontend
+vercel --prod
+```
 
+**Important:** Set **Root Directory** to `frontend` in your Vercel Project Settings.
+
+For detailed frontend deployment instructions, see:
+- [frontend/README.md](frontend/README.md) - Frontend setup and deployment
+- [VERCEL_MIGRATION.md](VERCEL_MIGRATION.md) - Vercel configuration guide
+
+### NestJS Backend
+
+#### Vercel
+The backend can be deployed to Vercel as serverless functions (requires separate configuration).
+
+#### Docker
 Use the included `Dockerfile` for containerized deployment on any platform.
+
+```bash
+docker build -t quemiai:latest .
+docker run -p 4000:4000 --env-file .env quemiai:latest
+```
+
+For comprehensive deployment options, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## 📋 Git Workflow
 
