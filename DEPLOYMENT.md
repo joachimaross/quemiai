@@ -2,6 +2,8 @@
 
 This guide covers deployment strategies for the Quemiai backend application.
 
+> **📋 See Also:** [ROADMAP.md](ROADMAP.md) for planned enhancements to monitoring, performance, security, and architecture.
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
@@ -10,6 +12,7 @@ This guide covers deployment strategies for the Quemiai backend application.
 - [Traditional Server Deployment](#traditional-server-deployment)
 - [Environment Configuration](#environment-configuration)
 - [Production Checklist](#production-checklist)
+- [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
@@ -231,10 +234,16 @@ FIREBASE_PROJECT_ID=...
 
 ### Security Best Practices
 
+> **Note:** For comprehensive security implementation, see [ROADMAP.md - PHASE 3.5](ROADMAP.md#phase-35-advanced-security).
+
 1. **Never commit `.env` files** to version control
 2. **Use strong secrets** for JWT and other security tokens
 3. **Rotate secrets regularly** in production
 4. **Use secret management** services (AWS Secrets Manager, HashiCorp Vault, etc.)
+5. **Enable security headers** with Helmet middleware (planned - see PHASE 3.5)
+6. **Implement vulnerability scanning** with npm audit, Dependabot, and Snyk (planned - see PHASE 3.5)
+7. **Use JWT refresh tokens** with proper expiration (planned - see PHASE 3.5)
+8. **Implement RBAC** for role-based access control (planned - see PHASE 3.5)
 
 ## Production Checklist
 
@@ -267,16 +276,28 @@ FIREBASE_PROJECT_ID=...
 
 ### Monitoring Setup
 
+> **Note:** For detailed monitoring and observability implementation, see [ROADMAP.md - PHASE 2.5](ROADMAP.md#phase-25-monitoring--observability).
+
 1. **Application Monitoring**
    - Set up error tracking (Sentry, Rollbar)
    - Configure application performance monitoring (APM)
-   - Set up log aggregation (ELK Stack, CloudWatch)
+   - Set up log aggregation (ELK Stack, Logtail, Datadog, CloudWatch)
+   - Implement Prometheus metrics (see PHASE 2.5)
+   - Configure Grafana dashboards (see PHASE 2.5)
 
 2. **Infrastructure Monitoring**
    - CPU and memory usage
    - Disk space
    - Network traffic
    - Database connections
+   - Redis connections and cache hit rates
+   - Connection pool metrics
+
+3. **Health Checks**
+   - Basic health endpoint: `/health` (status, uptime, environment)
+   - Planned: `/health/ready` for readiness probes (database, Redis connectivity)
+   - Planned: `/health/live` for liveness probes
+   - See [ROADMAP.md - Health Checks](ROADMAP.md#health-checks) for implementation details
 
 3. **Alerts**
    - Set up alerts for:
@@ -286,6 +307,8 @@ FIREBASE_PROJECT_ID=...
      - Resource exhaustion
 
 ### Scaling Strategies
+
+> **Note:** For performance optimization and load testing, see [ROADMAP.md - PHASE 3](ROADMAP.md#phase-3-performance--reliability).
 
 #### Horizontal Scaling
 
@@ -297,15 +320,26 @@ FIREBASE_PROJECT_ID=...
 #### Vertical Scaling
 
 - Increase server resources (CPU, RAM)
-- Optimize database queries
-- Implement caching strategies
+- Optimize database queries (see PHASE 3 for query optimization)
+- Implement caching strategies (Redis caching - see PHASE 3)
 
 #### Database Scaling
 
 - Add read replicas
-- Implement connection pooling
+- Implement connection pooling (see PHASE 3 for pool monitoring)
 - Use database caching (Redis)
 - Consider database sharding for large scale
+
+### Performance Testing
+
+> **Note:** For load testing implementation, see [ROADMAP.md - Load Testing](ROADMAP.md#load-testing).
+
+Planned performance testing infrastructure includes:
+- Load testing with k6 or Artillery
+- Performance baseline establishment
+- Performance regression tests in CI/CD
+- Automated performance reports
+- See PHASE 3 for detailed implementation steps
 
 ## Rollback Strategy
 
