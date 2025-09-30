@@ -1,2 +1,4 @@
-// This file is not used for the Netlify deployment.
-// The main entry point for the Netlify function is src/functions/api.ts.
+// Quemi (Vercel) placeholder entry file.
+// Previous Netlify-specific references removed.
+// If using Next.js API routes, they live under /pages/api or /app/api.
+// This file can be removed if unused.
