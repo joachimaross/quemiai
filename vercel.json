@@ -1,10 +1,1 @@
-{
-  "version": 2,
-  "outputDirectory": "dist",
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "src/functions/api.ts"
-    }
-  ]
-}
+{"rootDirectory": "frontend"}
