@@ -17,32 +17,39 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let errorDetails: any;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      message = typeof exceptionResponse === 'string' 
-        ? exceptionResponse 
-        : (exceptionResponse as any).message || message;
+      message =
+        typeof exceptionResponse === 'string'
+          ? exceptionResponse
+          : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (exceptionResponse as any).message || message;
       errorDetails = exceptionResponse;
     } else if (exception instanceof Error) {
       message = exception.message;
       errorDetails = {
         name: exception.name,
-        stack: process.env.NODE_ENV === 'development' ? exception.stack : undefined,
+        stack:
+          process.env.NODE_ENV === 'development' ? exception.stack : undefined,
       };
     }
 
     // Log the error
-    logger.error({
-      err: exception,
-      req: {
-        method: request.method,
-        url: request.url,
-        ip: request.ip,
+    logger.error(
+      {
+        err: exception,
+        req: {
+          method: request.method,
+          url: request.url,
+          ip: request.ip,
+        },
       },
-    }, `${status} - ${message}`);
+      `${status} - ${message}`,
+    );
 
     // Send response
     response.status(status).json({

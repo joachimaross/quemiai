@@ -31,7 +31,9 @@ wss.on('connection', async (ws: AuthenticatedWebSocket, request) => {
 
     if (data.type === 'join') {
       rooms.set(ws, data.room);
-      console.log(`Client ${ws.userId || 'unauthenticated'} joined room ${data.room}`);
+      console.log(
+        `Client ${ws.userId || 'unauthenticated'} joined room ${data.room}`,
+      );
     } else if (data.type === 'message') {
       const room = rooms.get(ws);
       if (room) {
@@ -43,7 +45,11 @@ wss.on('connection', async (ws: AuthenticatedWebSocket, request) => {
             rooms.get(authenticatedClient) === room
           ) {
             authenticatedClient.send(
-              JSON.stringify({ type: 'message', userId: ws.userId, message: data.message }),
+              JSON.stringify({
+                type: 'message',
+                userId: ws.userId,
+                message: data.message,
+              }),
             );
           }
         });

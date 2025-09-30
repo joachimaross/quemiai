@@ -1,11 +1,23 @@
-import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: true })
-export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server!: Server;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   afterInit(_server: Server) {
     console.log('WebSocket server initialized');
   }
@@ -19,18 +31,31 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('sendMessage')
-  handleMessage(@MessageBody() data: { conversationId: string; message: string; userId: string }, @ConnectedSocket() _client: Socket) {
+  handleMessage(
+    @MessageBody()
+    data: { conversationId: string; message: string; userId: string },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @ConnectedSocket() _client: Socket,
+  ) {
     // Broadcast to all clients in the conversation room
     this.server.to(data.conversationId).emit('receiveMessage', data);
   }
 
   @SubscribeMessage('joinConversation')
-  handleJoin(@MessageBody() data: { conversationId: string }, @ConnectedSocket() client: Socket) {
+  handleJoin(
+    @MessageBody() data: { conversationId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
     client.join(data.conversationId);
     client.emit('joinedConversation', { conversationId: data.conversationId });
   }
   @SubscribeMessage('typing')
-  handleTyping(@MessageBody() data: { conversationId: string; userId: string; isTyping: boolean }, @ConnectedSocket() _client: Socket) {
+  handleTyping(
+    @MessageBody()
+    data: { conversationId: string; userId: string; isTyping: boolean },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @ConnectedSocket() _client: Socket,
+  ) {
     // Broadcast typing indicator to all clients in the conversation room
     this.server.to(data.conversationId).emit('typing', data);
   }
