@@ -6,7 +6,8 @@ const options = {
     info: {
       title: 'Quemi Social Messaging API',
       version: '1.0.0',
-      description: 'API documentation for the Quemi social messaging platform (migrated from Netlify to Vercel).',
+      description:
+        'API documentation for the Quemi social messaging platform (migrated from Netlify to Vercel).',
     },
     servers: [
       {

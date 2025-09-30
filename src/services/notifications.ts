@@ -1,10 +1,11 @@
 // Notifications service stub
-export function sendNotification(userId: string, message: string) {
+export function sendNotification(_userId: string, message: string) {
   // Simulate sending a notification
-  return { success: true, userId, message };
+  return { success: true, userId: _userId, message };
 }
 
-export function getNotifications(userId: string) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getNotifications(_userId: string) {
   // Simulate fetching notifications
   return [
     { id: '1', message: 'Welcome to Jacameno!', read: false },

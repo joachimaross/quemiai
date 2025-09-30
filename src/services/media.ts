@@ -1,5 +1,6 @@
 // Media service stub
-export function uploadMedia(userId: string, file: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+export function uploadMedia(_userId: string, _file: any) {
   // Simulate media upload
   return { success: true, url: 'https://cdn.jacameno.com/media/123.jpg' };
 }
