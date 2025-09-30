@@ -55,24 +55,6 @@ npm run test:cov
 npm run test:e2e
 ```
 
-**See [TESTING.md](TESTING.md) for comprehensive testing guide, coverage goals, and best practices.**
-
-### Current Test Coverage
-
-- **Overall Coverage:** ~42% (Target: 75%+)
-- **Unit Tests:** 10 tests passing
-- **Integration Tests:** Included
-- **E2E Tests:** Available
-
-### Coverage Goals
-
-| Metric | Current | Target |
-|--------|---------|--------|
-| Statements | ~42% | 75% |
-| Branches | ~20% | 65% |
-| Functions | ~15% | 70% |
-| Lines | ~41% | 75% |
-
 ## 🧹 Code Quality
 
 ```bash
@@ -135,13 +117,11 @@ See `.env.example` for all required environment variables:
 - ✅ Structured logging with Pino
 - ✅ Global error handling
 - ✅ Request validation
-- ✅ **Rate limiting with @nestjs/throttler**
-- ✅ **Sentry error tracking and performance monitoring**
+- ✅ Rate limiting
 - ✅ CORS configuration
 - ✅ Swagger API documentation (configurable)
 - ✅ Docker support
 - ✅ CI/CD with GitHub Actions
-- ✅ **Enhanced Vercel deployment with security headers**
 
 ## 🐳 Docker
 
@@ -157,41 +137,13 @@ docker run -p 4000:4000 --env-file .env quemiai
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
+### Vercel
 
-The project is configured for Vercel deployment with enhanced `vercel.json`.
-
-**Key Features:**
-- Automatic HTTPS and security headers
-- Environment variable management
-- Preview deployments for PRs
-- Automatic scaling
-- Built-in analytics
-
-**Quick Deploy:**
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
-```
-
-**See [DEPLOYMENT.md](DEPLOYMENT.md) for:**
-- Complete Vercel deployment checklist
-- Sentry integration setup
-- Rate limiting configuration
-- Environment variables guide
-- Troubleshooting and best practices
+The project is configured for Vercel deployment with `vercel.json`.
 
 ### Docker
 
 Use the included `Dockerfile` for containerized deployment on any platform.
-
-```bash
-docker build -t quemiai .
-docker run -p 4000:4000 --env-file .env quemiai
-```
 
 ## 📋 Git Workflow
 
@@ -215,6 +167,43 @@ See our comprehensive [ROADMAP.md](ROADMAP.md) for detailed development phases a
 - [x] Logging & error handling
 - [x] Docker & CI/CD setup
 
+### In Progress / Planned
+- [ ] **PHASE 2.5:** Monitoring & Observability
+  - Enhanced health checks (`/health`, `/ready`)
+  - Prometheus metrics integration
+  - Grafana dashboard setup
+  - Log aggregation (ELK, Logtail, Datadog)
+
+- [ ] **PHASE 3:** Performance & Reliability
+  - Load testing with k6/Artillery
+  - Redis caching optimization
+  - Database query optimization
+  - Performance regression tests
+
+- [ ] **PHASE 3.5:** Advanced Security
+  - Helmet middleware configuration
+  - Automated vulnerability scanning
+  - JWT refresh tokens
+  - RBAC implementation
+
+- [ ] **PHASE 3.75:** Developer Experience
+  - Auto-generated Swagger/OpenAPI docs
+  - Enhanced GitHub Actions
+  - PR preview deployments
+
+- [ ] **PHASE 4:** Architecture Evolution
+  - Monorepo split (frontend/backend)
+  - Reverse proxy setup
+  - Microservices preparation
+
+- [ ] **PHASE 4+:** SaaS Product Features
+  - Multi-tenancy and advanced auth
+  - Enhanced messaging (typing, reactions, files, voice)
+  - Enterprise features (audit logs, data export/import)
+  - Billing integration (Stripe)
+  - Admin dashboard
+
+For detailed implementation plans, timelines, and actionable checklists, see [ROADMAP.md](ROADMAP.md).
 
 ## 📝 License
 
