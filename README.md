@@ -206,19 +206,15 @@ See `CONTRIBUTING.md` for contribution guidelines.
 
 ## ✅ Roadmap
 
+See our comprehensive [ROADMAP.md](ROADMAP.md) for detailed development phases and timelines.
+
+### Completed
 - [x] Base NestJS setup
 - [x] Real-time chat with WebSockets
 - [x] Authentication & OAuth
 - [x] Logging & error handling
 - [x] Docker & CI/CD setup
-- [x] **Rate limiting implementation**
-- [x] **Sentry error tracking integration**
-- [x] **Enhanced Vercel deployment**
-- [ ] Enhanced AI features
-- [ ] Advanced caching strategies
-- [ ] Comprehensive API documentation
-- [ ] **Increase test coverage to 75%+**
-- [ ] Microservices architecture
+
 
 ## 📝 License
 
