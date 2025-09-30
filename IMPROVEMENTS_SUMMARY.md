@@ -321,25 +321,35 @@ src/
 
 ## 15. Recommendations for Future Improvements
 
-### Short Term
-1. Add more comprehensive test coverage
-2. Set up Sentry or similar for error tracking
-3. Implement rate limiting at application level
-4. Add API documentation with Swagger
+> **Note:** A comprehensive roadmap with detailed phases is now available in [ROADMAP.md](ROADMAP.md).
+
+The roadmap includes:
+- **PHASE 2.5:** Monitoring & Observability (health checks, Prometheus metrics, Grafana dashboards, log aggregation)
+- **PHASE 3:** Performance & Reliability (load testing, Redis caching, database optimization, performance regression tests)
+- **PHASE 3.5:** Advanced Security (Helmet middleware, vulnerability scanning, JWT refresh tokens, RBAC)
+- **PHASE 3.75:** Developer Experience (Swagger/OpenAPI auto-generation, enhanced GitHub Actions, preview deployments)
+- **PHASE 4:** Architecture (monorepo split, separate deployments, reverse proxy setup, microservices preparation)
+- **PHASE 4+:** Product & SaaS Readiness (full auth system, enhanced messaging, enterprise features, billing, community)
+
+### Short Term (Next 1-2 Months)
+1. Complete monitoring and observability infrastructure (PHASE 2.5)
+2. Implement performance testing and optimization (PHASE 3)
+3. Set up Sentry or similar for error tracking
+4. Add comprehensive API documentation with Swagger
 5. Set up staging environment
 
-### Medium Term
-1. Implement caching strategies with Redis
-2. Add database migrations with Prisma
-3. Implement proper authentication middleware
-4. Add request/response logging middleware
+### Medium Term (3-6 Months)
+1. Implement advanced security features (PHASE 3.5)
+2. Enhance developer experience with better tooling (PHASE 3.75)
+3. Implement caching strategies with Redis
+4. Add database migrations with Prisma
 5. Set up automated database backups
 
-### Long Term
-1. Microservices architecture consideration
-2. GraphQL API implementation
-3. Advanced monitoring and alerting
-4. Performance optimization
+### Long Term (6+ Months)
+1. Split monorepo and optimize deployment architecture (PHASE 4)
+2. Implement microservices architecture consideration
+3. Build out full SaaS features (PHASE 4+)
+4. GraphQL API implementation
 5. Auto-scaling setup
 
 ## Summary

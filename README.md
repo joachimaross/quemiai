@@ -158,17 +158,52 @@ See `CONTRIBUTING.md` for contribution guidelines.
 
 ## ✅ Roadmap
 
+See our comprehensive [ROADMAP.md](ROADMAP.md) for detailed development phases and timelines.
+
+### Completed
 - [x] Base NestJS setup
 - [x] Real-time chat with WebSockets
 - [x] Authentication & OAuth
 - [x] Logging & error handling
 - [x] Docker & CI/CD setup
-- [ ] Enhanced AI features
-- [ ] Advanced caching strategies
-- [ ] Comprehensive API documentation
-- [ ] Performance monitoring
-- [ ] Rate limiting & security enhancements
-- [ ] Microservices architecture
+
+### In Progress / Planned
+- [ ] **PHASE 2.5:** Monitoring & Observability
+  - Enhanced health checks (`/health`, `/ready`)
+  - Prometheus metrics integration
+  - Grafana dashboard setup
+  - Log aggregation (ELK, Logtail, Datadog)
+
+- [ ] **PHASE 3:** Performance & Reliability
+  - Load testing with k6/Artillery
+  - Redis caching optimization
+  - Database query optimization
+  - Performance regression tests
+
+- [ ] **PHASE 3.5:** Advanced Security
+  - Helmet middleware configuration
+  - Automated vulnerability scanning
+  - JWT refresh tokens
+  - RBAC implementation
+
+- [ ] **PHASE 3.75:** Developer Experience
+  - Auto-generated Swagger/OpenAPI docs
+  - Enhanced GitHub Actions
+  - PR preview deployments
+
+- [ ] **PHASE 4:** Architecture Evolution
+  - Monorepo split (frontend/backend)
+  - Reverse proxy setup
+  - Microservices preparation
+
+- [ ] **PHASE 4+:** SaaS Product Features
+  - Multi-tenancy and advanced auth
+  - Enhanced messaging (typing, reactions, files, voice)
+  - Enterprise features (audit logs, data export/import)
+  - Billing integration (Stripe)
+  - Admin dashboard
+
+For detailed implementation plans, timelines, and actionable checklists, see [ROADMAP.md](ROADMAP.md).
 
 ## 📝 License
 
