@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils';
 import FloatingDock from '@/components/FloatingDock';
 
 export const metadata: Metadata = {
-  title: 'Quemiai | Course Management Platform',
+  title: 'Quemi Social | Connect, Share, and Engage',
   description:
-    'A modern course management platform built with Next.js and NestJS.',
+    'A modern social media and messaging platform inspired by Apple Messages and Google Messages. Connect with friends, share moments, and stay engaged.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

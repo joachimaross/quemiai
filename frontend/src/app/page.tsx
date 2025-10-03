@@ -8,10 +8,10 @@ const HomePage: NextPage = () => {
     <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
       <Logo />
       <h1 className="text-5xl font-bold text-zeeky-blue mt-4 mb-2 font-heading tracking-tight">
-        Zeeky
+        Quemi Social
       </h1>
       <p className="text-lg text-gray-300">
-        Your pulse on real content. The immersive experience is loading...
+        Connect, Share, and Engage - Your modern social platform
       </p>
     </div>
   );

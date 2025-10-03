@@ -45,7 +45,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-8">
           <h1 className="text-3xl font-bold text-zeeky-blue mb-6 text-center font-heading">
-            Quemiai Login
+            Quemi Social Login
           </h1>
 
           {error && (
