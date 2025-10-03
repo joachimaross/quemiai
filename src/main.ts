@@ -4,22 +4,18 @@ import { AllExceptionsFilter } from './filters/http-exception.filter';
 import logger from './config/logger';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { helmetConfig, corsConfig } from './config/security.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
 
-  // Security: Helmet middleware for security headers
-  app.use(helmet());
+  // Security: Helmet middleware for comprehensive security headers
+  app.use(helmet(helmetConfig));
 
-  // Enable CORS with environment-based configuration
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
-  app.enableCors({
-    origin: frontendUrl,
-    methods: 'GET,POST,PUT,DELETE,OPTIONS',
-    credentials: true,
-  });
+  // Enable CORS with secure configuration
+  app.enableCors(corsConfig);
 
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
