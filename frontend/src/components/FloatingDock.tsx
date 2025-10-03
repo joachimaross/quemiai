@@ -1,18 +1,22 @@
 'use client';
 
-import { Home, Compass, MessageCircle, Users, UserCircle } from 'lucide-react';
+import { Home, Compass, MessageCircle, Bell, UserCircle } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { mockNotifications } from '@/lib/mockData';
 
 const FloatingDock = () => {
   const router = useRouter();
   const pathname = usePathname();
+  
+  // Count unread notifications
+  const unreadNotifications = mockNotifications.filter(n => !n.read).length;
 
   const navItems = [
     { icon: Home, label: 'Feed', path: '/feed' },
     { icon: Compass, label: 'Discover', path: '/discover' },
     { icon: MessageCircle, label: 'Messages', path: '/messages' },
-    { icon: Users, label: 'Community', path: '/community' },
+    { icon: Bell, label: 'Notifications', path: '/notifications', badge: unreadNotifications },
     { icon: UserCircle, label: 'Profile', path: '/profile' },
   ];
 
@@ -23,7 +27,7 @@ const FloatingDock = () => {
           key={item.label}
           onClick={() => router.push(item.path)}
           className={cn(
-            'flex flex-col items-center justify-center w-16 h-16 rounded-full transition-all duration-300 ease-in-out group',
+            'flex flex-col items-center justify-center w-16 h-16 rounded-full transition-all duration-300 ease-in-out group relative',
             {
               'text-white bg-zeeky-blue/20': pathname === item.path,
               'text-gray-400 hover:bg-zeeky-blue/20 hover:text-white': pathname !== item.path,
@@ -31,6 +35,11 @@ const FloatingDock = () => {
           )}
         >
           <item.icon className="w-6 h-6" />
+          {item.badge && item.badge > 0 && (
+            <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
+              {item.badge > 9 ? '9+' : item.badge}
+            </span>
+          )}
           <span className="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {item.label}
           </span>
