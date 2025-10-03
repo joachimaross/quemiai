@@ -3,6 +3,11 @@
 /node_modules
 /build
 
+# Compiled JavaScript files in src (TypeScript output)
+src/**/*.js
+!src/**/*.spec.js
+!src/**/*.test.js
+
 # Logs
 logs
 *.log

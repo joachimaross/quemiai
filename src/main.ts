@@ -3,15 +3,20 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './filters/http-exception.filter';
 import logger from './config/logger';
 import { ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
 
-  // Enable CORS
+  // Security: Helmet middleware for security headers
+  app.use(helmet());
+
+  // Enable CORS with environment-based configuration
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
   app.enableCors({
-    origin: 'http://localhost:3001',
+    origin: frontendUrl,
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     credentials: true,
   });
