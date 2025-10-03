@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChatModule } from './modules/chat/chat.module';
@@ -13,6 +14,13 @@ import { validate } from './config/env.validation';
       validate,
       envFilePath: ['.env.local', '.env'],
     }),
+    // Rate limiting: 10 requests per minute per IP
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 60 seconds
+        limit: 10,
+      },
+    ]),
     ChatModule,
     CoursesModule,
   ],
