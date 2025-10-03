@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChatModule } from './modules/chat/chat.module';
 import { CoursesModule } from './modules/courses/courses.module';
+import { HealthModule } from './modules/health/health.module';
+import { MetricsInterceptor } from './interceptors/metrics.interceptor';
 import { validate } from './config/env.validation';
+import { prometheusConfig } from './config/prometheus.config';
 
 @Module({
   imports: [
@@ -21,10 +26,21 @@ import { validate } from './config/env.validation';
         limit: 10,
       },
     ]),
+    PrometheusModule.register({
+      defaultMetrics: prometheusConfig.defaultMetrics,
+      defaultLabels: prometheusConfig.defaultLabels,
+    }),
+    HealthModule,
     ChatModule,
     CoursesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MetricsInterceptor,
+    },
+  ],
 })
 export class AppModule {}
