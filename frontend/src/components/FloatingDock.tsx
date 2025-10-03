@@ -9,7 +9,7 @@ const FloatingDock = () => {
   const pathname = usePathname();
 
   const navItems = [
-    { icon: Home, label: 'Home', path: '/' },
+    { icon: Home, label: 'Feed', path: '/feed' },
     { icon: Compass, label: 'Discover', path: '/discover' },
     { icon: PlusSquare, label: 'Create', path: '/create' },
     { icon: Users, label: 'Community', path: '/community' },
