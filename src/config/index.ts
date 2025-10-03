@@ -25,5 +25,14 @@ export const config = {
     accessToken: process.env.TWITTER_ACCESS_TOKEN || '',
     accessSecret: process.env.TWITTER_ACCESS_SECRET || '',
   },
+  tiktok: {
+    clientKey: process.env.TIKTOK_CLIENT_KEY || '',
+    clientSecret: process.env.TIKTOK_CLIENT_SECRET || '',
+  },
+  instagram: {
+    clientId: process.env.INSTAGRAM_CLIENT_ID || '',
+    clientSecret: process.env.INSTAGRAM_CLIENT_SECRET || '',
+    accessToken: process.env.INSTAGRAM_ACCESS_TOKEN || '',
+  },
   jwtSecret: process.env.JWT_SECRET || 'supersecretkey',
 };
