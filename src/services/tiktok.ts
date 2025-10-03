@@ -88,10 +88,11 @@ export class TikTokService {
     cursor?: string,
     maxCount = 20,
   ): Promise<{
-    videos: any[];
+    videos: unknown[];
     cursor: string;
     has_more: boolean;
   }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any = {
       max_count: maxCount,
     };
@@ -114,7 +115,7 @@ export class TikTokService {
   async getVideoInsights(
     accessToken: string,
     videoIds: string[],
-  ): Promise<any> {
+  ): Promise<unknown> {
     const response = await this.client.post(
       '/video/query/',
       {
@@ -174,7 +175,7 @@ export class TikTokService {
     videoUrl: string,
     title: string,
     description?: string,
-  ): Promise<any> {
+  ): Promise<unknown> {
     const response = await this.client.post(
       '/post/publish/video/init/',
       {

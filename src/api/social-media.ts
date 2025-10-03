@@ -5,6 +5,8 @@ import { instagramService } from '../services/instagram';
 import AppError from '../utils/AppError';
 import { firebaseAuthMiddleware } from '../middleware/firebaseAuth';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 const router = Router();
 
 /**

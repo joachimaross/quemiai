@@ -67,8 +67,9 @@ const mockedTikTokService = tiktokService as jest.Mocked<typeof tiktokService>;
 
 // Mock Instagram service
 jest.mock('../../services/instagram');
-const mockedInstagramService =
-  instagramService as jest.Mocked<typeof instagramService>;
+const mockedInstagramService = instagramService as jest.Mocked<
+  typeof instagramService
+>;
 
 describe('Social Media API Integration', () => {
   const authToken = 'test-firebase-token';

@@ -1,6 +1,8 @@
 import { InstagramService } from '../instagram';
 import axios from 'axios';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
@@ -237,7 +239,8 @@ describe('InstagramService', () => {
   describe('postContent', () => {
     it('should complete full post flow for image', async () => {
       const mockClient = {
-        post: jest.fn()
+        post: jest
+          .fn()
           .mockResolvedValueOnce({ data: { id: 'container-123' } })
           .mockResolvedValueOnce({ data: { id: 'published-123' } }),
         get: jest.fn().mockResolvedValueOnce({

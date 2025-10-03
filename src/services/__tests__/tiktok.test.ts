@@ -1,6 +1,8 @@
 import { TikTokService } from '../tiktok';
 import axios from 'axios';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 

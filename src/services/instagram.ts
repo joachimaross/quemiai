@@ -91,7 +91,10 @@ export class InstagramService {
   /**
    * Get user profile information
    */
-  async getUserProfile(accessToken: string, userId: string): Promise<{
+  async getUserProfile(
+    accessToken: string,
+    userId: string,
+  ): Promise<{
     id: string;
     username: string;
     account_type: string;
@@ -122,7 +125,7 @@ export class InstagramService {
     limit = 25,
     after?: string,
   ): Promise<{
-    data: any[];
+    data: unknown[];
     paging?: {
       cursors: {
         before: string;
@@ -131,6 +134,7 @@ export class InstagramService {
       next?: string;
     };
   }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any = {
       fields:
         'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username,like_count,comments_count',
@@ -177,7 +181,7 @@ export class InstagramService {
     userId: string,
     metric = 'follower_count,profile_views',
     period = 'day',
-  ): Promise<any> {
+  ): Promise<unknown> {
     const response = await this.client.get(`/${userId}/insights`, {
       params: {
         metric,
@@ -221,6 +225,7 @@ export class InstagramService {
   ): Promise<{
     id: string;
   }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any = {
       media_type: 'VIDEO',
       video_url: videoUrl,
@@ -259,7 +264,7 @@ export class InstagramService {
   /**
    * Get media details
    */
-  async getMedia(accessToken: string, mediaId: string): Promise<any> {
+  async getMedia(accessToken: string, mediaId: string): Promise<unknown> {
     const response = await this.client.get(`/${mediaId}`, {
       params: {
         fields:
@@ -329,7 +334,10 @@ export class InstagramService {
     );
 
     // Step 3: Get the published media details
-    const mediaDetails = await this.getMedia(accessToken, publishResponse.id);
+    const mediaDetails = (await this.getMedia(
+      accessToken,
+      publishResponse.id,
+    )) as { permalink?: string };
 
     return {
       id: publishResponse.id,
