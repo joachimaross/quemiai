@@ -3,39 +3,58 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signIn, googleSignIn } from '@/lib/auth';
+import { googleSignIn } from '@/lib/auth';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function SignupPage() {
+  const [formData, setFormData] = useState({
+    displayName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await signIn(email, password);
-      router.push('/feed');
+      // In a real app, this would create a new user
+      // For now, we'll simulate it
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+      setError(err.message || 'Failed to create account');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleSignup = async () => {
     setError('');
     setLoading(true);
 
     try {
       await googleSignIn();
-      router.push('/feed');
+      router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+      setError(err.message || 'Failed to sign up with Google');
     } finally {
       setLoading(false);
     }
@@ -46,10 +65,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-8">
           <h1 className="text-3xl font-bold text-zeeky-blue mb-2 text-center font-heading">
-            Welcome Back
+            Join Quemi Social
           </h1>
           <p className="text-gray-400 text-center mb-6">
-            Log in to continue to Quemi Social
+            Connect with friends and share your moments
           </p>
 
           {error && (
@@ -58,7 +77,22 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleEmailLogin} className="space-y-4">
+          <form onSubmit={handleEmailSignup} className="space-y-4">
+            <div>
+              <label htmlFor="displayName" className="block text-sm font-medium text-gray-300 mb-2">
+                Display Name
+              </label>
+              <input
+                type="text"
+                id="displayName"
+                value={formData.displayName}
+                onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-zeeky-blue"
+                required
+                placeholder="John Doe"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
@@ -66,8 +100,8 @@ export default function LoginPage() {
               <input
                 type="email"
                 id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-zeeky-blue"
                 required
                 placeholder="you@example.com"
@@ -81,22 +115,32 @@ export default function LoginPage() {
               <input
                 type="password"
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-zeeky-blue"
                 required
-                placeholder="Enter your password"
+                minLength={6}
+                placeholder="At least 6 characters"
               />
             </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center text-gray-400">
-                <input type="checkbox" className="mr-2" />
-                Remember me
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
+                Confirm Password
               </label>
-              <a href="#" className="text-zeeky-blue hover:underline">
-                Forgot password?
-              </a>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-zeeky-blue"
+                required
+                minLength={6}
+                placeholder="Confirm your password"
+              />
             </div>
 
             <button
@@ -104,7 +148,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full px-4 py-2 bg-zeeky-blue hover:bg-blue-600 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </form>
 
@@ -114,10 +158,10 @@ export default function LoginPage() {
             <div className="flex-1 border-t border-gray-700" />
           </div>
 
-          {/* Social Login Buttons */}
+          {/* Social Sign Up Buttons */}
           <div className="space-y-3">
             <button
-              onClick={handleGoogleLogin}
+              onClick={handleGoogleSignup}
               disabled={loading}
               className="w-full px-4 py-2 bg-white hover:bg-gray-100 text-gray-900 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -139,7 +183,7 @@ export default function LoginPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              {loading ? 'Signing in...' : 'Sign in with Google'}
+              {loading ? 'Signing up...' : 'Sign up with Google'}
             </button>
 
             <button
@@ -149,7 +193,7 @@ export default function LoginPage() {
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
               </svg>
-              Sign in with Apple
+              Sign up with Apple
             </button>
 
             <button
@@ -159,15 +203,26 @@ export default function LoginPage() {
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
-              Sign in with Facebook
+              Sign up with Facebook
             </button>
           </div>
 
           <p className="text-center text-sm text-gray-400 mt-6">
-            Don't have an account?{' '}
-            <Link href="/signup" className="text-zeeky-blue hover:underline">
-              Sign up
+            Already have an account?{' '}
+            <Link href="/login" className="text-zeeky-blue hover:underline">
+              Log in
             </Link>
+          </p>
+
+          <p className="text-center text-xs text-gray-500 mt-4">
+            By signing up, you agree to our{' '}
+            <a href="#" className="text-zeeky-blue hover:underline">
+              Terms of Service
+            </a>{' '}
+            and{' '}
+            <a href="#" className="text-zeeky-blue hover:underline">
+              Privacy Policy
+            </a>
           </p>
         </div>
       </div>
