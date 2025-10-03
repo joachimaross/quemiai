@@ -10,6 +10,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('getHello')
+  getHelloExplicit(): string {
+    return this.appService.getHello();
+  }
+
   @Get('health')
   healthCheck() {
     return {
@@ -18,5 +23,10 @@ export class AppController {
       uptime: process.uptime(),
       environment: process.env.NODE_ENV || 'development',
     };
+  }
+
+  @Get('healthCheck')
+  healthCheckExplicit() {
+    return this.healthCheck();
   }
 }

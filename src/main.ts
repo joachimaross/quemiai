@@ -10,7 +10,11 @@ async function bootstrap() {
   });
 
   // Enable CORS
-  app.enableCors();
+  app.enableCors({
+    origin: 'http://localhost:3001',
+    methods: 'GET,POST,PUT,DELETE,OPTIONS',
+    credentials: true,
+  });
 
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
@@ -24,7 +28,7 @@ async function bootstrap() {
     }),
   );
 
-  const port = process.env.PORT ?? 4000;
+  const port = process.env.PORT ?? 3000;
   await app.listen(port);
 
   logger.info(`Application is running on: http://localhost:${port}`);
