@@ -43,6 +43,11 @@ model User {
   storyReactions StoryReaction[] @relation("UserStoryReactions")
   storyReplies   StoryReply[] @relation("UserStoryReplies")
   settings       UserSettings?
+  groupMemberships GroupMember[]
+  createdGroups  Group[] @relation("GroupCreator")
+  badges         UserBadge[]
+  reportedBy     Report[] @relation("ReportReporter")
+  reportedContent Report[] @relation("ReportReported")
 }
 
 model Conversation {
@@ -341,4 +346,127 @@ model SocialMediaConnection {
   @@unique([userId, platform])
   @@index([userId])
   @@index([platform])
+}
+
+model Group {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  avatarUrl   String?
+  coverUrl    String?
+  isPrivate   Boolean  @default(false)
+  creatorId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  creator     User     @relation("GroupCreator", fields: [creatorId], references: [id])
+  members     GroupMember[]
+  
+  @@index([creatorId])
+  @@index([isPrivate])
+}
+
+model GroupMember {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String
+  role      String   @default("member") // member, moderator, admin
+  joinedAt  DateTime @default(now())
+  
+  // Relations
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+  
+  @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
+}
+
+model Badge {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  iconUrl     String?
+  category    String   // achievement, milestone, community, special
+  rarity      String   @default("common") // common, rare, epic, legendary
+  criteria    String?  // JSON string for badge criteria
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  userBadges  UserBadge[]
+  
+  @@index([category])
+  @@index([rarity])
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([badgeId])
+}
+
+model Leaderboard {
+  id          String   @id @default(uuid())
+  userId      String
+  category    String   // posts, likes, followers, engagement
+  score       Int      @default(0)
+  rank        Int?
+  period      String   @default("all_time") // daily, weekly, monthly, all_time
+  periodStart DateTime?
+  periodEnd   DateTime?
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([userId, category, period])
+  @@index([category, period, score])
+  @@index([userId])
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  reporterId  String
+  reportedId  String
+  entityType  String   // user, post, comment, story
+  entityId    String
+  reason      String
+  description String?
+  status      String   @default("pending") // pending, reviewing, resolved, dismissed
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  resolution  String?  // JSON string for resolution details
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  reporter    User     @relation("ReportReporter", fields: [reporterId], references: [id])
+  reported    User     @relation("ReportReported", fields: [reportedId], references: [id])
+  
+  @@index([reporterId])
+  @@index([reportedId])
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model FriendSuggestion {
+  id              String   @id @default(uuid())
+  userId          String
+  suggestedUserId String
+  reason          String   // mutual_friends, interests, location, etc.
+  score           Float    @default(0)
+  dismissed       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  
+  @@unique([userId, suggestedUserId])
+  @@index([userId, dismissed])
+  @@index([score])
 }
