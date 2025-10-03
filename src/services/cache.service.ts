@@ -49,7 +49,7 @@ export class CacheService {
 
     try {
       const value = await this.client.get(key);
-      return value ? JSON.parse(value) : null;
+      return value && typeof value === 'string' ? JSON.parse(value) : null;
     } catch (error) {
       this.logger.error(`Error getting key ${key}`, error);
       return null;
