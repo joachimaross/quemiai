@@ -40,6 +40,8 @@ model User {
   marketplaceItems MarketplaceItem[] @relation("UserMarketplaceItems")
   typingIndicators TypingIndicator[]
   socialMediaConnections SocialMediaConnection[]
+  storyReactions StoryReaction[] @relation("UserStoryReactions")
+  storyReplies   StoryReply[] @relation("UserStoryReplies")
 }
 
 model Conversation {
@@ -144,6 +146,36 @@ model Story {
   expiresAt DateTime
   // Relations
   author    User     @relation(fields: [authorId], references: [id])
+  reactions StoryReaction[]
+  replies   StoryReply[]
+}
+
+model StoryReaction {
+  id        String   @id @default(uuid())
+  storyId   String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+  // Relations
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserStoryReactions", fields: [userId], references: [id])
+  
+  @@unique([storyId, userId, emoji])
+  @@index([storyId])
+}
+
+model StoryReply {
+  id        String   @id @default(uuid())
+  storyId   String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  // Relations
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserStoryReplies", fields: [userId], references: [id])
+  
+  @@index([storyId])
+  @@index([userId])
 }
 
 model Hashtag {

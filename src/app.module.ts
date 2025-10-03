@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChatModule } from './modules/chat/chat.module';
 import { CoursesModule } from './modules/courses/courses.module';
+import { StoriesModule } from './modules/stories/stories.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -23,6 +24,7 @@ import { validate } from './config/env.validation';
     ]),
     ChatModule,
     CoursesModule,
+    StoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
