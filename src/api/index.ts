@@ -6,6 +6,7 @@ import analyticsRouter from './analytics';
 import marketplaceRouter from './marketplace';
 import aiRouter from './ai';
 import authRouter from './auth';
+import socialMediaRouter from './social-media';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/analytics', analyticsRouter);
 router.use('/marketplace', marketplaceRouter);
 router.use('/ai', aiRouter);
 router.use('/auth', authRouter);
+router.use('/social-media', socialMediaRouter);
 
 export default router;
