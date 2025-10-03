@@ -16,12 +16,13 @@ export default function MessagesPage() {
     (m) => m.conversationId === selectedConversation
   );
 
+  const lowerSearchQuery = searchQuery.toLowerCase();
   const filteredConversations = conversations.filter((conv) => {
     const participantNames = conv.participants
       .map((p) => p.displayName.toLowerCase())
       .join(' ');
-    return participantNames.includes(searchQuery.toLowerCase()) || 
-           conv.name?.toLowerCase().includes(searchQuery.toLowerCase());
+    return participantNames.includes(lowerSearchQuery) || 
+           conv.name?.toLowerCase().includes(lowerSearchQuery);
   });
 
   const handleSendMessage = (e: React.FormEvent) => {
