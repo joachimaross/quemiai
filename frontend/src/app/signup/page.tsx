@@ -3,31 +3,46 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signIn, googleSignIn } from '@/lib/auth';
+import { googleSignIn } from '@/lib/auth';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function SignupPage() {
+  const [formData, setFormData] = useState({
+    displayName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await signIn(email, password);
-      router.push('/dashboard');
+      // For now, show a message that signup will be integrated with Firebase
+      setError('Email signup coming soon! Please use social login.');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+      setError(err.message || 'Failed to sign up');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleSignup = async () => {
     setError('');
     setLoading(true);
 
@@ -35,7 +50,7 @@ export default function LoginPage() {
       await googleSignIn();
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+      setError(err.message || 'Failed to sign up with Google');
     } finally {
       setLoading(false);
     }
@@ -45,9 +60,12 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-deep-space px-4">
       <div className="w-full max-w-md">
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-8">
-          <h1 className="text-3xl font-bold text-zeeky-blue mb-6 text-center font-heading">
-            Quemi Social Login
+          <h1 className="text-3xl font-bold text-zeeky-blue mb-2 text-center font-heading">
+            Join Quemi Social
           </h1>
+          <p className="text-gray-400 text-center mb-6">
+            Create an account to connect with friends
+          </p>
 
           {error && (
             <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded mb-4">
@@ -55,7 +73,21 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleEmailLogin} className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-4">
+            <div>
+              <label htmlFor="displayName" className="block text-sm font-medium text-gray-300 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="displayName"
+                value={formData.displayName}
+                onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-zeeky-blue"
+                required
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
@@ -63,8 +95,8 @@ export default function LoginPage() {
               <input
                 type="email"
                 id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-zeeky-blue"
                 required
               />
@@ -77,10 +109,26 @@ export default function LoginPage() {
               <input
                 type="password"
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-zeeky-blue"
                 required
+                minLength={6}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-zeeky-blue"
+                required
+                minLength={6}
               />
             </div>
 
@@ -89,7 +137,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full px-4 py-2 bg-zeeky-blue hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Creating account...' : 'Sign Up'}
             </button>
           </form>
 
@@ -105,7 +153,7 @@ export default function LoginPage() {
 
             <div className="grid grid-cols-1 gap-3 mt-4">
               <button
-                onClick={handleGoogleLogin}
+                onClick={handleGoogleSignup}
                 disabled={loading}
                 className="w-full px-4 py-2 bg-white hover:bg-gray-100 text-gray-900 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
@@ -127,46 +175,45 @@ export default function LoginPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                {loading ? 'Signing in...' : 'Sign in with Google'}
+                {loading ? 'Signing up...' : 'Sign up with Google'}
               </button>
 
               <button
-                onClick={() => setError('Apple sign-in coming soon!')}
+                onClick={() => setError('Apple sign-up coming soon!')}
                 disabled={loading}
                 className="w-full px-4 py-2 bg-black hover:bg-gray-900 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center border border-gray-700"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
                 </svg>
-                {loading ? 'Signing in...' : 'Sign in with Apple'}
+                {loading ? 'Signing up...' : 'Sign up with Apple'}
               </button>
 
               <button
-                onClick={() => setError('Facebook sign-in coming soon!')}
+                onClick={() => setError('Facebook sign-up coming soon!')}
                 disabled={loading}
                 className="w-full px-4 py-2 bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                 </svg>
-                {loading ? 'Signing in...' : 'Sign in with Facebook'}
+                {loading ? 'Signing up...' : 'Sign up with Facebook'}
               </button>
             </div>
           </div>
 
-          <div className="mt-6 text-center space-y-2">
+          <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-zeeky-blue hover:underline">
-                Sign up
-              </Link>
-            </p>
-            <p className="text-sm text-gray-400">
-              <Link href="/forgot-password" className="text-zeeky-blue hover:underline">
-                Forgot your password?
+              Already have an account?{' '}
+              <Link href="/login" className="text-zeeky-blue hover:underline">
+                Sign in
               </Link>
             </p>
           </div>
+
+          <p className="text-xs text-gray-500 text-center mt-6">
+            By signing up, you agree to our Terms of Service and Privacy Policy
+          </p>
         </div>
       </div>
     </div>
