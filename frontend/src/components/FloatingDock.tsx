@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Compass, PlusSquare, Users, UserCircle } from 'lucide-react';
+import { Home, Compass, MessageCircle, Users, UserCircle } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,7 @@ const FloatingDock = () => {
   const navItems = [
     { icon: Home, label: 'Feed', path: '/feed' },
     { icon: Compass, label: 'Discover', path: '/discover' },
-    { icon: PlusSquare, label: 'Create', path: '/create' },
+    { icon: MessageCircle, label: 'Messages', path: '/messages' },
     { icon: Users, label: 'Community', path: '/community' },
     { icon: UserCircle, label: 'Profile', path: '/profile' },
   ];
