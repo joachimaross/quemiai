@@ -46,3 +46,14 @@ export class StoryReactionDto {
   @IsString()
   emoji: string;
 }
+
+export class StoryReplyDto {
+  @IsUUID()
+  storyId: string;
+
+  @IsUUID()
+  userId: string;
+
+  @IsString()
+  content: string;
+}

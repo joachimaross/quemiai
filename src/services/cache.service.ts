@@ -49,14 +49,17 @@ export class CacheService {
 
     try {
       const value = await this.client.get(key);
-      return value ? JSON.parse(value) : null;
+      if (typeof value === 'string') {
+        return JSON.parse(value) as T;
+      }
+      return null;
     } catch (error) {
       this.logger.error(`Error getting key ${key}`, error);
       return null;
     }
   }
 
-  async set(key: string, value: any, ttlSeconds?: number): Promise<void> {
+  async set(key: string, value: unknown, ttlSeconds?: number): Promise<void> {
     if (!this.client || !this.isConnected) {
       return;
     }
