@@ -1,6 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Course {
+// Domain model interface (no decorators)
+export interface Course {
+  id: string;
+  name: string;
+  description: string;
+  credits: number;
+  prerequisites: string[];
+}
+
+// DTO class for API documentation
+export class CourseDto {
   @ApiProperty({ 
     description: 'Unique identifier for the course',
     example: 'course-123'
