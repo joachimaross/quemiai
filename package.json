@@ -84,6 +84,7 @@
     "tailwind-merge": "^3.3.1",
     "twitter-api-v2": "^1.27.0",
     "typescript-eslint": "^8.44.0",
+    "uuid": "^13.0.0",
     "ws": "^8.18.3"
   },
   "devDependencies": {
@@ -100,6 +101,7 @@
     "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
     "cypress": "^15.2.0",

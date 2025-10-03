@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -9,6 +9,7 @@ import { ChatModule } from './modules/chat/chat.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { HealthModule } from './modules/health/health.module';
 import { MetricsInterceptor } from './interceptors/metrics.interceptor';
+import { CorrelationIdMiddleware } from './middleware/correlation-id.middleware';
 import { validate } from './config/env.validation';
 import { prometheusConfig } from './config/prometheus.config';
 
@@ -43,4 +44,8 @@ import { prometheusConfig } from './config/prometheus.config';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorrelationIdMiddleware).forRoutes('*');
+  }
+}
