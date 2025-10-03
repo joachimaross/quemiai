@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: 'http://localhost:3000' });
+const api = axios.create({ 
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000' 
+});
 
 export const getHello = () => api.get('/getHello');
 export const healthCheck = () => api.get('/healthCheck');
