@@ -5,6 +5,8 @@ This guide covers deployment strategies for the Quemiai platform, including both
 > **📋 See Also:** [ROADMAP.md](ROADMAP.md) for planned enhancements to monitoring, performance, security, and architecture.
 > 
 > **📂 Frontend Documentation:** See [frontend/README.md](frontend/README.md) for detailed Next.js frontend setup and deployment instructions.
+>
+> **🔧 Vercel Troubleshooting:** See [VERCEL_TROUBLESHOOTING.md](VERCEL_TROUBLESHOOTING.md) for comprehensive Vercel deployment troubleshooting and configuration guide.
 
 ## Table of Contents
 

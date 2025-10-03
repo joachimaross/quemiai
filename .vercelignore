@@ -1,0 +1,59 @@
+# This file ensures that if Vercel is misconfigured to deploy from root,
+# it will ignore backend files and provide a clear error rather than deploying incorrectly.
+# 
+# IMPORTANT: The correct configuration is to set "Root Directory" to "frontend" 
+# in Vercel Dashboard → Project Settings → General.
+# See VERCEL_MIGRATION.md and HOW_TO_COMPLETE_PRS.md for details.
+
+# Backend source files
+src/
+dist/
+test/
+
+# Backend configuration
+nest-cli.json
+tsconfig.json
+tsconfig.build.json
+jest.config.cjs
+
+# Backend dependencies
+node_modules/
+
+# Database
+prisma/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Git
+.git/
+.github/
+
+# Documentation (not needed in deployment)
+*.md
+!frontend/**/*.md
+
+# Testing
+cypress/
+cypress.config.cjs
+
+# IDE
+.idx/
+.vscode/
+.idea/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# All root-level backend files
+*.json
+*.js
+*.cjs
+*.mjs
+*.ts
+
+# But allow frontend directory
+!frontend/

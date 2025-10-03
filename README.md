@@ -166,11 +166,20 @@ cd frontend
 vercel --prod
 ```
 
-**Important:** Set **Root Directory** to `frontend` in your Vercel Project Settings.
+**⚠️ Critical Configuration Step:**  
+Set **Root Directory** to `frontend` in your Vercel Project Settings (Dashboard → Project → Settings → General).
 
-For detailed frontend deployment instructions, see:
+**✅ Recent Deployment Fixes:**
+- Build configuration optimized for monorepo structure
+- All dependencies resolved (ESLint, emotion)
+- Comprehensive troubleshooting guide added
+- Root directory protection implemented
+
+For detailed deployment instructions and troubleshooting, see:
+- [VERCEL_TROUBLESHOOTING.md](VERCEL_TROUBLESHOOTING.md) - **Start here for deployment issues**
 - [frontend/README.md](frontend/README.md) - Frontend setup and deployment
 - [VERCEL_MIGRATION.md](VERCEL_MIGRATION.md) - Vercel configuration guide
+- [DEPLOYMENT_FIX_SUMMARY.md](DEPLOYMENT_FIX_SUMMARY.md) - Recent fixes summary
 
 ### NestJS Backend
 
