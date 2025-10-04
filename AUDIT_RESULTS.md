@@ -188,7 +188,6 @@ Full documentation in `GIT_WORKFLOW.md`
 
 - `secret-scan.yml` - Security scanning ✅
 - `static.yml` - Static site deployment ✅
-- `jekyll-gh-pages.yml` - Documentation ✅
 
 ### Recommendations for Enhancement (Future)
 
