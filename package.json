@@ -21,7 +21,10 @@
     "clean": "pnpm -r clean && rm -rf node_modules",
     "backend:dev": "pnpm --filter @quemiai/backend dev",
     "web:dev": "pnpm --filter @quemiai/web dev",
+    "web:build": "pnpm --filter @quemiai/web build",
     "mobile:dev": "pnpm --filter @quemiai/mobile start",
+    "netlify:build": "pnpm install && pnpm --filter @quemiai/web build",
+    "netlify:serve": "cd apps/web && pnpm start",
     "prepare": "husky"
   },
   "devDependencies": {

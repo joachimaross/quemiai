@@ -51,6 +51,17 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 
+# Netlify
+.netlify
+.netlify/*
+netlify/functions/node_modules
+netlify/functions/dist
+
+# Next.js
+.next/
+out/
+.vercel
+
 # temp directory
 .temp
 .tmp

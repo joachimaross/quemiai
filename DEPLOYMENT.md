@@ -4,6 +4,8 @@ This guide covers deployment strategies for the Quemiai platform, including both
 
 > **📋 See Also:** [ROADMAP.md](ROADMAP.md) for planned enhancements to monitoring, performance, security, and architecture.
 > 
+> **🚀 Netlify Deployment (Recommended):** See [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md) for comprehensive Netlify deployment guide and [NETLIFY_QUICKSTART.md](NETLIFY_QUICKSTART.md) for quick setup.
+>
 > **📂 Frontend Documentation:** See [frontend/README.md](frontend/README.md) for detailed Next.js frontend setup and deployment instructions.
 >
 > **🔧 Vercel Troubleshooting:** See [VERCEL_TROUBLESHOOTING.md](VERCEL_TROUBLESHOOTING.md) for comprehensive Vercel deployment troubleshooting and configuration guide.
@@ -11,6 +13,7 @@ This guide covers deployment strategies for the Quemiai platform, including both
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
+- [Netlify Deployment (Recommended)](#netlify-deployment-recommended)
 - [Docker Deployment](#docker-deployment)
 - [Vercel Deployment](#vercel-deployment)
 - [Traditional Server Deployment](#traditional-server-deployment)
@@ -21,9 +24,63 @@ This guide covers deployment strategies for the Quemiai platform, including both
 ## Prerequisites
 
 - Node.js >= 18 < 21
+- pnpm >= 8.0.0
 - PostgreSQL database
 - Redis instance (optional but recommended)
 - Environment variables configured
+
+## Netlify Deployment (Recommended)
+
+Netlify provides the best integration for this monorepo structure with Next.js frontend and serverless backend functions.
+
+### Quick Setup
+
+1. **Install Netlify CLI**:
+   ```bash
+   npm install -g netlify-cli
+   netlify login
+   ```
+
+2. **Initialize and Deploy**:
+   ```bash
+   cd /path/to/quemiai
+   netlify init
+   netlify deploy --prod
+   ```
+
+3. **Configure Environment Variables**:
+   - Copy `.env.example` to reference required variables
+   - Add variables in Netlify Dashboard → Site Settings → Environment Variables
+
+### Key Features
+
+✅ **Next.js 15 Support**: Full App Router support with SSR and static generation  
+✅ **Serverless Functions**: Backend API wrapped as Netlify Functions  
+✅ **Security Headers**: Pre-configured HSTS, CSP, X-Frame-Options  
+✅ **Deploy Previews**: Automatic preview deployments for PRs  
+✅ **Global CDN**: Edge network with automatic HTTPS  
+
+### Build Configuration
+
+The repository includes:
+- `netlify.toml` - Main Netlify configuration
+- `apps/web/public/_redirects` - URL routing rules
+- `apps/web/public/_headers` - Security and caching headers
+- `netlify/functions/` - Serverless backend functions
+
+### Documentation
+
+For detailed Netlify deployment instructions, see:
+- **[NETLIFY_QUICKSTART.md](NETLIFY_QUICKSTART.md)** - Quick setup guide
+- **[NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md)** - Complete deployment documentation
+- **[.env.example](.env.example)** - Environment variables reference
+
+### Validation
+
+Run the validation script to check your configuration:
+```bash
+./scripts/validate-netlify-config.sh
+```
 
 ## Docker Deployment
 
