@@ -1,9 +1,17 @@
+// Initialize OpenTelemetry FIRST - before any other imports
+import { initializeOpenTelemetry } from './config/opentelemetry';
+initializeOpenTelemetry();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './filters/http-exception.filter';
 import logger from './config/logger';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { initializeSentry } from './config/sentry';
+
+// Initialize Sentry after OpenTelemetry
+initializeSentry();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

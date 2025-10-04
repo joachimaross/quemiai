@@ -1,0 +1,15 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Check for secrets with git-secrets
+echo "🔒 Scanning for secrets..."
+git secrets --scan
+
+# Run linting
+echo "🔍 Running linter..."
+pnpm lint:check || {
+  echo "❌ Linting failed. Please fix errors before committing."
+  exit 1
+}
+
+echo "✅ Pre-commit checks passed!"

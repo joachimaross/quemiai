@@ -21,9 +21,11 @@
     "clean": "pnpm -r clean && rm -rf node_modules",
     "backend:dev": "pnpm --filter @quemiai/backend dev",
     "web:dev": "pnpm --filter @quemiai/web dev",
-    "mobile:dev": "pnpm --filter @quemiai/mobile start"
+    "mobile:dev": "pnpm --filter @quemiai/mobile start",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.0.0",
     "pnpm": "^8.15.0",
     "turbo": "^2.0.0"
   },

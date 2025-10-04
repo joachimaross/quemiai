@@ -64,7 +64,7 @@ export class AnalyticsService {
     }
 
     // Cache for 5 minutes
-    await this.cacheService.set(cacheKey, analytics, 300);
+    await this.cacheService.set(cacheKey, analytics, { ttl: 300 });
 
     return analytics;
   }
@@ -151,7 +151,7 @@ export class AnalyticsService {
     }
 
     // Cache for 10 minutes
-    await this.cacheService.set(cacheKey, analytics, 600);
+    await this.cacheService.set(cacheKey, analytics, { ttl: 600 });
 
     return analytics;
   }
