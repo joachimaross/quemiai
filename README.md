@@ -87,7 +87,6 @@ npm run format
 
 ### Deployment
 - **Netlify:** Recommended platform with full Next.js and serverless functions support
-- **Vercel:** Alternative platform with enterprise-grade configuration
 - **Docker:** Containerized deployment support for backend
 - **Traditional Server:** PM2 + Nginx setup
 
@@ -95,24 +94,31 @@ npm run format
 
 ```
 /
-├── frontend/            # Next.js application
-│   ├── src/
-│   │   ├── app/        # Next.js App Router pages
-│   │   ├── components/ # React components
-│   │   └── lib/        # Utility functions
-│   ├── vercel.json     # Vercel deployment config
-│   ├── next.config.js  # Next.js configuration
-│   └── package.json    # Frontend dependencies
-├── src/                # NestJS backend
-│   ├── api/            # API route handlers
-│   ├── config/         # Configuration files
-│   ├── modules/        # Feature modules
-│   ├── middleware/     # Custom middleware
-│   ├── services/       # Business logic services
-├── gateways/           # WebSocket gateways
-├── utils/              # Utility functions
-├── app.module.ts       # Root application module
-└── main.ts             # Application entry point
+├── apps/
+│   ├── web/             # Next.js application
+│   │   ├── src/
+│   │   │   ├── app/     # Next.js App Router pages
+│   │   │   ├── components/ # React components
+│   │   │   └── lib/     # Utility functions
+│   │   ├── public/
+│   │   │   ├── _redirects  # Netlify URL routing
+│   │   │   └── _headers    # Netlify security headers
+│   │   ├── next.config.js  # Next.js configuration
+│   │   └── package.json    # Frontend dependencies
+│   ├── backend/         # NestJS backend
+│   │   ├── src/
+│   │   │   ├── api/     # API route handlers
+│   │   │   ├── config/  # Configuration files
+│   │   │   ├── modules/ # Feature modules
+│   │   │   ├── middleware/ # Custom middleware
+│   │   │   └── services/   # Business logic services
+│   │   └── package.json
+├── netlify/
+│   └── functions/       # Netlify serverless functions
+│       ├── api.ts       # Backend API wrapper
+│       └── package.json
+├── netlify.toml         # Netlify deployment config
+└── .env.example         # Environment variables template
 ```
 
 ## 🔧 Environment Variables
@@ -184,38 +190,12 @@ netlify deploy --prod
 
 For detailed Netlify deployment instructions, see:
 - [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md) - **Complete Netlify setup guide**
-
-### Alternative: Next.js Frontend on Vercel
-
-The frontend can also be deployed to Vercel (legacy configuration):
-
-```bash
-cd frontend
-vercel --prod
-```
-
-**⚠️ Critical Configuration Step:**  
-Set **Root Directory** to `frontend` in your Vercel Project Settings (Dashboard → Project → Settings → General).
-
-**✅ Recent Deployment Fixes:**
-- Build configuration optimized for monorepo structure
-- All dependencies resolved (ESLint, emotion)
-- Comprehensive troubleshooting guide added
-- Root directory protection implemented
-
-For detailed deployment instructions and troubleshooting, see:
-- [VERCEL_TROUBLESHOOTING.md](VERCEL_TROUBLESHOOTING.md) - **Start here for deployment issues**
-- [frontend/README.md](frontend/README.md) - Frontend setup and deployment
-- [VERCEL_MIGRATION.md](VERCEL_MIGRATION.md) - Vercel configuration guide
-- [DEPLOYMENT_FIX_SUMMARY.md](DEPLOYMENT_FIX_SUMMARY.md) - Recent fixes summary
+- [NETLIFY_QUICKSTART.md](NETLIFY_QUICKSTART.md) - **Quick start guide**
 
 ### NestJS Backend
 
-#### Netlify Functions (Recommended)
+#### Netlify Functions
 The backend is wrapped as Netlify serverless functions in `netlify/functions/api.ts`. Deploy automatically with the frontend.
-
-#### Vercel
-The backend can be deployed to Vercel as serverless functions (requires separate configuration).
 
 #### Docker
 Use the included `Dockerfile` for containerized deployment on any platform.

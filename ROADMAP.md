@@ -31,7 +31,7 @@ This roadmap outlines the development path for transforming Quemiai from a funct
 - [x] CI/CD pipeline (GitHub Actions)
 - [x] Comprehensive documentation
 - [x] Git workflow and branching strategy
-- [x] Basic deployment guides (Docker, Vercel, Traditional)
+- [x] Basic deployment guides (Docker, Netlify, Traditional)
 
 ---
 
@@ -467,7 +467,7 @@ This roadmap outlines the development path for transforming Quemiai from a funct
 
 - [ ] **PR Preview Deployments**
   - [ ] Frontend preview deployments:
-    - Configure Vercel GitHub integration
+    - Configure Netlify deploy previews
     - Enable automatic preview per PR
     - Add preview URL to PR comments
     - Configure environment variables
@@ -479,7 +479,7 @@ This roadmap outlines the development path for transforming Quemiai from a funct
   - [ ] Document preview deployment process
   
   **Implementation Steps:**
-  1. Configure Vercel GitHub app
+  1. Configure Netlify deploy preview settings
   2. Set up Render/Fly.io project
   3. Create preview deployment workflow
   4. Add PR comment automation
@@ -545,8 +545,8 @@ This roadmap outlines the development path for transforming Quemiai from a funct
 ### Deployment Architecture
 
 - [ ] **Separate Deployment Strategy**
-  - [ ] Frontend deployment (Vercel):
-    - Configure Vercel project
+  - [ ] Frontend deployment (Netlify):
+    - Configure Netlify project (already done)
     - Set up custom domain (app.quemiai.com)
     - Configure environment variables
     - Set up edge functions if needed
@@ -560,7 +560,7 @@ This roadmap outlines the development path for transforming Quemiai from a funct
   - [ ] Document deployment process
   
   **Implementation Steps:**
-  1. Set up Vercel project for frontend
+  1. Configure Netlify custom domain
   2. Set up Render/Fly.io for backend
   3. Configure custom domains
   4. Update DNS records

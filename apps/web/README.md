@@ -102,45 +102,33 @@ The `lib/auth.ts` provides Firebase authentication utilities:
 - `logOut()`: Sign out current user
 - `getCurrentUser(callback)`: Monitor auth state changes
 
-## Vercel Deployment
+## Netlify Deployment
 
-This directory is configured for Vercel deployment with enterprise-grade security and performance settings.
+This application is configured for Netlify deployment with enterprise-grade security and performance settings.
 
 ### Deployment Setup
 
-1. **Install Vercel CLI:**
-   ```bash
-   npm i -g vercel
-   ```
+The frontend is part of a monorepo and deploys automatically via the root `netlify.toml` configuration.
 
-2. **Login to Vercel:**
-   ```bash
-   vercel login
-   ```
-
-3. **Deploy:**
-   ```bash
-   # From the repository root
-   cd frontend
-   vercel
-   
-   # Or deploy to production
-   vercel --prod
-   ```
-
-4. **Configure Vercel Project Settings:**
-   - In your Vercel project dashboard, go to **Settings** → **General**
-   - Set **Root Directory** to `frontend`
-   - This ensures Vercel uses this directory as the project root
-   - Environment variables should be configured in the Vercel dashboard
+For detailed deployment instructions, see:
+- **[NETLIFY_DEPLOYMENT.md](../../NETLIFY_DEPLOYMENT.md)** - Complete deployment guide
+- **[NETLIFY_QUICKSTART.md](../../NETLIFY_QUICKSTART.md)** - Quick start guide
 
 ### Configuration Files
 
-- **vercel.json**: Enterprise-grade Vercel configuration with:
-  - Security headers (HSTS, CSP, X-Frame-Options, etc.)
-  - Caching strategies for static assets
-  - Clean URLs and trailing slash handling
-  - Placeholder sections for rewrites and redirects
+- **netlify.toml** (root): Main Netlify configuration with:
+  - Build settings for pnpm monorepo
+  - Serverless functions configuration
+  - Security headers and redirects
+  - Next.js plugin integration
+
+- **public/_redirects**: URL routing rules:
+  - API proxy to Netlify Functions
+  - SPA fallback routing
+
+- **public/_headers**: Security and caching headers:
+  - HSTS, CSP, X-Frame-Options
+  - Cache control for static assets
 
 - **next.config.js**: Next.js configuration with:
   - React Strict Mode enabled
@@ -161,7 +149,7 @@ This directory is configured for Vercel deployment with enterprise-grade securit
 ## Project Structure
 
 ```
-frontend/
+apps/web/
 ├── src/
 │   ├── app/              # Next.js App Router pages
 │   │   ├── layout.tsx    # Root layout
@@ -171,12 +159,14 @@ frontend/
 │   │   ├── discover/     # Discover pages
 │   │   └── profile/      # Profile pages
 │   ├── components/       # React components
-│   └── lib/             # Utility functions
-├── next.config.js       # Next.js configuration
-├── tailwind.config.ts   # Tailwind CSS configuration
-├── tsconfig.json        # TypeScript configuration
-├── vercel.json          # Vercel deployment configuration
-└── package.json         # Dependencies and scripts
+│   └── lib/              # Utility functions
+├── public/
+│   ├── _redirects        # Netlify URL routing
+│   └── _headers          # Netlify security headers
+├── next.config.js        # Next.js configuration
+├── tailwind.config.ts    # Tailwind CSS configuration
+├── tsconfig.json         # TypeScript configuration
+└── package.json          # Dependencies and scripts
 ```
 
 ## Environment Variables
@@ -187,7 +177,9 @@ Create a `.env.local` file in this directory for local development:
 # Add your environment variables here
 ```
 
-For production deployment, configure environment variables in the Vercel dashboard under **Settings** → **Environment Variables**.
+For production deployment, configure environment variables in the Netlify dashboard under **Site Settings** → **Environment Variables**.
+
+See the root `.env.example` file for all available environment variables.
 
 ## Security Features
 

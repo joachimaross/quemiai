@@ -57,7 +57,7 @@ The repository has been significantly enhanced with better structure, documentat
 
 - **DEPLOYMENT.md:** Comprehensive deployment guide
   - Docker deployment
-  - Vercel deployment
+  - Netlify deployment
   - Traditional server deployment
   - Environment configuration
   - Production checklist
@@ -213,7 +213,7 @@ src/
 ```
 
 ### Observations
-- ✅ Has both Express (for Vercel/serverless) and NestJS structure
+- ✅ Has both Express (for Netlify serverless functions) and NestJS structure
 - ✅ Proper separation of concerns
 - ✅ Configuration management in place
 - ✅ Middleware and validation setup
@@ -291,14 +291,14 @@ src/
 
 ### Documented Strategies
 1. **Docker:** Production-ready Dockerfile with multi-stage build
-2. **Vercel:** Configured with vercel.json (serverless)
+2. **Netlify:** Configured with netlify.toml (Next.js + serverless functions)
 3. **Traditional Server:** PM2 + Nginx setup guide
 4. **Docker Compose:** Local development and testing
 
 ### Configuration Files
 - ✅ Dockerfile (optimized)
 - ✅ .dockerignore
-- ✅ vercel.json (existing)
+- ✅ netlify.toml (configured)
 - ✅ Package.json scripts for all scenarios
 
 ## 14. Production Readiness Checklist
