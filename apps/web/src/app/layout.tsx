@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils';
 import FloatingDock from '@/components/FloatingDock';
 
 export const metadata: Metadata = {
-  title: 'Quemi Social | Connect, Share, and Engage',
+  title: 'QUEMI | Unified Social Media & Messaging Hub',
   description:
-    'A modern social media and messaging platform inspired by Apple Messages and Google Messages. Connect with friends, share moments, and stay engaged.',
+    'QUEMI - Your unified social media and messaging platform. Connect Instagram, TikTok, Facebook, and X in one place. Featuring QuemiAi assistant for content creation and productivity.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

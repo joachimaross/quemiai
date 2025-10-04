@@ -9,6 +9,8 @@ import { StoriesModule } from './modules/stories/stories.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { SocialModule } from './modules/social/social.module';
+import { FeedModule } from './modules/feed/feed.module';
+import { AiModule } from './modules/ai/ai.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -31,6 +33,8 @@ import { validate } from './config/env.validation';
     AnalyticsModule,
     SettingsModule,
     SocialModule,
+    FeedModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

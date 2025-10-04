@@ -1,34 +1,31 @@
 {
-  "name": "quemiai-monorepo",
+  "name": "@quemiai/backend",
   "version": "1.0.0",
-  "description": "QUEMI - Unified social media and messaging platform",
+  "description": "QUEMI Backend - NestJS API Server",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "main": "src/index.ts",
   "engines": {
-    "node": ">=18 <21",
-    "pnpm": ">=8.0.0"
+    "node": ">=18 <21"
   },
   "scripts": {
-    "build": "pnpm -r build",
-    "dev": "pnpm -r --parallel dev",
-    "lint": "pnpm -r lint",
-    "test": "pnpm -r test",
-    "clean": "pnpm -r clean && rm -rf node_modules",
-    "backend:dev": "pnpm --filter @quemiai/backend dev",
-    "web:dev": "pnpm --filter @quemiai/web dev",
-    "mobile:dev": "pnpm --filter @quemiai/mobile start"
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "npx eslint \"{src,test}/**/*.ts\" --fix",
+    "lint:check": "npx eslint \"{src,test}/**/*.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "clean": "rm -rf dist node_modules"
   },
-  "devDependencies": {
-    "pnpm": "^8.15.0",
-    "turbo": "^2.0.0"
-  },
-  "packageManager": "pnpm@8.15.0"
-}
+  "dependencies": {
     "@google-cloud/speech": "^7.2.0",
     "@google-cloud/storage": "^7.17.1",
     "@google-cloud/video-intelligence": "^6.2.0",

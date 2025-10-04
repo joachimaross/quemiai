@@ -1,13 +1,14 @@
 {
-  "name": "quemiai-frontend",
+  "name": "@quemiai/web",
   "version": "1.0.0",
-  "description": "Zeeky Social Frontend - Next.js Application",
+  "description": "QUEMI Web - Next.js Application",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "rm -rf .next node_modules"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.3.1",

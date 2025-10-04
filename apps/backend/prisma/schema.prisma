@@ -1,0 +1,522 @@
+model TypingIndicator {
+  id              String   @id @default(uuid())
+  conversationId  String
+  userId          String
+  isTyping        Boolean  @default(true)
+  updatedAt       DateTime @updatedAt
+  // Relations
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+  user            User        @relation(fields: [userId], references: [id])
+}
+// Jacameno Prisma schema (starter)
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  avatar    String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  messages      Message[]
+  conversations ConversationMember[]
+  posts         Post[]
+  stories       Story[]
+  followers     Follower[] @relation("UserFollowers")
+  following     Follower[] @relation("UserFollowing")
+  messageReactions MessageReaction[]
+  messageReadStates MessageReadState[]
+  comments      Comment[]
+  likes         Like[]
+  marketplaceItems MarketplaceItem[] @relation("UserMarketplaceItems")
+  typingIndicators TypingIndicator[]
+  socialMediaConnections SocialMediaConnection[]
+  storyReactions StoryReaction[] @relation("UserStoryReactions")
+  storyReplies   StoryReply[] @relation("UserStoryReplies")
+  settings       UserSettings?
+  groupMemberships GroupMember[]
+  createdGroups  Group[] @relation("GroupCreator")
+  badges         UserBadge[]
+  reportedBy     Report[] @relation("ReportReporter")
+  reportedContent Report[] @relation("ReportReported")
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+  isGroup   Boolean @default(false)
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  members   ConversationMember[]
+  messages  Message[]
+  typingIndicators TypingIndicator[]
+}
+
+model ConversationMember {
+  id              String   @id @default(uuid())
+  userId          String
+  conversationId  String
+  joinedAt        DateTime @default(now())
+  // Relations
+  user            User     @relation(fields: [userId], references: [id])
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model Message {
+  id              String   @id @default(uuid())
+  conversationId  String
+  senderId        String
+  content         String?
+  mediaUrl        String?
+  type            String   // text, image, video, audio, etc.
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  // Relations
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+  sender          User        @relation(fields: [senderId], references: [id])
+  reactions       MessageReaction[]
+  readStates      MessageReadState[]
+}
+
+model MessageReaction {
+  id         String   @id @default(uuid())
+  messageId  String
+  userId     String
+  emoji      String
+  createdAt  DateTime @default(now())
+  // Relations
+  message    Message  @relation(fields: [messageId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model MessageReadState {
+  id         String   @id @default(uuid())
+  messageId  String
+  userId     String
+  readAt     DateTime @default(now())
+  // Relations
+  message    Message  @relation(fields: [messageId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Post {
+  id         String   @id @default(uuid())
+  authorId   String
+  content    String
+  mediaUrl   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  // Relations
+  author     User     @relation(fields: [authorId], references: [id])
+  comments   Comment[]
+  likes      Like[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  postId    String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  // Relations
+  post      Post     @relation(fields: [postId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  // Relations
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Story {
+  id        String   @id @default(uuid())
+  authorId  String
+  mediaUrl  String
+  audioUrl  String?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  // Relations
+  author    User     @relation(fields: [authorId], references: [id])
+  reactions StoryReaction[]
+  replies   StoryReply[]
+}
+
+model StoryReaction {
+  id        String   @id @default(uuid())
+  storyId   String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+  // Relations
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserStoryReactions", fields: [userId], references: [id])
+  
+  @@unique([storyId, userId, emoji])
+  @@index([storyId])
+}
+
+model StoryReply {
+  id        String   @id @default(uuid())
+  storyId   String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  // Relations
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserStoryReplies", fields: [userId], references: [id])
+  
+  @@index([storyId])
+  @@index([userId])
+}
+
+model Hashtag {
+  id        String   @id @default(uuid())
+  tag       String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Follower {
+  id         String   @id @default(uuid())
+  followerId String
+  followingId String
+  createdAt  DateTime @default(now())
+  // Relations
+  follower   User     @relation("UserFollowers", fields: [followerId], references: [id])
+  following  User     @relation("UserFollowing", fields: [followingId], references: [id])
+}
+
+model SubscriptionPlan {
+  id        String   @id @default(uuid())
+  name      String
+  price     Float
+  createdAt DateTime @default(now())
+}
+
+model MarketplaceItem {
+  id        String   @id @default(uuid())
+  sellerId  String
+  title     String
+  price     Float
+  mediaUrl  String?
+  createdAt DateTime @default(now())
+  // Relations
+  seller    User     @relation("UserMarketplaceItems", fields: [sellerId], references: [id])
+}
+
+model AdPlacement {
+  id        String   @id @default(uuid())
+  name      String
+  config    String
+  createdAt DateTime @default(now())
+}
+
+model PostAnalytics {
+  id                String   @id @default(uuid())
+  postId            String   @unique
+  views             Int      @default(0)
+  likes             Int      @default(0)
+  comments          Int      @default(0)
+  shares            Int      @default(0)
+  engagementRate    Float    @default(0)
+  reachCount        Int      @default(0)
+  impressionCount   Int      @default(0)
+  avgWatchTime      Float?   // For video posts
+  completionRate    Float?   // For video posts
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([postId])
+}
+
+model UserAnalytics {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  totalPosts        Int      @default(0)
+  totalFollowers    Int      @default(0)
+  totalFollowing    Int      @default(0)
+  totalLikes        Int      @default(0)
+  totalViews        Int      @default(0)
+  totalEngagement   Int      @default(0)
+  avgEngagementRate Float    @default(0)
+  topPostId         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(uuid())
+  userId     String?
+  eventType  String   // 'post_view', 'post_like', 'post_share', 'profile_view', etc.
+  entityType String   // 'post', 'user', 'story', etc.
+  entityId   String
+  metadata   String?  // JSON string for additional data
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+model UserSettings {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  
+  // Notification preferences
+  emailNotifications      Boolean @default(true)
+  pushNotifications       Boolean @default(true)
+  smsNotifications        Boolean @default(false)
+  notifyOnLikes           Boolean @default(true)
+  notifyOnComments        Boolean @default(true)
+  notifyOnFollows         Boolean @default(true)
+  notifyOnMentions        Boolean @default(true)
+  notifyOnMessages        Boolean @default(true)
+  
+  // Privacy settings
+  profileVisibility       String  @default("public") // public, friends, private
+  showEmail               Boolean @default(false)
+  showPhone               Boolean @default(false)
+  allowTagging            Boolean @default(true)
+  allowMessagesFrom       String  @default("everyone") // everyone, friends, nobody
+  
+  // Content preferences
+  autoplayVideos          Boolean @default(true)
+  highQualityUploads      Boolean @default(true)
+  saveDataMode            Boolean @default(false)
+  
+  // AI & Personalization
+  enableAiRecommendations Boolean @default(true)
+  enableSmartReplies      Boolean @default(true)
+  enableContentFiltering  Boolean @default(true)
+  
+  // Theme & Display
+  theme                   String  @default("system") // light, dark, system
+  fontSize                String  @default("medium") // small, medium, large
+  highContrast            Boolean @default(false)
+  reduceMotion            Boolean @default(false)
+  
+  // Language & Region
+  language                String  @default("en")
+  timezone                String  @default("UTC")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model SocialMediaConnection {
+  id              String   @id @default(uuid())
+  userId          String
+  platform        String   // 'tiktok', 'instagram', 'twitter', 'facebook'
+  platformUserId  String
+  platformUsername String?
+  accessToken     String
+  refreshToken    String?
+  tokenExpiresAt  DateTime?
+  isActive        Boolean  @default(true)
+  metadata        String?  // JSON string for additional platform-specific data
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  // Relations
+  user            User     @relation(fields: [userId], references: [id])
+  
+  @@unique([userId, platform])
+  @@index([userId])
+  @@index([platform])
+}
+
+model Group {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  avatarUrl   String?
+  coverUrl    String?
+  isPrivate   Boolean  @default(false)
+  creatorId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  creator     User     @relation("GroupCreator", fields: [creatorId], references: [id])
+  members     GroupMember[]
+  
+  @@index([creatorId])
+  @@index([isPrivate])
+}
+
+model GroupMember {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String
+  role      String   @default("member") // member, moderator, admin
+  joinedAt  DateTime @default(now())
+  
+  // Relations
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+  
+  @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
+}
+
+model Badge {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  iconUrl     String?
+  category    String   // achievement, milestone, community, special
+  rarity      String   @default("common") // common, rare, epic, legendary
+  criteria    String?  // JSON string for badge criteria
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  userBadges  UserBadge[]
+  
+  @@index([category])
+  @@index([rarity])
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([badgeId])
+}
+
+model Leaderboard {
+  id          String   @id @default(uuid())
+  userId      String
+  category    String   // posts, likes, followers, engagement
+  score       Int      @default(0)
+  rank        Int?
+  period      String   @default("all_time") // daily, weekly, monthly, all_time
+  periodStart DateTime?
+  periodEnd   DateTime?
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([userId, category, period])
+  @@index([category, period, score])
+  @@index([userId])
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  reporterId  String
+  reportedId  String
+  entityType  String   // user, post, comment, story
+  entityId    String
+  reason      String
+  description String?
+  status      String   @default("pending") // pending, reviewing, resolved, dismissed
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  resolution  String?  // JSON string for resolution details
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  reporter    User     @relation("ReportReporter", fields: [reporterId], references: [id])
+  reported    User     @relation("ReportReported", fields: [reportedId], references: [id])
+  
+  @@index([reporterId])
+  @@index([reportedId])
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model FriendSuggestion {
+  id              String   @id @default(uuid())
+  userId          String
+  suggestedUserId String
+  reason          String   // mutual_friends, interests, location, etc.
+  score           Float    @default(0)
+  dismissed       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  
+  @@unique([userId, suggestedUserId])
+  @@index([userId, dismissed])
+  @@index([score])
+}
+
+model AiConversation {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  messages  AiMessage[]
+  
+  @@index([userId])
+}
+
+model AiMessage {
+  id             String   @id @default(uuid())
+  conversationId String
+  role           String   // 'user' or 'assistant'
+  content        String
+  metadata       String?  // JSON string for additional data
+  createdAt      DateTime @default(now())
+  
+  // Relations
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([conversationId])
+}
+
+model ExternalPost {
+  id              String   @id @default(uuid())
+  userId          String
+  platform        String   // 'instagram', 'tiktok', 'facebook', 'x'
+  externalId      String
+  content         String?
+  mediaUrls       String?  // JSON array
+  authorName      String
+  authorAvatar    String?
+  externalUrl     String?
+  likes           Int      @default(0)
+  comments        Int      @default(0)
+  shares          Int      @default(0)
+  timestamp       DateTime
+  fetchedAt       DateTime @default(now())
+  
+  @@unique([platform, externalId])
+  @@index([userId])
+  @@index([platform])
+  @@index([timestamp])
+}
+
