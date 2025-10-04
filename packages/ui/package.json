@@ -1,0 +1,36 @@
+{
+  "name": "@quemiai/ui",
+  "version": "1.0.0",
+  "description": "QUEMI UI - Shared React UI components",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf dist node_modules"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.544.0",
+    "framer-motion": "^11.18.2",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.2",
+    "eslint": "^9.0.0"
+  }
+}
