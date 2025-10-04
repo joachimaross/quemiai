@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Conventional Commits validation
+# Format: type(scope): subject
+# Example: feat(api): add user authentication
+
+commit_msg=$(cat "$1")
+
+# Allow merge commits and revert commits
+if echo "$commit_msg" | grep -qE "^(Merge|Revert|Co-authored-by)"; then
+  exit 0
+fi
+
+# Check conventional commit format
+if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{1,}"; then
+  echo "❌ ERROR: Commit message does not follow Conventional Commits format!"
+  echo ""
+  echo "Format: <type>(<scope>): <subject>"
+  echo ""
+  echo "Types:"
+  echo "  feat:     A new feature"
+  echo "  fix:      A bug fix"
+  echo "  docs:     Documentation only changes"
+  echo "  style:    Code style changes (formatting, missing semi colons, etc)"
+  echo "  refactor: Code refactoring"
+  echo "  perf:     Performance improvements"
+  echo "  test:     Adding or updating tests"
+  echo "  build:    Build system changes"
+  echo "  ci:       CI/CD changes"
+  echo "  chore:    Other changes that don't modify src or test files"
+  echo "  revert:   Revert a previous commit"
+  echo ""
+  echo "Example: feat(auth): add JWT token refresh"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Commit message follows Conventional Commits format."

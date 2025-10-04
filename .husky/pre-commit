@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Secret scanning with multiple patterns
+echo "🔍 Scanning for secrets and sensitive data..."
+
+# Check for common secret patterns
+if git diff --cached --diff-filter=ACM | grep -iE "(password|api[_-]?key|secret|token|private[_-]?key|access[_-]?key|auth[_-]?token|bearer|jwt_secret|database_url|redis_url|aws_access_key|aws_secret)" | grep -v ".env.example" | grep -v "# Example" | grep -v "your_.*_here"; then
+  echo "❌ ERROR: Potential secrets detected in staged files!"
+  echo "Please review the matches above and ensure no real credentials are being committed."
+  echo "Use .env.example files for sample configurations."
+  exit 1
+fi
+
+# Check for actual .env files (not .env.example)
+if git diff --cached --name-only | grep -E "^\.env$|^\.env\.local$|^\.env\.production$|^\.env\.development$" | grep -v ".env.example"; then
+  echo "❌ ERROR: .env file detected in staged files!"
+  echo "Never commit actual .env files. Only .env.example should be committed."
+  exit 1
+fi
+
+# Check for AWS credentials
+if git diff --cached --diff-filter=ACM | grep -iE "AKIA[0-9A-Z]{16}"; then
+  echo "❌ ERROR: AWS access key detected!"
+  exit 1
+fi
+
+# Check for private keys
+if git diff --cached --diff-filter=ACM | grep -E "BEGIN (RSA|DSA|EC|OPENSSH) PRIVATE KEY"; then
+  echo "❌ ERROR: Private key detected!"
+  exit 1
+fi
+
+echo "✅ No secrets detected. Proceeding with commit."

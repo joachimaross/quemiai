@@ -4,14 +4,27 @@ import { AllExceptionsFilter } from './filters/http-exception.filter';
 import logger from './config/logger';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { initializeSentry, Sentry } from './config/sentry';
+import { initializeOpenTelemetry } from './config/opentelemetry';
 
 async function bootstrap() {
+  // Initialize OpenTelemetry first (must be before other imports)
+  initializeOpenTelemetry();
+  
+  // Initialize Sentry as early as possible
+  initializeSentry();
+
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
 
   // Security: Helmet middleware for security headers
   app.use(helmet());
+
+  // Sentry request handler (must be the first middleware)
+  app.use(Sentry.Handlers.requestHandler());
+  // Sentry tracing middleware
+  app.use(Sentry.Handlers.tracingHandler());
 
   // Enable CORS with environment-based configuration
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
@@ -32,6 +45,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // Sentry error handler (must be before any other error middleware)
+  app.use(Sentry.Handlers.errorHandler());
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);

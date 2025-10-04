@@ -11,10 +11,16 @@ model TypingIndicator {
 // Jacameno Prisma schema (starter)
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["tracing"]
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // Connection pooling configuration
+  // Add these parameters to your DATABASE_URL:
+  // ?connection_limit=20&pool_timeout=20&connect_timeout=10
+  // Example: postgresql://user:pass@host:5432/db?connection_limit=20&pool_timeout=20
 }
 
 model User {

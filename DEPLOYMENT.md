@@ -260,16 +260,411 @@ FIREBASE_PROJECT_ID=...
 
 ### Security Best Practices
 
-> **Note:** For comprehensive security implementation, see [ROADMAP.md - PHASE 3.5](ROADMAP.md#phase-35-advanced-security).
+> **Note:** For comprehensive security implementation, see [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md).
 
-1. **Never commit `.env` files** to version control
+1. **Never commit `.env` files** to version control (✅ Pre-commit hooks configured)
 2. **Use strong secrets** for JWT and other security tokens
-3. **Rotate secrets regularly** in production
+3. **Rotate secrets regularly** in production (every 90 days minimum)
 4. **Use secret management** services (AWS Secrets Manager, HashiCorp Vault, etc.)
-5. **Enable security headers** with Helmet middleware (planned - see PHASE 3.5)
-6. **Implement vulnerability scanning** with npm audit, Dependabot, and Snyk (planned - see PHASE 3.5)
-7. **Use JWT refresh tokens** with proper expiration (planned - see PHASE 3.5)
-8. **Implement RBAC** for role-based access control (planned - see PHASE 3.5)
+5. **Enable security headers** with Helmet middleware (✅ Implemented)
+6. **Implement vulnerability scanning** with npm audit, Dependabot, and Snyk (✅ Implemented)
+7. **Use JWT refresh tokens** with proper expiration (✅ Supported)
+8. **Implement RBAC** for role-based access control (✅ Implemented)
+
+## Database Connection Management
+
+### Connection Pooling Configuration
+
+The application uses Prisma with PostgreSQL connection pooling. Configure in your `DATABASE_URL`:
+
+```env
+# Recommended for production
+DATABASE_URL="postgresql://user:pass@host:5432/db?connection_limit=20&pool_timeout=20&connect_timeout=10"
+```
+
+**Connection Parameters:**
+- `connection_limit`: Maximum connections per application instance (default: 20)
+- `pool_timeout`: Max seconds to wait for connection from pool (default: 20)
+- `connect_timeout`: Max seconds to wait for initial connection (default: 10)
+
+### Recommended Connection Limits
+
+**Small Deployments (1-2 instances):**
+```env
+DATABASE_URL="...?connection_limit=20&pool_timeout=20"
+```
+
+**Medium Deployments (3-5 instances):**
+```env
+DATABASE_URL="...?connection_limit=15&pool_timeout=20"
+```
+
+**Large Deployments (6+ instances):**
+```env
+DATABASE_URL="...?connection_limit=10&pool_timeout=20"
+```
+
+**Formula:** Total connections = `connection_limit × number_of_instances`
+
+**PostgreSQL Default:** `max_connections = 100`
+
+Reserve 10-20 connections for maintenance, monitoring, and emergency access.
+
+### PgBouncer Setup (Recommended for Production)
+
+PgBouncer is a lightweight connection pooler for PostgreSQL that significantly reduces connection overhead.
+
+**Installation:**
+```bash
+# Ubuntu/Debian
+sudo apt-get update
+sudo apt-get install pgbouncer
+
+# macOS
+brew install pgbouncer
+
+# Docker
+docker run -d --name pgbouncer \
+  -p 6432:6432 \
+  -v $(pwd)/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini \
+  edoburu/pgbouncer
+```
+
+**Configuration (`/etc/pgbouncer/pgbouncer.ini`):**
+```ini
+[databases]
+quemiai = host=localhost port=5432 dbname=quemiai
+
+[pgbouncer]
+listen_addr = 127.0.0.1
+listen_port = 6432
+auth_type = md5
+auth_file = /etc/pgbouncer/userlist.txt
+
+# Pool configuration
+pool_mode = transaction
+max_client_conn = 1000
+default_pool_size = 25
+min_pool_size = 5
+reserve_pool_size = 5
+reserve_pool_timeout = 3
+
+# Connection lifetime
+server_lifetime = 3600
+server_idle_timeout = 600
+server_connect_timeout = 15
+
+# Logging
+log_connections = 1
+log_disconnections = 1
+log_pooler_errors = 1
+```
+
+**User Authentication (`/etc/pgbouncer/userlist.txt`):**
+```
+"postgres" "md5<hashed_password>"
+```
+
+Generate hashed password:
+```bash
+echo -n "passwordpostgres" | md5sum | awk '{print "md5"$1}'
+```
+
+**Update Connection String:**
+```env
+# Connect through PgBouncer (port 6432) instead of direct PostgreSQL (port 5432)
+DATABASE_URL="postgresql://user:pass@localhost:6432/quemiai?pgbouncer=true"
+```
+
+**Start PgBouncer:**
+```bash
+sudo systemctl start pgbouncer
+sudo systemctl enable pgbouncer
+sudo systemctl status pgbouncer
+```
+
+**Monitoring PgBouncer:**
+```bash
+# Connect to PgBouncer admin console
+psql -h localhost -p 6432 -U postgres pgbouncer
+
+# Show pools
+SHOW POOLS;
+
+# Show stats
+SHOW STATS;
+
+# Show servers
+SHOW SERVERS;
+```
+
+### Database Connection Best Practices
+
+1. **Use connection pooling** via Prisma or PgBouncer
+2. **Set appropriate connection limits** based on instance count
+3. **Monitor connection usage** with `SHOW STATS` in PostgreSQL/PgBouncer
+4. **Use read replicas** for read-heavy workloads
+5. **Implement connection retry logic** with exponential backoff
+6. **Close connections properly** in application shutdown handlers
+
+## WebSocket Scaling & Real-Time Communication
+
+### Single Instance Setup
+
+For development or small deployments, Socket.IO works out-of-the-box with no additional configuration.
+
+### Multi-Instance Setup with Redis Adapter
+
+When running multiple application instances behind a load balancer, use the Redis adapter to share WebSocket state.
+
+**Install Dependencies:**
+```bash
+npm install @socket.io/redis-adapter redis
+```
+
+**Create Redis Adapter (`apps/backend/src/adapters/redis-io.adapter.ts`):**
+```typescript
+import { IoAdapter } from '@nestjs/platform-socket.io';
+import { ServerOptions } from 'socket.io';
+import { createAdapter } from '@socket.io/redis-adapter';
+import { createClient } from 'redis';
+
+export class RedisIoAdapter extends IoAdapter {
+  private adapterConstructor: ReturnType<typeof createAdapter>;
+
+  async connectToRedis(): Promise<void> {
+    const pubClient = createClient({ 
+      url: process.env.REDIS_URL || 'redis://localhost:6379' 
+    });
+    const subClient = pubClient.duplicate();
+
+    await Promise.all([pubClient.connect(), subClient.connect()]);
+
+    this.adapterConstructor = createAdapter(pubClient, subClient);
+    console.log('Redis adapter for Socket.IO connected');
+  }
+
+  createIOServer(port: number, options?: ServerOptions): any {
+    const server = super.createIOServer(port, options);
+    server.adapter(this.adapterConstructor);
+    return server;
+  }
+}
+```
+
+**Update `main.ts`:**
+```typescript
+import { RedisIoAdapter } from './adapters/redis-io.adapter';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Configure Redis adapter for WebSockets
+  if (process.env.REDIS_URL) {
+    const redisIoAdapter = new RedisIoAdapter(app);
+    await redisIoAdapter.connectToRedis();
+    app.useWebSocketAdapter(redisIoAdapter);
+    console.log('WebSocket scaling enabled with Redis adapter');
+  }
+
+  await app.listen(3000);
+}
+```
+
+**Environment Configuration:**
+```env
+REDIS_URL=redis://localhost:6379
+```
+
+### Load Balancer Configuration
+
+#### Sticky Sessions (IP Hash)
+
+**Nginx Configuration:**
+```nginx
+upstream backend {
+    ip_hash;  # Ensures same client always connects to same instance
+    server backend1:4000;
+    server backend2:4000;
+    server backend3:4000;
+}
+
+server {
+    listen 80;
+    server_name api.quemiai.com;
+
+    location / {
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_cache_bypass $http_upgrade;
+        
+        # WebSocket specific timeouts
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+}
+```
+
+**AWS Application Load Balancer:**
+```bash
+# Enable sticky sessions via AWS CLI
+aws elbv2 modify-target-group-attributes \
+  --target-group-arn arn:aws:elasticloadbalancing:... \
+  --attributes Key=stickiness.enabled,Value=true \
+               Key=stickiness.type,Value=lb_cookie \
+               Key=stickiness.lb_cookie.duration_seconds,Value=86400
+```
+
+#### Redis Adapter (Recommended)
+
+With Redis adapter, sticky sessions are not required. Clients can connect to any instance:
+
+```nginx
+upstream backend {
+    least_conn;  # Distribute load evenly
+    server backend1:4000;
+    server backend2:4000;
+    server backend3:4000;
+}
+
+server {
+    listen 80;
+    server_name api.quemiai.com;
+
+    location / {
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+### Testing Multi-Instance WebSocket Setup
+
+**Test Script (`test-websocket.js`):**
+```javascript
+const io = require('socket.io-client');
+
+const socket = io('http://localhost:4000', {
+  transports: ['websocket'],
+});
+
+socket.on('connect', () => {
+  console.log('Connected:', socket.id);
+  socket.emit('message', { text: 'Hello from test client!' });
+});
+
+socket.on('message', (data) => {
+  console.log('Received:', data);
+});
+
+socket.on('disconnect', () => {
+  console.log('Disconnected');
+});
+```
+
+**Load Test:**
+```bash
+# Install k6 for load testing
+brew install k6  # macOS
+# or download from https://k6.io/
+
+# Run WebSocket load test
+k6 run websocket-load-test.js
+```
+
+**Load Test Script (`websocket-load-test.js`):**
+```javascript
+import ws from 'k6/ws';
+import { check } from 'k6';
+
+export const options = {
+  vus: 100,  // 100 concurrent connections
+  duration: '60s',
+};
+
+export default function () {
+  const url = 'ws://localhost:4000';
+  
+  const response = ws.connect(url, {}, function (socket) {
+    socket.on('open', () => {
+      console.log('Connected');
+      socket.send(JSON.stringify({ type: 'ping' }));
+    });
+
+    socket.on('message', (data) => {
+      console.log('Message received:', data);
+    });
+
+    socket.on('close', () => {
+      console.log('Disconnected');
+    });
+
+    socket.setTimeout(() => {
+      socket.close();
+    }, 30000);
+  });
+
+  check(response, { 'status is 101': (r) => r && r.status === 101 });
+}
+```
+
+### WebSocket Monitoring
+
+**Monitor Redis Pub/Sub:**
+```bash
+redis-cli
+> PUBSUB CHANNELS
+> PUBSUB NUMSUB socket.io#/#
+> MONITOR
+```
+
+**Monitor Active Connections:**
+```typescript
+// Add to your gateway
+@WebSocketGateway()
+export class ChatGateway {
+  private connectedClients = new Map<string, Socket>();
+
+  handleConnection(client: Socket) {
+    this.connectedClients.set(client.id, client);
+    console.log(`Client connected: ${client.id} (Total: ${this.connectedClients.size})`);
+  }
+
+  handleDisconnect(client: Socket) {
+    this.connectedClients.delete(client.id);
+    console.log(`Client disconnected: ${client.id} (Total: ${this.connectedClients.size})`);
+  }
+
+  @Get('stats')
+  getStats() {
+    return {
+      connectedClients: this.connectedClients.size,
+      uptime: process.uptime(),
+    };
+  }
+}
+```
+
+### WebSocket Best Practices
+
+1. **Use Redis adapter** for multi-instance deployments
+2. **Implement heartbeat/ping** to detect disconnected clients
+3. **Add connection limits** per user to prevent abuse
+4. **Use rooms** to organize clients by channel/conversation
+5. **Implement exponential backoff** for reconnection logic
+6. **Log connection events** for monitoring
+7. **Set appropriate timeouts** in load balancer configuration
+
+### Security Best Practices
 
 ## Production Checklist
 
