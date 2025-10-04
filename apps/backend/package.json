@@ -45,7 +45,6 @@
     "@sentry/node": "^10.12.0",
     "@types/fluent-ffmpeg": "^2.1.27",
     "@types/multer": "^2.0.0",
-    "@types/uuid": "^11.0.0",
     "@types/ws": "^8.18.1",
     "apollo-server-express": "^3.13.0",
     "axios": "^1.12.2",
