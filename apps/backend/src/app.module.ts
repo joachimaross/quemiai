@@ -11,6 +11,8 @@ import { SettingsModule } from './modules/settings/settings.module';
 import { SocialModule } from './modules/social/social.module';
 import { FeedModule } from './modules/feed/feed.module';
 import { AiModule } from './modules/ai/ai.module';
+import { HealthModule } from './modules/health/health.module';
+import { CacheModule } from './modules/cache/cache.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -27,6 +29,8 @@ import { validate } from './config/env.validation';
         limit: 10,
       },
     ]),
+    CacheModule,
+    HealthModule,
     ChatModule,
     CoursesModule,
     StoriesModule,
