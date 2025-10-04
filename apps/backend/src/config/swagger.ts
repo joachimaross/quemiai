@@ -7,12 +7,12 @@ const options = {
       title: 'Quemi Social Messaging API',
       version: '1.0.0',
       description:
-        'API documentation for the Quemi social messaging platform (migrated from Netlify to Vercel).',
+        'API documentation for the Quemi social messaging platform.',
     },
     servers: [
       {
-        url: 'https://quemiai.vercel.app/api/v1',
-        description: 'Production (Vercel)',
+        url: 'https://quemiai.netlify.app/api/v1',
+        description: 'Production (Netlify)',
       },
       {
         url: 'http://localhost:3000/api/v1',

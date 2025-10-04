@@ -6,16 +6,13 @@ This guide covers deployment strategies for the Quemiai platform, including both
 > 
 > **🚀 Netlify Deployment (Recommended):** See [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md) for comprehensive Netlify deployment guide and [NETLIFY_QUICKSTART.md](NETLIFY_QUICKSTART.md) for quick setup.
 >
-> **📂 Frontend Documentation:** See [frontend/README.md](frontend/README.md) for detailed Next.js frontend setup and deployment instructions.
->
-> **🔧 Vercel Troubleshooting:** See [VERCEL_TROUBLESHOOTING.md](VERCEL_TROUBLESHOOTING.md) for comprehensive Vercel deployment troubleshooting and configuration guide.
+> **📂 Frontend Documentation:** See [apps/web/README.md](apps/web/README.md) for detailed Next.js frontend setup.
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Netlify Deployment (Recommended)](#netlify-deployment-recommended)
 - [Docker Deployment](#docker-deployment)
-- [Vercel Deployment](#vercel-deployment)
 - [Traditional Server Deployment](#traditional-server-deployment)
 - [Environment Configuration](#environment-configuration)
 - [Production Checklist](#production-checklist)
@@ -164,68 +161,6 @@ docker tag quemiai:latest your-registry/quemiai:latest
 # Push to registry
 docker push your-registry/quemiai:latest
 ```
-
-## Vercel Deployment
-
-### Frontend Deployment (Next.js)
-
-The frontend application is located in the `/frontend` directory and is configured for Vercel deployment with enterprise-grade security and performance settings.
-
-1. Install Vercel CLI:
-```bash
-npm i -g vercel
-```
-
-2. Login to Vercel:
-```bash
-vercel login
-```
-
-3. Deploy from the frontend directory:
-```bash
-cd frontend
-vercel
-
-# Or deploy to production
-vercel --prod
-```
-
-### Configuration
-
-The frontend has been configured with:
-
-- **vercel.json**: Enterprise-grade configuration including:
-  - Security headers (HSTS, X-Frame-Options, CSP, etc.)
-  - Caching strategies for static assets
-  - Clean URLs and trailing slash handling
-  - Placeholder sections for rewrites and redirects
-
-- **next.config.js**: Next.js configuration with:
-  - React Strict Mode
-  - Security headers
-  - Image optimization
-  - Production optimizations
-
-### Vercel Project Settings
-
-**Important**: When setting up your Vercel project:
-
-1. In the Vercel dashboard, go to your project **Settings** → **General**
-2. Set **Root Directory** to `frontend`
-3. The **Build Command** and **Install Command** will be read from `vercel.json`
-4. Add environment variables in **Settings** → **Environment Variables**
-
-### Backend Deployment (Optional)
-
-For deploying the NestJS backend to Vercel as serverless functions, you would need a separate configuration. The current setup is optimized for the Next.js frontend.
-
-### Custom Domain
-
-1. Go to Vercel dashboard
-2. Navigate to your project
-3. Go to Settings → Domains
-4. Add your custom domain
-5. Configure DNS records as instructed
 
 ## Traditional Server Deployment
 
