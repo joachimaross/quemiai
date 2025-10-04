@@ -1,0 +1,1 @@
+{\n  \"builds\": [\n    {\n      \"src\": \"frontend/**/*\",\n      \"use\": \"@vercel/static\"\n    }\n  ],\n  \"routes\": [\n    {\n      \"src\": \/(.*),\n      \"dest\": \/frontend/$1\n    }\n  ]\n}
