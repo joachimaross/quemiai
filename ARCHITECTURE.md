@@ -233,14 +233,20 @@ docker-compose up -d
 docker-compose down
 ```
 
-### Web (Vercel)
+### Web (Netlify)
 
 ```bash
-cd apps/web
-vercel --prod
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Login and deploy
+netlify login
+netlify deploy --prod
 ```
 
-**Important**: Set Root Directory to `apps/web` in Vercel Project Settings.
+**Configuration**: Deployment is configured via `netlify.toml` at repository root.
+
+See [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md) for detailed deployment instructions.
 
 ### Backend (Production Server)
 
