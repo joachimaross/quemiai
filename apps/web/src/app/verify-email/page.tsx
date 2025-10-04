@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import type React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, XCircle, Mail } from 'lucide-react';
@@ -20,9 +21,10 @@ function VerifyEmailContent() {
       setStatus('error');
       setError('Invalid verification link');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const verifyEmail = async (token: string) => {
+  const verifyEmail = async (_token: string) => {
     try {
       // Simulate email verification
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -32,9 +34,9 @@ function VerifyEmailContent() {
       setTimeout(() => {
         router.push('/dashboard');
       }, 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus('error');
-      setError(err.message || 'Failed to verify email');
+      setError((err as Error).message || 'Failed to verify email');
     }
   };
 
@@ -44,7 +46,7 @@ function VerifyEmailContent() {
       // Simulate resending verification email
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert('Verification email sent! Please check your inbox.');
-    } catch (err: any) {
+    } catch {
       alert('Failed to send verification email');
     } finally {
       setResending(false);
@@ -126,13 +128,15 @@ function VerifyEmailContent() {
 }
 
 export default function VerifyEmailPage() {
+  const SuspenseComponent = Suspense as React.ComponentType<{ fallback: React.ReactNode; children: React.ReactNode }>;
+  
   return (
-    <Suspense fallback={
+    <SuspenseComponent fallback={
       <div className="min-h-screen flex items-center justify-center bg-deep-space">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zeeky-blue"></div>
       </div>
     }>
       <VerifyEmailContent />
-    </Suspense>
+    </SuspenseComponent>
   );
 }
