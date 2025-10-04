@@ -112,10 +112,7 @@ export class TikTokService {
   /**
    * Get video analytics/insights
    */
-  async getVideoInsights(
-    accessToken: string,
-    videoIds: string[],
-  ): Promise<unknown> {
+  async getVideoInsights(accessToken: string, videoIds: string[]): Promise<unknown> {
     const response = await this.client.post(
       '/video/query/',
       {

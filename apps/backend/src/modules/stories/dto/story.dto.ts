@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsUrl,
-  IsOptional,
-  IsDateString,
-  IsUUID,
-} from 'class-validator';
+import { IsString, IsUrl, IsOptional, IsDateString, IsUUID } from 'class-validator';
 
 export class CreateStoryDto {
   @IsUUID()

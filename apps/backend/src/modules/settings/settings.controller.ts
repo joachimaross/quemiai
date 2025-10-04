@@ -45,10 +45,7 @@ export class SettingsController {
       notifyOnMessages?: boolean;
     },
   ) {
-    return this.settingsService.updateNotificationPreferences(
-      userId,
-      preferences,
-    );
+    return this.settingsService.updateNotificationPreferences(userId, preferences);
   }
 
   /**

@@ -10,10 +10,7 @@ export class FeedController {
    * Returns unified feed from all connected platforms
    */
   @Get()
-  async getFeed(
-    @Req() req: any,
-    @Query('limit') limit?: string,
-  ) {
+  async getFeed(@Req() req: any, @Query('limit') limit?: string) {
     // TODO: Extract user ID from JWT token in request
     const userId = req.user?.id || 'mock-user-id';
     const feedLimit = limit ? parseInt(limit, 10) : 20;

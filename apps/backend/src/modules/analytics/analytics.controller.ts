@@ -83,10 +83,7 @@ export class AnalyticsController {
    * GET /analytics/users/:userId/top-posts
    */
   @Get('users/:userId/top-posts')
-  async getUserTopPosts(
-    @Param('userId') userId: string,
-    @Query('limit') limit?: number,
-  ) {
+  async getUserTopPosts(@Param('userId') userId: string, @Query('limit') limit?: number) {
     return this.analyticsService.getUserTopPosts(
       userId,
       limit ? parseInt(limit.toString(), 10) : 10,

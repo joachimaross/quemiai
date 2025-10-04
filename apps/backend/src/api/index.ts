@@ -8,7 +8,7 @@ import aiRouter from './ai';
 import authRouter from './auth';
 import socialMediaRouter from './social-media';
 
-const router = Router();
+const router: Router = Router();
 
 router.use('/users', usersRouter);
 router.use('/posts', postsRouter);

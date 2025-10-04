@@ -45,9 +45,7 @@ export class ModerationService {
       },
     });
 
-    this.logger.log(
-      `Report created: ${report.id} for ${entityType}:${entityId}`,
-    );
+    this.logger.log(`Report created: ${report.id} for ${entityType}:${entityId}`);
     return report;
   }
 
@@ -230,19 +228,14 @@ export class ModerationService {
    * Get moderation statistics
    */
   async getModerationStats() {
-    const [
-      totalReports,
-      pendingReports,
-      reviewingReports,
-      resolvedReports,
-      dismissedReports,
-    ] = await Promise.all([
-      this.prisma.report.count(),
-      this.prisma.report.count({ where: { status: 'pending' } }),
-      this.prisma.report.count({ where: { status: 'reviewing' } }),
-      this.prisma.report.count({ where: { status: 'resolved' } }),
-      this.prisma.report.count({ where: { status: 'dismissed' } }),
-    ]);
+    const [totalReports, pendingReports, reviewingReports, resolvedReports, dismissedReports] =
+      await Promise.all([
+        this.prisma.report.count(),
+        this.prisma.report.count({ where: { status: 'pending' } }),
+        this.prisma.report.count({ where: { status: 'reviewing' } }),
+        this.prisma.report.count({ where: { status: 'resolved' } }),
+        this.prisma.report.count({ where: { status: 'dismissed' } }),
+      ]);
 
     // Get report counts by entity type
     const reportsByType = await this.prisma.report.groupBy({

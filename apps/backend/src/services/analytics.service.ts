@@ -34,9 +34,7 @@ export class AnalyticsService {
         },
       });
 
-      this.logger.debug(
-        `Event tracked: ${eventType} for ${entityType}:${entityId}`,
-      );
+      this.logger.debug(`Event tracked: ${eventType} for ${entityType}:${entityId}`);
     } catch (error) {
       this.logger.error('Error tracking event', error);
     }
@@ -88,9 +86,7 @@ export class AnalyticsService {
       update: {
         views: updates.views ? { increment: updates.views } : undefined,
         likes: updates.likes ? { increment: updates.likes } : undefined,
-        comments: updates.comments
-          ? { increment: updates.comments }
-          : undefined,
+        comments: updates.comments ? { increment: updates.comments } : undefined,
         shares: updates.shares ? { increment: updates.shares } : undefined,
       },
       create: {
@@ -120,10 +116,8 @@ export class AnalyticsService {
       return;
     }
 
-    const totalEngagement =
-      analytics.likes + analytics.comments + analytics.shares;
-    const engagementRate =
-      analytics.views > 0 ? totalEngagement / analytics.views : 0;
+    const totalEngagement = analytics.likes + analytics.comments + analytics.shares;
+    const engagementRate = analytics.views > 0 ? totalEngagement / analytics.views : 0;
 
     await this.prisma.postAnalytics.update({
       where: { postId },
@@ -335,10 +329,7 @@ export class AnalyticsService {
 
     const totalViews = postAnalytics.reduce((sum, pa) => sum + pa.views, 0);
     const totalLikes = postAnalytics.reduce((sum, pa) => sum + pa.likes, 0);
-    const totalComments = postAnalytics.reduce(
-      (sum, pa) => sum + pa.comments,
-      0,
-    );
+    const totalComments = postAnalytics.reduce((sum, pa) => sum + pa.comments, 0);
     const totalShares = postAnalytics.reduce((sum, pa) => sum + pa.shares, 0);
 
     return {

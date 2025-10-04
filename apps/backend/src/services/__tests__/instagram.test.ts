@@ -215,11 +215,7 @@ describe('InstagramService', () => {
       };
       (service as any).client = mockClient;
 
-      const result = await service.publishMedia(
-        'access-token',
-        'user-123',
-        'container-123',
-      );
+      const result = await service.publishMedia('access-token', 'user-123', 'container-123');
 
       expect(mockClient.post).toHaveBeenCalledWith(
         '/user-123/media_publish',

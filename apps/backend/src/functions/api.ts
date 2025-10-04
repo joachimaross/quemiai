@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, Express } from 'express';
 import serverless from 'serverless-http';
 import apiRouter from '../api';
 import { errorHandler } from '../middleware/errorHandler';
@@ -7,7 +7,7 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from '../config/swagger';
 
-const app = express();
+const app: Express = express();
 
 // Security Middleware
 app.use(helmet());
