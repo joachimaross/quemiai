@@ -86,7 +86,8 @@ npm run format
 - **Animation:** Framer Motion
 
 ### Deployment
-- **Vercel:** Enterprise-grade configuration for Next.js frontend
+- **Netlify:** Recommended platform with full Next.js and serverless functions support
+- **Vercel:** Alternative platform with enterprise-grade configuration
 - **Docker:** Containerized deployment support for backend
 - **Traditional Server:** PM2 + Nginx setup
 
@@ -157,9 +158,36 @@ docker run -p 4000:4000 --env-file .env quemiai
 
 ## 🚀 Deployment
 
-### Next.js Frontend
+### Next.js Frontend on Netlify (Recommended)
 
-The Next.js frontend application is located in the `/frontend` directory and is configured for Vercel deployment with enterprise-grade security and performance settings.
+The Next.js frontend application is located in the `apps/web` directory and is fully configured for Netlify deployment with enterprise-grade security, serverless functions, and performance optimization.
+
+```bash
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Login and link repository
+netlify login
+netlify init
+
+# Deploy to production
+netlify deploy --prod
+```
+
+**✅ Netlify Configuration Includes:**
+- Complete `netlify.toml` with build settings for pnpm monorepo
+- Security headers via `_headers` file
+- URL redirects and SPA routing via `_redirects` file
+- Serverless backend functions in `netlify/functions/`
+- Automatic HTTPS and global CDN
+- Deploy previews for all pull requests
+
+For detailed Netlify deployment instructions, see:
+- [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md) - **Complete Netlify setup guide**
+
+### Alternative: Next.js Frontend on Vercel
+
+The frontend can also be deployed to Vercel (legacy configuration):
 
 ```bash
 cd frontend
@@ -182,6 +210,9 @@ For detailed deployment instructions and troubleshooting, see:
 - [DEPLOYMENT_FIX_SUMMARY.md](DEPLOYMENT_FIX_SUMMARY.md) - Recent fixes summary
 
 ### NestJS Backend
+
+#### Netlify Functions (Recommended)
+The backend is wrapped as Netlify serverless functions in `netlify/functions/api.ts`. Deploy automatically with the frontend.
 
 #### Vercel
 The backend can be deployed to Vercel as serverless functions (requires separate configuration).
