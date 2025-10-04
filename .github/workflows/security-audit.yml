@@ -1,0 +1,87 @@
+name: Security Audit
+
+on:
+  # Run on push to main/dev branches
+  push:
+    branches:
+      - main
+      - dev
+  # Run on pull requests
+  pull_request:
+    branches:
+      - main
+      - dev
+  # Run weekly on Monday at 9 AM UTC
+  schedule:
+    - cron: '0 9 * * 1'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  npm-audit:
+    name: NPM Security Audit
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        directory:
+          - apps/backend
+          - apps/web
+          - apps/mobile
+          - packages/shared
+          - packages/ui
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Run NPM Audit for ${{ matrix.directory }}
+        working-directory: ${{ matrix.directory }}
+        run: |
+          echo "🔒 Running npm audit for ${{ matrix.directory }}..."
+          npm audit --audit-level=moderate --json > audit-report.json || true
+          
+          # Display audit results
+          cat audit-report.json | jq -r '.metadata | "Total Vulnerabilities: \(.vulnerabilities.total // 0)\nCritical: \(.vulnerabilities.critical // 0)\nHigh: \(.vulnerabilities.high // 0)\nModerate: \(.vulnerabilities.moderate // 0)\nLow: \(.vulnerabilities.low // 0)"'
+          
+          # Fail if critical or high vulnerabilities found
+          CRITICAL=$(cat audit-report.json | jq -r '.metadata.vulnerabilities.critical // 0')
+          HIGH=$(cat audit-report.json | jq -r '.metadata.vulnerabilities.high // 0')
+          
+          if [ "$CRITICAL" -gt "0" ] || [ "$HIGH" -gt "0" ]; then
+            echo "❌ Critical or High vulnerabilities found!"
+            echo "Please run 'npm audit fix' or review manually"
+            npm audit --audit-level=high
+            exit 1
+          else
+            echo "✅ No critical or high vulnerabilities found"
+          fi
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-report-${{ matrix.directory }}
+          path: ${{ matrix.directory }}/audit-report.json
+          retention-days: 30
+
+  summary:
+    name: Security Audit Summary
+    runs-on: ubuntu-latest
+    needs: npm-audit
+    if: always()
+    
+    steps:
+      - name: Create summary
+        run: |
+          echo "# Security Audit Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "NPM audit completed for all packages." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check individual job results for details." >> $GITHUB_STEP_SUMMARY

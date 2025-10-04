@@ -10,11 +10,28 @@ model TypingIndicator {
 }
 // Jacameno Prisma schema (starter)
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["metrics"]
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // Connection pooling configuration via DATABASE_URL query parameters:
+  // ?connection_limit=10    - Max number of connections (default: unlimited)
+  // ?pool_timeout=20        - Max seconds to wait for connection (default: 10)
+  // ?connect_timeout=5      - Max seconds for initial connection (default: 5)
+  //
+  // Example for production:
+  // DATABASE_URL=postgresql://user:pass@host:5432/db?connection_limit=10&pool_timeout=20
+  //
+  // Recommended settings:
+  // - Development: connection_limit=5
+  // - Production (single instance): connection_limit=10
+  // - Production (multi-instance): total_db_connections / number_of_instances
+  //
+  // For connection pooling at database level, consider using PgBouncer
+  // See PRODUCTION_READINESS.md for detailed configuration
 }
 
 model User {
