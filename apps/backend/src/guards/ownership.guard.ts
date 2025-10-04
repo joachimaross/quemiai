@@ -1,19 +1,14 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 /**
  * Resource Ownership Guard
- * 
+ *
  * This guard checks if the authenticated user is the owner of a resource
  * or has administrative privileges.
- * 
+ *
  * Use this guard to ensure users can only access their own resources.
- * 
+ *
  * @example
  * ```typescript
  * @UseGuards(JwtAuthGuard, OwnershipGuard)
@@ -44,7 +39,7 @@ export class OwnershipGuard implements CanActivate {
 
     // Check ownership based on userId in params or body
     const resourceUserId = request.params.userId || request.body.userId;
-    
+
     if (resourceUserId && resourceUserId !== user.id) {
       throw new ForbiddenException('You do not have permission to access this resource');
     }

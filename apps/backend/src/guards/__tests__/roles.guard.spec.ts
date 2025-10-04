@@ -2,7 +2,6 @@ import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RolesGuard } from '../roles.guard';
-import { ROLES_KEY } from '../roles.decorator';
 
 describe('RolesGuard', () => {
   let guard: RolesGuard;
@@ -25,14 +24,14 @@ describe('RolesGuard', () => {
     reflector = module.get<Reflector>(Reflector);
   });
 
-  const mockExecutionContext = (user?: any): ExecutionContext => {
+  const mockExecutionContext = (user?: unknown): ExecutionContext => {
     return {
       switchToHttp: () => ({
         getRequest: () => ({ user }),
       }),
       getHandler: jest.fn(),
       getClass: jest.fn(),
-    } as any;
+    } as unknown as ExecutionContext;
   };
 
   describe('canActivate', () => {

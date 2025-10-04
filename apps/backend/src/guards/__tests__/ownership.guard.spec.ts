@@ -5,7 +5,6 @@ import { OwnershipGuard } from '../ownership.guard';
 
 describe('OwnershipGuard', () => {
   let guard: OwnershipGuard;
-  let reflector: Reflector;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,10 +20,13 @@ describe('OwnershipGuard', () => {
     }).compile();
 
     guard = module.get<OwnershipGuard>(OwnershipGuard);
-    reflector = module.get<Reflector>(Reflector);
   });
 
-  const mockExecutionContext = (user?: any, params?: any, body?: any): ExecutionContext => {
+  const mockExecutionContext = (
+    user?: unknown,
+    params?: unknown,
+    body?: unknown,
+  ): ExecutionContext => {
     return {
       switchToHttp: () => ({
         getRequest: () => ({
@@ -35,7 +37,7 @@ describe('OwnershipGuard', () => {
       }),
       getHandler: jest.fn(),
       getClass: jest.fn(),
-    } as any;
+    } as unknown as ExecutionContext;
   };
 
   describe('canActivate', () => {
@@ -49,7 +51,7 @@ describe('OwnershipGuard', () => {
     it('should return true for admin users regardless of ownership', async () => {
       const context = mockExecutionContext(
         { id: 'admin-123', roles: ['admin'] },
-        { userId: 'other-user-456' }
+        { userId: 'other-user-456' },
       );
 
       const result = await guard.canActivate(context);
@@ -60,7 +62,7 @@ describe('OwnershipGuard', () => {
     it('should return true when user owns the resource (userId in params)', async () => {
       const context = mockExecutionContext(
         { id: 'user-123', roles: ['user'] },
-        { userId: 'user-123' }
+        { userId: 'user-123' },
       );
 
       const result = await guard.canActivate(context);
@@ -72,7 +74,7 @@ describe('OwnershipGuard', () => {
       const context = mockExecutionContext(
         { id: 'user-123', roles: ['user'] },
         {},
-        { userId: 'user-123' }
+        { userId: 'user-123' },
       );
 
       const result = await guard.canActivate(context);
@@ -83,19 +85,17 @@ describe('OwnershipGuard', () => {
     it('should throw ForbiddenException when user does not own the resource', async () => {
       const context = mockExecutionContext(
         { id: 'user-123', roles: ['user'] },
-        { userId: 'other-user-456' }
+        { userId: 'other-user-456' },
       );
 
       await expect(guard.canActivate(context)).rejects.toThrow(ForbiddenException);
-      await expect(guard.canActivate(context)).rejects.toThrow('You do not have permission to access this resource');
+      await expect(guard.canActivate(context)).rejects.toThrow(
+        'You do not have permission to access this resource',
+      );
     });
 
     it('should return true when no userId is specified in params or body', async () => {
-      const context = mockExecutionContext(
-        { id: 'user-123', roles: ['user'] },
-        {},
-        {}
-      );
+      const context = mockExecutionContext({ id: 'user-123', roles: ['user'] }, {}, {});
 
       const result = await guard.canActivate(context);
 
@@ -105,7 +105,7 @@ describe('OwnershipGuard', () => {
     it('should work with single role as string', async () => {
       const adminContext = mockExecutionContext(
         { id: 'admin-123', role: 'admin' },
-        { userId: 'other-user-456' }
+        { userId: 'other-user-456' },
       );
 
       const result = await guard.canActivate(adminContext);
@@ -117,7 +117,7 @@ describe('OwnershipGuard', () => {
       const context = mockExecutionContext(
         { id: 'user-123', roles: ['user'] },
         { userId: 'user-123' },
-        { userId: 'other-user-456' }
+        { userId: 'other-user-456' },
       );
 
       const result = await guard.canActivate(context);

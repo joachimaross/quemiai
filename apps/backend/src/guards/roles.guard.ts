@@ -4,10 +4,10 @@ import { ROLES_KEY } from './roles.decorator';
 
 /**
  * Role-Based Access Control (RBAC) Guard
- * 
+ *
  * This guard checks if the authenticated user has the required role(s)
  * to access a protected route.
- * 
+ *
  * @example
  * Usage in controller:
  * ```typescript
@@ -37,7 +37,7 @@ export class RolesGuard implements CanActivate {
 
     // Get user from request
     const { user } = context.switchToHttp().getRequest();
-    
+
     // If no user is authenticated, deny access
     if (!user) {
       return false;
@@ -46,7 +46,7 @@ export class RolesGuard implements CanActivate {
     // Check if user has any of the required roles
     // User can have a single role (string) or multiple roles (array)
     const userRoles = Array.isArray(user.roles) ? user.roles : [user.role];
-    
+
     return requiredRoles.some((role) => userRoles.includes(role));
   }
 }

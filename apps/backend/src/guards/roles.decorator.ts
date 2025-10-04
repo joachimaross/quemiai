@@ -3,7 +3,7 @@ import { SetMetadata } from '@nestjs/common';
 /**
  * Decorator to specify required roles for a route
  * @param roles - Array of role names that are allowed to access the route
- * 
+ *
  * @example
  * ```typescript
  * @Roles('admin', 'moderator')

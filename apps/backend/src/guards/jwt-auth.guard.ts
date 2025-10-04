@@ -1,18 +1,13 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
 /**
  * JWT Authentication Guard
- * 
+ *
  * This guard validates JWT tokens in the Authorization header
  * and attaches the decoded user to the request object.
- * 
+ *
  * @example
  * Usage in controller:
  * ```typescript
@@ -43,7 +38,7 @@ export class JwtAuthGuard implements CanActivate {
 
       // Attach user to request object for use in route handlers
       request['user'] = payload;
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }
 
