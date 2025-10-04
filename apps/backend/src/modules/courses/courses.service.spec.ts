@@ -62,9 +62,7 @@ describe('CoursesService', () => {
     });
 
     it('should throw NotFoundException for invalid id', () => {
-      expect(() => service.update('invalid-id', { name: 'Test' })).toThrow(
-        NotFoundException,
-      );
+      expect(() => service.update('invalid-id', { name: 'Test' })).toThrow(NotFoundException);
     });
   });
 

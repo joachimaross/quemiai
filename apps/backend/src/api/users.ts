@@ -3,7 +3,7 @@ import { db } from '../config';
 import { validate, userValidationRules } from '../middleware/validation';
 import AppError from '../utils/AppError';
 
-const router = Router();
+const router: Router = Router();
 
 // Define a custom request type for authenticated routes
 interface UserRequest extends Request {
@@ -59,20 +59,17 @@ interface UserRequest extends Request {
  *       500:
  *         description: Server error
  */
-router.get(
-  '/:userId',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const doc = await db.collection('users').doc(req.params.userId).get();
-      if (!doc.exists) {
-        return next(new AppError('User not found', 404));
-      }
-      return res.send({ id: doc.id, ...doc.data() });
-    } catch (error) {
-      return next(error);
+router.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const doc = await db.collection('users').doc(req.params.userId).get();
+    if (!doc.exists) {
+      return next(new AppError('User not found', 404));
     }
-  },
-);
+    return res.send({ id: doc.id, ...doc.data() });
+  } catch (error) {
+    return next(error);
+  }
+});
 
 /**
  * @swagger
@@ -179,69 +176,66 @@ router.put(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/:userId/follow',
-  async (req: UserRequest, res: Response, next: NextFunction) => {
-    try {
-      const { userId } = req.params; // The user to follow
-      const followerId = req.user?.id;
+router.post('/:userId/follow', async (req: UserRequest, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params; // The user to follow
+    const followerId = req.user?.id;
 
-      if (!followerId) {
-        return next(new AppError('Authentication required', 401));
-      }
-
-      if (userId === followerId) {
-        return next(new AppError('Cannot follow yourself', 400));
-      }
-
-      const userToFollowRef = db.collection('users').doc(userId);
-      const followerRef = db.collection('users').doc(followerId);
-
-      const [userToFollowDoc, followerDoc] = await Promise.all([
-        userToFollowRef.get(),
-        followerRef.get(),
-      ]);
-
-      if (!userToFollowDoc.exists) {
-        return next(new AppError('User to follow not found', 404));
-      }
-      if (!followerDoc.exists) {
-        return next(new AppError('Follower user not found', 404));
-      }
-
-      // Check if already following
-      const existingRelationship = await db
-        .collection('relationships')
-        .where('followerId', '==', followerId)
-        .where('followingId', '==', userId)
-        .limit(1)
-        .get();
-
-      if (!existingRelationship.empty) {
-        return next(new AppError('Already following this user', 400));
-      }
-
-      // Create relationship
-      await db.collection('relationships').add({
-        followerId,
-        followingId: userId,
-        createdAt: new Date(),
-      });
-
-      // Update follower/following counts atomically
-      await userToFollowRef.update({
-        followersCount: (userToFollowDoc.data()?.followersCount || 0) + 1,
-      });
-      await followerRef.update({
-        followingCount: (followerDoc.data()?.followingCount || 0) + 1,
-      });
-
-      return res.status(200).send({ message: 'User followed successfully' });
-    } catch (error) {
-      return next(error);
+    if (!followerId) {
+      return next(new AppError('Authentication required', 401));
     }
-  },
-);
+
+    if (userId === followerId) {
+      return next(new AppError('Cannot follow yourself', 400));
+    }
+
+    const userToFollowRef = db.collection('users').doc(userId);
+    const followerRef = db.collection('users').doc(followerId);
+
+    const [userToFollowDoc, followerDoc] = await Promise.all([
+      userToFollowRef.get(),
+      followerRef.get(),
+    ]);
+
+    if (!userToFollowDoc.exists) {
+      return next(new AppError('User to follow not found', 404));
+    }
+    if (!followerDoc.exists) {
+      return next(new AppError('Follower user not found', 404));
+    }
+
+    // Check if already following
+    const existingRelationship = await db
+      .collection('relationships')
+      .where('followerId', '==', followerId)
+      .where('followingId', '==', userId)
+      .limit(1)
+      .get();
+
+    if (!existingRelationship.empty) {
+      return next(new AppError('Already following this user', 400));
+    }
+
+    // Create relationship
+    await db.collection('relationships').add({
+      followerId,
+      followingId: userId,
+      createdAt: new Date(),
+    });
+
+    // Update follower/following counts atomically
+    await userToFollowRef.update({
+      followersCount: (userToFollowDoc.data()?.followersCount || 0) + 1,
+    });
+    await followerRef.update({
+      followingCount: (followerDoc.data()?.followingCount || 0) + 1,
+    });
+
+    return res.status(200).send({ message: 'User followed successfully' });
+  } catch (error) {
+    return next(error);
+  }
+});
 
 /**
  * @swagger
@@ -268,70 +262,58 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/:userId/unfollow',
-  async (req: UserRequest, res: Response, next: NextFunction) => {
-    try {
-      const { userId } = req.params; // The user to unfollow
-      const followerId = req.user?.id;
+router.post('/:userId/unfollow', async (req: UserRequest, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params; // The user to unfollow
+    const followerId = req.user?.id;
 
-      if (!followerId) {
-        return next(new AppError('Authentication required', 401));
-      }
-
-      const userToUnfollowRef = db.collection('users').doc(userId);
-      const followerRef = db.collection('users').doc(followerId);
-
-      const [userToUnfollowDoc, followerDoc] = await Promise.all([
-        userToUnfollowRef.get(),
-        followerRef.get(),
-      ]);
-
-      if (!userToUnfollowDoc.exists) {
-        return next(new AppError('User to unfollow not found', 404));
-      }
-      if (!followerDoc.exists) {
-        return next(new AppError('Follower user not found', 404));
-      }
-
-      // Find relationship
-      const existingRelationship = await db
-        .collection('relationships')
-        .where('followerId', '==', followerId)
-        .where('followingId', '==', userId)
-        .limit(1)
-        .get();
-
-      if (existingRelationship.empty) {
-        return next(new AppError('Not following this user', 400));
-      }
-
-      // Delete relationship
-      await db
-        .collection('relationships')
-        .doc(existingRelationship.docs[0].id)
-        .delete();
-
-      // Update follower/following counts atomically
-      await userToUnfollowRef.update({
-        followersCount: Math.max(
-          0,
-          (userToUnfollowDoc.data()?.followersCount || 0) - 1,
-        ),
-      });
-      await followerRef.update({
-        followingCount: Math.max(
-          0,
-          (followerDoc.data()?.followingCount || 0) - 1,
-        ),
-      });
-
-      return res.status(200).send({ message: 'User unfollowed successfully' });
-    } catch (error) {
-      return next(error);
+    if (!followerId) {
+      return next(new AppError('Authentication required', 401));
     }
-  },
-);
+
+    const userToUnfollowRef = db.collection('users').doc(userId);
+    const followerRef = db.collection('users').doc(followerId);
+
+    const [userToUnfollowDoc, followerDoc] = await Promise.all([
+      userToUnfollowRef.get(),
+      followerRef.get(),
+    ]);
+
+    if (!userToUnfollowDoc.exists) {
+      return next(new AppError('User to unfollow not found', 404));
+    }
+    if (!followerDoc.exists) {
+      return next(new AppError('Follower user not found', 404));
+    }
+
+    // Find relationship
+    const existingRelationship = await db
+      .collection('relationships')
+      .where('followerId', '==', followerId)
+      .where('followingId', '==', userId)
+      .limit(1)
+      .get();
+
+    if (existingRelationship.empty) {
+      return next(new AppError('Not following this user', 400));
+    }
+
+    // Delete relationship
+    await db.collection('relationships').doc(existingRelationship.docs[0].id).delete();
+
+    // Update follower/following counts atomically
+    await userToUnfollowRef.update({
+      followersCount: Math.max(0, (userToUnfollowDoc.data()?.followersCount || 0) - 1),
+    });
+    await followerRef.update({
+      followingCount: Math.max(0, (followerDoc.data()?.followingCount || 0) - 1),
+    });
+
+    return res.status(200).send({ message: 'User unfollowed successfully' });
+  } catch (error) {
+    return next(error);
+  }
+});
 
 /**
  * @swagger
@@ -367,51 +349,44 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/:userId/followers',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { userId } = req.params;
+router.get('/:userId/followers', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params;
 
-      const userDoc = await db.collection('users').doc(userId).get();
-      if (!userDoc.exists) {
-        return next(new AppError('User not found', 404));
-      }
-
-      const followersSnapshot = await db
-        .collection('relationships')
-        .where('followingId', '==', userId)
-        .get();
-
-      const followerIds = followersSnapshot.docs.map(
-        (doc) => doc.data().followerId,
-      );
-
-      if (followerIds.length === 0) {
-        return res.status(200).send([]);
-      }
-
-      // Fetch follower details
-      const followersPromises = followerIds.map((id) =>
-        db.collection('users').doc(id).get(),
-      );
-      const followersDocs = await Promise.all(followersPromises);
-
-      const followers = followersDocs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          username: data?.username,
-          profilePicture: data?.profilePicture,
-        };
-      });
-
-      return res.status(200).send(followers);
-    } catch (error) {
-      return next(error);
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (!userDoc.exists) {
+      return next(new AppError('User not found', 404));
     }
-  },
-);
+
+    const followersSnapshot = await db
+      .collection('relationships')
+      .where('followingId', '==', userId)
+      .get();
+
+    const followerIds = followersSnapshot.docs.map((doc) => doc.data().followerId);
+
+    if (followerIds.length === 0) {
+      return res.status(200).send([]);
+    }
+
+    // Fetch follower details
+    const followersPromises = followerIds.map((id) => db.collection('users').doc(id).get());
+    const followersDocs = await Promise.all(followersPromises);
+
+    const followers = followersDocs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        username: data?.username,
+        profilePicture: data?.profilePicture,
+      };
+    });
+
+    return res.status(200).send(followers);
+  } catch (error) {
+    return next(error);
+  }
+});
 
 /**
  * @swagger
@@ -447,51 +422,44 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/:userId/following',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { userId } = req.params;
+router.get('/:userId/following', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params;
 
-      const userDoc = await db.collection('users').doc(userId).get();
-      if (!userDoc.exists) {
-        return next(new AppError('User not found', 404));
-      }
-
-      const followingSnapshot = await db
-        .collection('relationships')
-        .where('followerId', '==', userId)
-        .get();
-
-      const followingIds = followingSnapshot.docs.map(
-        (doc) => doc.data().followingId,
-      );
-
-      if (followingIds.length === 0) {
-        return res.status(200).send([]);
-      }
-
-      // Fetch following details
-      const followingPromises = followingIds.map((id) =>
-        db.collection('users').doc(id).get(),
-      );
-      const followingDocs = await Promise.all(followingPromises);
-
-      const following = followingDocs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          username: data?.username,
-          profilePicture: data?.profilePicture,
-        };
-      });
-
-      return res.status(200).send(following);
-    } catch (error) {
-      return next(error);
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (!userDoc.exists) {
+      return next(new AppError('User not found', 404));
     }
-  },
-);
+
+    const followingSnapshot = await db
+      .collection('relationships')
+      .where('followerId', '==', userId)
+      .get();
+
+    const followingIds = followingSnapshot.docs.map((doc) => doc.data().followingId);
+
+    if (followingIds.length === 0) {
+      return res.status(200).send([]);
+    }
+
+    // Fetch following details
+    const followingPromises = followingIds.map((id) => db.collection('users').doc(id).get());
+    const followingDocs = await Promise.all(followingPromises);
+
+    const following = followingDocs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        username: data?.username,
+        profilePicture: data?.profilePicture,
+      };
+    });
+
+    return res.status(200).send(following);
+  } catch (error) {
+    return next(error);
+  }
+});
 
 /**
  * @swagger

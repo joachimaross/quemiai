@@ -7,7 +7,7 @@ import { firebaseAuthMiddleware } from '../middleware/firebaseAuth';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * @swagger
@@ -67,9 +67,7 @@ router.post(
       const userInfo = await tiktokService.getUserInfo(tokenData.access_token);
 
       // Calculate token expiry
-      const expiresAt = new Date(
-        Date.now() + tokenData.expires_in * 1000,
-      ).toISOString();
+      const expiresAt = new Date(Date.now() + tokenData.expires_in * 1000).toISOString();
 
       // Store connection in database
       const usersCollection = db.collection('socialMediaConnections');
@@ -174,9 +172,7 @@ router.post(
       const shortTokenData = await instagramService.getShortLivedToken(code);
 
       // Exchange for long-lived token
-      const longTokenData = await instagramService.getLongLivedToken(
-        shortTokenData.access_token,
-      );
+      const longTokenData = await instagramService.getLongLivedToken(shortTokenData.access_token);
 
       // Get user profile info
       const userProfile = await instagramService.getUserProfile(
@@ -185,9 +181,7 @@ router.post(
       );
 
       // Calculate token expiry
-      const expiresAt = new Date(
-        Date.now() + longTokenData.expires_in * 1000,
-      ).toISOString();
+      const expiresAt = new Date(Date.now() + longTokenData.expires_in * 1000).toISOString();
 
       // Store connection in database
       const usersCollection = db.collection('socialMediaConnections');
@@ -385,9 +379,7 @@ router.get(
         throw new AppError('User not authenticated', 401);
       }
 
-      const platforms = platformsParam
-        ? platformsParam.split(',')
-        : ['tiktok', 'instagram'];
+      const platforms = platformsParam ? platformsParam.split(',') : ['tiktok', 'instagram'];
 
       const usersCollection = db.collection('socialMediaConnections');
       const connectionsSnapshot = await usersCollection
@@ -406,9 +398,7 @@ router.get(
 
         try {
           if (connection.platform === 'tiktok') {
-            const userInfo = await tiktokService.getUserInfo(
-              connection.accessToken,
-            );
+            const userInfo = await tiktokService.getUserInfo(connection.accessToken);
             results.tiktok = {
               username: userInfo.display_name,
               followerCount: userInfo.follower_count,
@@ -491,9 +481,7 @@ router.get(
         throw new AppError('User not authenticated', 401);
       }
 
-      const platforms = platformsParam
-        ? platformsParam.split(',')
-        : ['tiktok', 'instagram'];
+      const platforms = platformsParam ? platformsParam.split(',') : ['tiktok', 'instagram'];
 
       const usersCollection = db.collection('socialMediaConnections');
       const connectionsSnapshot = await usersCollection
@@ -688,9 +676,7 @@ router.get(
       }
 
       const usersCollection = db.collection('socialMediaConnections');
-      const connectionsSnapshot = await usersCollection
-        .where('userId', '==', userId)
-        .get();
+      const connectionsSnapshot = await usersCollection.where('userId', '==', userId).get();
 
       const connections = connectionsSnapshot.docs.map((doc) => {
         const data = doc.data();

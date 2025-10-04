@@ -136,9 +136,7 @@ export class SocialService {
 
     await Promise.all(promises);
 
-    this.logger.log(
-      `Generated ${suggestionScores.size} friend suggestions for user ${userId}`,
-    );
+    this.logger.log(`Generated ${suggestionScores.size} friend suggestions for user ${userId}`);
     return { generatedCount: suggestionScores.size };
   }
 
@@ -340,11 +338,7 @@ export class SocialService {
   /**
    * Get leaderboard
    */
-  async getLeaderboard(
-    category: string,
-    period: string = 'all_time',
-    limit: number = 100,
-  ) {
+  async getLeaderboard(category: string, period: string = 'all_time', limit: number = 100) {
     const leaderboard = await this.prisma.leaderboard.findMany({
       where: {
         category,

@@ -31,9 +31,7 @@ wss.on('connection', async (ws: AuthenticatedWebSocket, request) => {
 
     if (data.type === 'join') {
       rooms.set(ws, data.room);
-      console.log(
-        `Client ${ws.userId || 'unauthenticated'} joined room ${data.room}`,
-      );
+      console.log(`Client ${ws.userId || 'unauthenticated'} joined room ${data.room}`);
     } else if (data.type === 'message') {
       const room = rooms.get(ws);
       if (room) {

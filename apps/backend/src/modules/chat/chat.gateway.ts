@@ -11,9 +11,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: true })
-export class ChatGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
@@ -42,10 +40,7 @@ export class ChatGateway
   }
 
   @SubscribeMessage('joinConversation')
-  handleJoin(
-    @MessageBody() data: { conversationId: string },
-    @ConnectedSocket() client: Socket,
-  ) {
+  handleJoin(@MessageBody() data: { conversationId: string }, @ConnectedSocket() client: Socket) {
     client.join(data.conversationId);
     client.emit('joinedConversation', { conversationId: data.conversationId });
   }

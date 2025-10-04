@@ -1,10 +1,4 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import logger from '../config/logger';
 
@@ -33,8 +27,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = exception.message;
       errorDetails = {
         name: exception.name,
-        stack:
-          process.env.NODE_ENV === 'development' ? exception.stack : undefined,
+        stack: process.env.NODE_ENV === 'development' ? exception.stack : undefined,
       };
     }
 

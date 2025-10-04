@@ -1,6 +1,8 @@
 # compiled output
 /dist
+**/dist
 /node_modules
+**/node_modules
 /build
 
 # Compiled JavaScript files in src (TypeScript output)
@@ -23,6 +25,7 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+**/coverage
 
 # IDEs and editors
 /.idea

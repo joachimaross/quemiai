@@ -101,9 +101,7 @@ export class AdvancedRecommendationEngine {
       if (!ratings[post.userId]) {
         ratings[post.userId] = {};
       }
-      const liked = likedPosts.some(
-        (p) => p.id === post.id && p.userId === post.userId,
-      );
+      const liked = likedPosts.some((p) => p.id === post.id && p.userId === post.userId);
       ratings[post.userId][post.id] = liked ? 1 : 0;
     }
 
@@ -112,8 +110,7 @@ export class AdvancedRecommendationEngine {
   }
 
   getRecommendations(userId: string, posts: Post[]): (Post | undefined)[] {
-    const recommendations: Recommendation[] =
-      this.recommender.recommend(userId);
+    const recommendations: Recommendation[] = this.recommender.recommend(userId);
     const recommendedPosts = recommendations.map((recommendation) => {
       return posts.find((post) => post.id === recommendation.item);
     });

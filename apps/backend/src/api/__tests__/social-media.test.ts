@@ -67,9 +67,7 @@ const mockedTikTokService = tiktokService as jest.Mocked<typeof tiktokService>;
 
 // Mock Instagram service
 jest.mock('../../services/instagram');
-const mockedInstagramService = instagramService as jest.Mocked<
-  typeof instagramService
->;
+const mockedInstagramService = instagramService as jest.Mocked<typeof instagramService>;
 
 describe('Social Media API Integration', () => {
   const authToken = 'test-firebase-token';
@@ -104,12 +102,8 @@ describe('Social Media API Integration', () => {
         video_count: 100,
       };
 
-      mockedTikTokService.getAccessToken = jest
-        .fn()
-        .mockResolvedValue(mockTokenData);
-      mockedTikTokService.getUserInfo = jest
-        .fn()
-        .mockResolvedValue(mockUserInfo);
+      mockedTikTokService.getAccessToken = jest.fn().mockResolvedValue(mockTokenData);
+      mockedTikTokService.getUserInfo = jest.fn().mockResolvedValue(mockUserInfo);
 
       (db.collection as jest.Mock).mockReturnValueOnce({
         where: jest.fn().mockReturnThis(),
@@ -126,10 +120,7 @@ describe('Social Media API Integration', () => {
 
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('status', 'success');
-      expect(res.body).toHaveProperty(
-        'message',
-        'TikTok account connected successfully',
-      );
+      expect(res.body).toHaveProperty('message', 'TikTok account connected successfully');
       expect(res.body.data).toHaveProperty('platform', 'tiktok');
       expect(res.body.data).toHaveProperty('username', 'TikTok User');
     });
@@ -170,15 +161,9 @@ describe('Social Media API Integration', () => {
         profile_picture_url: 'https://example.com/pic.jpg',
       };
 
-      mockedInstagramService.getShortLivedToken = jest
-        .fn()
-        .mockResolvedValue(mockShortToken);
-      mockedInstagramService.getLongLivedToken = jest
-        .fn()
-        .mockResolvedValue(mockLongToken);
-      mockedInstagramService.getUserProfile = jest
-        .fn()
-        .mockResolvedValue(mockUserProfile);
+      mockedInstagramService.getShortLivedToken = jest.fn().mockResolvedValue(mockShortToken);
+      mockedInstagramService.getLongLivedToken = jest.fn().mockResolvedValue(mockLongToken);
+      mockedInstagramService.getUserProfile = jest.fn().mockResolvedValue(mockUserProfile);
 
       (db.collection as jest.Mock).mockReturnValueOnce({
         where: jest.fn().mockReturnThis(),
@@ -195,10 +180,7 @@ describe('Social Media API Integration', () => {
 
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('status', 'success');
-      expect(res.body).toHaveProperty(
-        'message',
-        'Instagram account connected successfully',
-      );
+      expect(res.body).toHaveProperty('message', 'Instagram account connected successfully');
       expect(res.body.data).toHaveProperty('platform', 'instagram');
       expect(res.body.data).toHaveProperty('username', 'instagram_user');
     });
@@ -228,10 +210,7 @@ describe('Social Media API Integration', () => {
 
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('status', 'success');
-      expect(res.body).toHaveProperty(
-        'message',
-        'TikTok account disconnected successfully',
-      );
+      expect(res.body).toHaveProperty('message', 'TikTok account disconnected successfully');
     });
 
     it('should return 404 if TikTok connection not found', async () => {
@@ -259,9 +238,7 @@ describe('Social Media API Integration', () => {
         avatar_url: 'https://example.com/avatar.jpg',
       };
 
-      mockedTikTokService.getUserInfo = jest
-        .fn()
-        .mockResolvedValue(mockTikTokUserInfo);
+      mockedTikTokService.getUserInfo = jest.fn().mockResolvedValue(mockTikTokUserInfo);
 
       (db.collection as jest.Mock).mockReturnValueOnce({
         where: jest.fn().mockReturnThis(),

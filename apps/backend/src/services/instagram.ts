@@ -311,33 +311,18 @@ export class InstagramService {
     // Step 1: Create media container
     let containerResponse;
     if (isVideo) {
-      containerResponse = await this.createVideoContainer(
-        accessToken,
-        userId,
-        mediaUrl,
-        caption,
-      );
+      containerResponse = await this.createVideoContainer(accessToken, userId, mediaUrl, caption);
     } else {
-      containerResponse = await this.createMediaContainer(
-        accessToken,
-        userId,
-        mediaUrl,
-        caption,
-      );
+      containerResponse = await this.createMediaContainer(accessToken, userId, mediaUrl, caption);
     }
 
     // Step 2: Publish the media
-    const publishResponse = await this.publishMedia(
-      accessToken,
-      userId,
-      containerResponse.id,
-    );
+    const publishResponse = await this.publishMedia(accessToken, userId, containerResponse.id);
 
     // Step 3: Get the published media details
-    const mediaDetails = (await this.getMedia(
-      accessToken,
-      publishResponse.id,
-    )) as { permalink?: string };
+    const mediaDetails = (await this.getMedia(accessToken, publishResponse.id)) as {
+      permalink?: string;
+    };
 
     return {
       id: publishResponse.id,

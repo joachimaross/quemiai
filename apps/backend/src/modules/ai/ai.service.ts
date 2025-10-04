@@ -76,10 +76,12 @@ export class AiService {
   /**
    * Generate social media caption
    */
-  async generateCaption(request: AICaptionRequest): Promise<{ caption: string; hashtags?: string[] }> {
+  async generateCaption(
+    request: AICaptionRequest,
+  ): Promise<{ caption: string; hashtags?: string[] }> {
     try {
       const prompt = this.buildCaptionPrompt(request);
-      
+
       const messages = [
         { role: 'system', content: this.getQuemiAiSystemPrompt() },
         { role: 'user', content: prompt },
@@ -90,10 +92,7 @@ export class AiService {
       // Parse caption and hashtags
       const lines = response.split('\n');
       const caption = lines[0];
-      const hashtags = lines
-        .slice(1)
-        .join(' ')
-        .match(/#\w+/g);
+      const hashtags = lines.slice(1).join(' ').match(/#\w+/g);
 
       return {
         caption,
@@ -138,17 +137,17 @@ Keep responses concise and actionable.`;
    */
   private buildCaptionPrompt(request: AICaptionRequest): string {
     let prompt = 'Generate an engaging social media caption';
-    
+
     if (request.platform) {
       prompt += ` for ${request.platform.toUpperCase()}`;
     }
-    
+
     if (request.context) {
       prompt += ` about: ${request.context}`;
     }
-    
+
     prompt += '. Include relevant hashtags on separate lines.';
-    
+
     return prompt;
   }
 
@@ -171,7 +170,7 @@ Keep responses concise and actionable.`;
         },
         {
           headers: {
-            'Authorization': `Bearer ${this.openaiApiKey}`,
+            Authorization: `Bearer ${this.openaiApiKey}`,
             'Content-Type': 'application/json',
           },
         },
@@ -189,11 +188,11 @@ Keep responses concise and actionable.`;
    */
   private getMockResponse(messages: any[]): string {
     const userMessage = messages[messages.length - 1]?.content || '';
-    
+
     if (userMessage.toLowerCase().includes('caption')) {
       return 'Create amazing content that inspires! ✨\n#QUEMI #SocialMedia #Content #Creative';
     }
-    
+
     return "Hey! I'm QuemiAi, your friendly assistant. How can I help you create amazing content today? 🚀";
   }
 

@@ -33,9 +33,7 @@ export class StoriesService {
       },
     });
 
-    this.logger.log(
-      `Story created: ${story.id} by user ${createStoryDto.authorId}`,
-    );
+    this.logger.log(`Story created: ${story.id} by user ${createStoryDto.authorId}`);
     return story;
   }
 

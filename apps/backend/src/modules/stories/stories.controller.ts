@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Body,
-  Param,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, Query } from '@nestjs/common';
 import { StoriesService } from './stories.service';
 import { CreateStoryDto } from './dto/story.dto';
 

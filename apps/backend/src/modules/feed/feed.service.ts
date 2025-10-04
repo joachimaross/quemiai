@@ -36,30 +36,22 @@ export class FeedService {
       for (const connection of connections) {
         switch (connection.platform) {
           case 'instagram':
-            feedPromises.push(
-              this.instagramConnector.fetchPosts(userId, connection.accessToken),
-            );
+            feedPromises.push(this.instagramConnector.fetchPosts(userId, connection.accessToken));
             break;
           case 'tiktok':
-            feedPromises.push(
-              this.tiktokConnector.fetchPosts(userId, connection.accessToken),
-            );
+            feedPromises.push(this.tiktokConnector.fetchPosts(userId, connection.accessToken));
             break;
           case 'facebook':
-            feedPromises.push(
-              this.facebookConnector.fetchPosts(userId, connection.accessToken),
-            );
+            feedPromises.push(this.facebookConnector.fetchPosts(userId, connection.accessToken));
             break;
           case 'x':
-            feedPromises.push(
-              this.xConnector.fetchPosts(userId, connection.accessToken),
-            );
+            feedPromises.push(this.xConnector.fetchPosts(userId, connection.accessToken));
             break;
         }
       }
 
       const results = await Promise.allSettled(feedPromises);
-      
+
       // Combine all posts
       const allPosts: ExternalPost[] = [];
       for (const result of results) {
@@ -69,9 +61,7 @@ export class FeedService {
       }
 
       // Sort by timestamp (newest first)
-      allPosts.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
+      allPosts.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
       // Paginate
       const paginatedPosts = allPosts.slice(0, limit);

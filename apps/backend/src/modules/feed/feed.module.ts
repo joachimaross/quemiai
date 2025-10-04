@@ -8,13 +8,7 @@ import { XConnector } from '../integrations/x/x.connector';
 
 @Module({
   controllers: [FeedController],
-  providers: [
-    FeedService,
-    InstagramConnector,
-    TikTokConnector,
-    FacebookConnector,
-    XConnector,
-  ],
+  providers: [FeedService, InstagramConnector, TikTokConnector, FacebookConnector, XConnector],
   exports: [FeedService],
 })
 export class FeedModule {}

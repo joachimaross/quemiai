@@ -50,10 +50,7 @@ export class PaginationUtils {
   /**
    * Validate and normalize pagination parameters
    */
-  static normalizePaginationParams(
-    page?: number,
-    limit?: number,
-  ): { page: number; limit: number } {
+  static normalizePaginationParams(page?: number, limit?: number): { page: number; limit: number } {
     const normalizedPage = Math.max(1, page || 1);
     const normalizedLimit = Math.min(100, Math.max(1, limit || 10));
 
