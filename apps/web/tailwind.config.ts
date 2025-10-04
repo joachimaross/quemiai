@@ -9,9 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'zeeky-blue': '#0066FF',
+        'zeeky-blue': '#3b82f6',
         'neon-fuchsia': '#FF00CC',
-        'deep-space': '#0A0A18',
+        'deep-space': '#0a0a0a',
       },
       spacing: {
         '128': '32rem',
