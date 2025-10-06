@@ -25,6 +25,8 @@
     "mobile:dev": "pnpm --filter @quemiai/mobile start",
     "netlify:build": "pnpm install && pnpm --filter @quemiai/web build",
     "netlify:serve": "cd apps/web && pnpm start",
+    "search:code": "grep -r --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=.git",
+    "search:files": "find . -type f -not -path '*/node_modules/*' -not -path '*/.next/*' -not -path '*/.git/*' -not -path '*/dist/*'",
     "prepare": "husky"
   },
   "devDependencies": {
