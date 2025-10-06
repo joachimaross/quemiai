@@ -11,9 +11,11 @@ This guide covers the complete setup and deployment of the Quemiai platform on N
 5. [Build Settings](#build-settings)
 6. [Environment Variables](#environment-variables)
 7. [Functions Setup](#functions-setup)
-8. [Deployment Process](#deployment-process)
-9. [Post-Deployment Verification](#post-deployment-verification)
-10. [Troubleshooting](#troubleshooting)
+8. [Build Failure Notifications and Monitoring](#build-failure-notifications-and-monitoring)
+9. [Deployment Process](#deployment-process)
+10. [Post-Deployment Verification](#post-deployment-verification)
+11. [Troubleshooting](#troubleshooting)
+12. [Additional Resources](#additional-resources)
 
 ## Overview
 
