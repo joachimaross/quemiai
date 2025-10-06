@@ -4,16 +4,6 @@
 # API proxy - route all /api requests to Netlify Functions
 /api/*  /.netlify/functions/:splat  200
 
-# WebSocket connections (if needed, proxy to external service)
-# /ws/*  wss://your-backend-service.com/ws/:splat  200
-
-# OAuth callbacks (preserve query parameters)
-/auth/google/callback  /auth/google/callback  200
-/auth/apple/callback   /auth/apple/callback   200
-
-# Legacy URL redirects (add as needed)
-# /old-path  /new-path  301
-
 # SPA fallback - serve index.html for all other routes
 # This ensures Next.js client-side routing works properly
 /*  /index.html  200
