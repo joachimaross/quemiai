@@ -13,9 +13,19 @@ module.exports = {
     'src/**/*.{js,ts}',
     '!src/**/*.d.ts',
     '!src/**/__tests__/**',
+    '!src/**/index.ts',
+    '!src/main.ts',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['json', 'lcov', 'text', 'clover'],
+  coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],
+  coverageThreshold: {
+    global: {
+      branches: 75,
+      functions: 75,
+      lines: 75,
+      statements: 75,
+    },
+  },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
