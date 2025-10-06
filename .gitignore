@@ -7,8 +7,11 @@
 
 # Compiled JavaScript files in src (TypeScript output)
 src/**/*.js
-!src/**/*.spec.js
-!src/**/*.test.js
+src/**/*.js.map
+# Do NOT keep compiled test files - TypeScript sources should be used
+**/src/**/*.test.js
+**/src/**/*.spec.js
+**/src/**/__tests__/**/*.js
 
 # Logs
 logs
