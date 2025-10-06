@@ -1,4 +1,4 @@
-export type Platform = 'instagram' | 'tiktok' | 'facebook' | 'x';
+import { Platform } from './platform';
 
 export interface FeedItem {
   id: string;

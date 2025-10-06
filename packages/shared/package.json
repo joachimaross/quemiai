@@ -13,8 +13,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint src --ext .ts",
-    "test": "jest --passWithNoTests",
+    "lint": "npx eslint src --ext .ts",
+    "test": "../../node_modules/.pnpm/node_modules/.bin/jest --passWithNoTests",
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {
