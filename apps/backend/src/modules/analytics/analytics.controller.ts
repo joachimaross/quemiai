@@ -1,5 +1,9 @@
 import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
-import { AnalyticsService } from '../../services/analytics.service';
+import {
+  AnalyticsService,
+  PostAnalyticsData,
+  UserAnalyticsData,
+} from '../../services/analytics.service';
 
 @Controller('analytics')
 export class AnalyticsController {
@@ -36,7 +40,9 @@ export class AnalyticsController {
    * GET /analytics/posts/:postId
    */
   @Get('posts/:postId')
-  async getPostAnalytics(@Param('postId') postId: string) {
+  async getPostAnalytics(
+    @Param('postId') postId: string,
+  ): Promise<PostAnalyticsData> {
     return this.analyticsService.getPostAnalytics(postId);
   }
 
@@ -65,7 +71,9 @@ export class AnalyticsController {
    * GET /analytics/users/:userId
    */
   @Get('users/:userId')
-  async getUserAnalytics(@Param('userId') userId: string) {
+  async getUserAnalytics(
+    @Param('userId') userId: string,
+  ): Promise<UserAnalyticsData> {
     return this.analyticsService.getUserAnalytics(userId);
   }
 

@@ -4,12 +4,12 @@
   "description": "QUEMI Mobile - React Native (Expo) Application",
   "main": "index.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "eslint .",
-    "test": "jest",
+    "start": "../../node_modules/.pnpm/node_modules/.bin/expo start",
+    "android": "../../node_modules/.pnpm/node_modules/.bin/expo start --android",
+    "ios": "../../node_modules/.pnpm/node_modules/.bin/expo start --ios",
+    "web": "../../node_modules/.pnpm/node_modules/.bin/expo start --web",
+    "lint": "npx eslint .",
+    "test": "../../node_modules/.pnpm/node_modules/.bin/jest",
     "clean": "rm -rf node_modules .expo"
   },
   "dependencies": {

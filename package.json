@@ -18,6 +18,7 @@
     "dev": "pnpm -r --parallel dev",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
+    "test:cov": "pnpm --filter @quemiai/backend test:cov",
     "clean": "pnpm -r clean && rm -rf node_modules",
     "backend:dev": "pnpm --filter @quemiai/backend dev",
     "web:dev": "pnpm --filter @quemiai/web dev",
