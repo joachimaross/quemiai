@@ -22,33 +22,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8.15.0
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: pnpm install --frozen-lockfile
 
       - name: Security Audit (Block High/Critical)
         run: |
           echo "🔒 Running security audit..."
-          npm audit --audit-level=high || {
+          pnpm audit --audit-level=high || {
             echo "❌ High or Critical vulnerabilities found!"
-            echo "Please run 'npm audit fix' to resolve vulnerabilities"
+            echo "Please run 'pnpm audit --fix' to resolve vulnerabilities"
             exit 1
           }
 
       - name: Run Linter
-        run: npm run lint
+        run: pnpm run lint
         continue-on-error: true
 
       - name: Run Tests
-        run: npm run test
+        run: pnpm run test
 
       - name: Run Test Coverage
-        run: npm run test:cov
+        run: pnpm run test:cov
 
       - name: Check Test Coverage Threshold
         run: |
@@ -59,7 +64,7 @@ jobs:
         continue-on-error: true
 
       - name: Build Project
-        run: npm run build
+        run: pnpm run build
 
       - name: Upload coverage to Codecov (optional)
         if: matrix.node-version == '20.x'
