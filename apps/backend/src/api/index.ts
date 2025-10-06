@@ -7,6 +7,7 @@ import marketplaceRouter from './marketplace';
 import aiRouter from './ai';
 import authRouter from './auth';
 import socialMediaRouter from './social-media';
+import searchRouter from './search/route';
 
 const router: Router = Router();
 
@@ -18,5 +19,6 @@ router.use('/marketplace', marketplaceRouter);
 router.use('/ai', aiRouter);
 router.use('/auth', authRouter);
 router.use('/social-media', socialMediaRouter);
+router.use('/search', searchRouter);
 
 export default router;

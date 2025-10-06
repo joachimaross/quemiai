@@ -95,30 +95,48 @@ npm run format
 ```
 /
 ├── apps/
-│   ├── web/             # Next.js application
+│   ├── web/                  # Next.js frontend application
 │   │   ├── src/
-│   │   │   ├── app/     # Next.js App Router pages
-│   │   │   ├── components/ # React components
-│   │   │   └── lib/     # Utility functions
+│   │   │   ├── app/         # Next.js App Router pages
+│   │   │   │   ├── discover/ # Discovery/search page
+│   │   │   │   └── ...      # Other routes
+│   │   │   ├── components/  # React components
+│   │   │   │   ├── search/  # Search components (EnhancedSearch, SearchFilters, VirtualizedResults)
+│   │   │   │   └── ...
+│   │   │   ├── hooks/       # Custom React hooks (useDebouncedSearch, useSearchHistory, useKeyboardShortcuts)
+│   │   │   └── lib/         # Utility functions
+│   │   │       ├── search/  # Search utilities (fuzzySearch, regexSearch, contentSearch, savedSearches)
+│   │   │       ├── types.ts
+│   │   │       └── utils.ts
 │   │   ├── public/
 │   │   │   ├── _redirects  # Netlify URL routing
 │   │   │   └── _headers    # Netlify security headers
 │   │   ├── next.config.js  # Next.js configuration
 │   │   └── package.json    # Frontend dependencies
-│   ├── backend/         # NestJS backend
+│   ├── backend/             # Express backend
 │   │   ├── src/
-│   │   │   ├── api/     # API route handlers
-│   │   │   ├── config/  # Configuration files
-│   │   │   ├── modules/ # Feature modules
-│   │   │   ├── middleware/ # Custom middleware
-│   │   │   └── services/   # Business logic services
+│   │   │   ├── api/         # API route handlers
+│   │   │   │   ├── search/  # Search API endpoints
+│   │   │   │   └── ...
+│   │   │   ├── config/      # Configuration files
+│   │   │   ├── modules/     # Feature modules
+│   │   │   ├── middleware/  # Custom middleware
+│   │   │   └── services/    # Business logic services
 │   │   └── package.json
+│   └── mobile/              # React Native mobile app
+├── packages/
+│   ├── ui/                  # Shared UI components
+│   └── shared/              # Shared utilities
+├── docs/                    # Documentation
+│   ├── SEARCH_GUIDE.md      # Comprehensive search features guide
+│   └── API.md               # API reference
 ├── netlify/
-│   └── functions/       # Netlify serverless functions
-│       ├── api.ts       # Backend API wrapper
+│   └── functions/           # Netlify serverless functions
+│       ├── api.ts           # Backend API wrapper
 │       └── package.json
-├── netlify.toml         # Netlify deployment config
-└── .env.example         # Environment variables template
+├── netlify.toml             # Netlify deployment config
+├── CONTRIBUTING.md          # Contribution guide with code search tips
+└── .env.example             # Environment variables template
 ```
 
 ## 🔧 Environment Variables

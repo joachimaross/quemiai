@@ -2,6 +2,56 @@
 
 First off, thank you for considering contributing to Joachima! It's people like you that make Joachima such a great tool.
 
+## Code Search Tips
+
+When working with this codebase, here are some tips to help you find what you need:
+
+### Directory Structure
+```
+quemiai/
+├── apps/
+│   ├── web/                    # Next.js frontend application
+│   │   ├── src/
+│   │   │   ├── app/           # Next.js app directory (routes)
+│   │   │   ├── components/    # React components
+│   │   │   │   ├── search/   # Search-related components
+│   │   │   ├── hooks/        # Custom React hooks
+│   │   │   └── lib/          # Utilities and helpers
+│   │   │       ├── search/   # Search utilities (fuzzy, regex, content-aware)
+│   ├── backend/               # Express backend API
+│   │   └── src/
+│   │       ├── api/          # API routes
+│   │       │   ├── search/   # Search endpoints
+│   │       └── services/     # Business logic
+│   └── mobile/               # React Native mobile app
+├── packages/
+│   ├── ui/                   # Shared UI components
+│   └── shared/               # Shared utilities
+├── docs/                     # Documentation
+│   ├── SEARCH_GUIDE.md      # Search features documentation
+│   └── API.md               # API reference
+└── netlify/                  # Netlify deployment functions
+```
+
+### Finding Code
+- **Search Components**: `apps/web/src/components/search/`
+- **Search Utilities**: `apps/web/src/lib/search/`
+- **Custom Hooks**: `apps/web/src/hooks/`
+- **API Endpoints**: `apps/backend/src/api/`
+- **Types**: `apps/web/src/lib/types.ts`
+
+### Useful Commands
+```bash
+# Search for specific code patterns
+grep -r "SearchFilters" apps/web/src
+
+# Find all TypeScript files
+find apps/web/src -name "*.tsx" -o -name "*.ts"
+
+# Search for component usage
+grep -r "EnhancedSearch" apps/web
+```
+
 ## Where do I go from here?
 
 If you've noticed a bug or have a feature request, [make one](https://github.com/joachimaross/JoachimaSocial/issues/new)! It's generally best if you get confirmation of your bug or approval for your feature request this way before starting to code.
