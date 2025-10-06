@@ -16,6 +16,7 @@
     "dev": "../../node_modules/.pnpm/node_modules/.bin/nest start --watch",
     "start:debug": "../../node_modules/.pnpm/node_modules/.bin/nest start --debug --watch",
     "start:prod": "node dist/main",
+    "prisma:generate": "../../node_modules/.pnpm/node_modules/.bin/prisma generate",
     "lint": "node ../../node_modules/eslint/bin/eslint.js \"{src,test}/**/*.ts\" --fix",
     "lint:check": "node ../../node_modules/eslint/bin/eslint.js \"{src,test}/**/*.ts\"",
     "test": "../../node_modules/.pnpm/node_modules/.bin/jest",

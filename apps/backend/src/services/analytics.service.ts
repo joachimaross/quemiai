@@ -347,7 +347,7 @@ export class AnalyticsService {
   }
 }
 
-interface PostAnalyticsData {
+export interface PostAnalyticsData {
   id: string;
   postId: string;
   views: number;
@@ -363,7 +363,7 @@ interface PostAnalyticsData {
   updatedAt: Date;
 }
 
-interface UserAnalyticsData {
+export interface UserAnalyticsData {
   id: string;
   userId: string;
   totalPosts: number;
