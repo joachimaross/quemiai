@@ -13,7 +13,7 @@
   publish = ".next"
   
   # Functions directory for serverless backend functions
-  functions = "../../netlify/functions"
+  functions = "netlify/functions"
 
 [build.environment]
   # Node.js version
@@ -60,7 +60,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
-  conditions = {Role = ["visitor"]}
 
 # Security headers
 [[headers]]
@@ -68,7 +67,7 @@
   [headers.values]
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
-    X-XSS-Protection = "0"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:;"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
@@ -110,9 +109,9 @@
   # External node modules to include
   external_node_modules = ["@prisma/client", "prisma"]
   
-  # Function timeout (max 26 seconds for free tier, 900 for paid)
+  # Function timeout (max 60 seconds for free tier, 900 for paid)
   [functions.timeouts]
-    default = 26
+    default = 60
 
 # Development settings
 [dev]
