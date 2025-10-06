@@ -184,6 +184,118 @@ else
 fi
 echo ""
 
+# 10. Validate function package.json dependencies
+echo "📦 Validating function dependencies..."
+if [ -f "netlify/functions/package.json" ]; then
+    if grep -q "serverless-http" netlify/functions/package.json; then
+        echo -e "  ${GREEN}✓${NC} serverless-http dependency found"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  serverless-http not in dependencies"
+    fi
+    
+    # Check if package.json is valid JSON
+    if node -e "JSON.parse(require('fs').readFileSync('netlify/functions/package.json', 'utf8'))" 2>/dev/null; then
+        echo -e "  ${GREEN}✓${NC} package.json is valid JSON"
+    else
+        echo -e "  ${RED}✗${NC} package.json is invalid JSON"
+        exit 1
+    fi
+fi
+echo ""
+
+# 11. Validate build command syntax
+echo "🔨 Validating build command..."
+BUILD_CMD=$(grep "command = " netlify.toml | head -1)
+if [ -n "$BUILD_CMD" ]; then
+    echo -e "  ${GREEN}✓${NC} Build command found"
+    
+    # Check for pnpm usage
+    if echo "$BUILD_CMD" | grep -q "pnpm"; then
+        echo -e "  ${GREEN}✓${NC} Using pnpm package manager"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  Not using pnpm (recommended for this project)"
+    fi
+else
+    echo -e "  ${RED}✗${NC} Build command not found in netlify.toml"
+    exit 1
+fi
+echo ""
+
+# 12. Validate redirect patterns
+echo "🔄 Validating redirect patterns..."
+REDIRECT_COUNT=$(grep -c "/.netlify/functions" apps/web/public/_redirects || true)
+if [ "$REDIRECT_COUNT" -gt 0 ]; then
+    echo -e "  ${GREEN}✓${NC} Function redirects configured ($REDIRECT_COUNT rules)"
+    
+    # Check for duplicate redirects (excluding comments and empty lines)
+    DUPLICATE_COUNT=$(grep -v "^#" apps/web/public/_redirects | grep -v "^$" | sort | uniq -d | wc -l)
+    if [ "$DUPLICATE_COUNT" -eq 0 ]; then
+        echo -e "  ${GREEN}✓${NC} No duplicate redirect rules"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  Found $DUPLICATE_COUNT duplicate redirect rules"
+    fi
+else
+    echo -e "  ${YELLOW}⚠${NC}  No function redirects found"
+fi
+echo ""
+
+# 13. Validate cache header values
+echo "💾 Validating cache headers..."
+if grep -q "Cache-Control" apps/web/public/_headers; then
+    echo -e "  ${GREEN}✓${NC} Cache-Control headers configured"
+    
+    # Check for immutable directive on static assets
+    if grep -q "immutable" apps/web/public/_headers; then
+        echo -e "  ${GREEN}✓${NC} Immutable caching for static assets"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  Consider adding immutable caching for static assets"
+    fi
+    
+    # Check for API no-cache directive
+    if grep -A 3 "/api/\*" apps/web/public/_headers | grep -q "no-cache"; then
+        echo -e "  ${GREEN}✓${NC} API responses set to no-cache"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  API responses should be set to no-cache"
+    fi
+else
+    echo -e "  ${YELLOW}⚠${NC}  No Cache-Control headers found"
+fi
+echo ""
+
+# 14. Check for Next.js plugin configuration
+echo "🔌 Validating Next.js plugin..."
+if grep -q "@netlify/plugin-nextjs" netlify.toml; then
+    echo -e "  ${GREEN}✓${NC} Next.js plugin configured"
+else
+    echo -e "  ${YELLOW}⚠${NC}  @netlify/plugin-nextjs not configured (recommended)"
+fi
+echo ""
+
+# 15. Validate environment variable references
+echo "🔑 Validating environment variable configuration..."
+if [ -f ".env.example" ]; then
+    # Check for sensitive variable patterns in .env.example
+    if grep -q "your-secret\|your-key\|your-password\|example" .env.example; then
+        echo -e "  ${GREEN}✓${NC} .env.example uses placeholder values (good practice)"
+    fi
+    
+    # Check for NEXT_PUBLIC_ prefix on frontend variables
+    if grep -q "NEXT_PUBLIC_" .env.example; then
+        echo -e "  ${GREEN}✓${NC} Frontend variables properly prefixed with NEXT_PUBLIC_"
+    fi
+    
+    # Check for common required variables
+    REQUIRED_VARS=("DATABASE_URL" "JWT_SECRET" "NODE_ENV")
+    for var in "${REQUIRED_VARS[@]}"; do
+        if grep -q "^$var=" .env.example; then
+            echo -e "  ${GREEN}✓${NC} $var documented"
+        else
+            echo -e "  ${YELLOW}⚠${NC}  $var not documented (may be needed)"
+        fi
+    done
+fi
+echo ""
+
 # Summary
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "${GREEN}✅ Netlify configuration validation complete!${NC}"
