@@ -1,5 +1,5 @@
 // jest.setup.js
-import 'dotenv/config';
+require('dotenv/config');
 
 // Mock Firebase Admin SDK globally
 jest.mock('firebase-admin', () => ({
@@ -59,7 +59,7 @@ jest.mock('firebase-admin', () => ({
 // Mock multer
 jest.mock('multer', () => {
     const multer = () => ({
-        single: () => (req: any, res: any, next: any) => {
+        single: () => (req, res, next) => {
             req.file = {
                 buffer: Buffer.from('test'),
                 originalname: 'test.jpg',
@@ -70,9 +70,3 @@ jest.mock('multer', () => {
     multer.memoryStorage = jest.fn();
     return multer;
 });
-
-// Mock other services if needed
-jest.mock('../src/services/storage', () => ({
-    uploadBuffer: jest.fn(() => Promise.resolve('mockUrl')),
-    getPublicUrl: jest.fn(() => 'mockPublicUrl'),
-}));

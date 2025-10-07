@@ -7,9 +7,9 @@
   base = "apps/web"
   
   # Build command - uses pnpm from root to build the web app
-  command = "cd ../.. && pnpm install && pnpm --filter @quemiai/web build"
+  command = "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @quemiai/web build"
   
-  # Publish directory - Next.js static export or standalone build
+  # Publish directory - Next.js standalone build
   publish = ".next"
   
   # Functions directory for serverless backend functions
@@ -17,37 +17,11 @@
 
 [build.environment]
   # Node.js version
-  NODE_VERSION = "18.17.0"
-  
-  # Use pnpm
-  NPM_FLAGS = "--version"
-  PNPM_FLAGS = "--version"
+  NODE_VERSION = "20"
   
   # Next.js build optimizations
   NEXT_TELEMETRY_DISABLED = "1"
   NODE_ENV = "production"
-
-# Enable Next.js Runtime for Netlify
-[build.processing]
-  skip_processing = false
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[build.processing.html]
-  pretty_urls = true
-
-[build.processing.images]
-  compress = true
-
-# Plugin configuration for Next.js
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
 
 # Redirects and rewrites
 [[redirects]]
@@ -98,28 +72,13 @@
   [headers.values]
     Cache-Control = "public, max-age=60, s-maxage=31536000"
 
-# Edge Functions configuration (optional, for advanced use cases)
+# Functions configuration
 [functions]
   # Directory for Netlify Functions
-  directory = "netlify/functions"
+  directory = "../../netlify/functions"
   
   # Node bundler
   node_bundler = "esbuild"
-  
-  # External node modules to include
-  external_node_modules = ["@prisma/client", "prisma"]
-  
-  # Function timeout (max 60 seconds for free tier, 900 for paid)
-  [functions.timeouts]
-    default = 60
-
-# Development settings
-[dev]
-  command = "pnpm --filter @quemiai/web dev"
-  port = 3000
-  targetPort = 3000
-  publish = "apps/web/.next"
-  autoLaunch = true
 
 # Context-specific configurations
 [context.production]

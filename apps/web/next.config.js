@@ -3,10 +3,6 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   
-  // Output configuration for monorepo setup
-  output: 'standalone',
-  outputFileTracingRoot: require('path').join(__dirname, '..'),
-  
   // Image optimization configuration
   images: {
     remotePatterns: [
