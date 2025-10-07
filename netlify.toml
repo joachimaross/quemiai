@@ -9,8 +9,8 @@
   # Build command - uses pnpm from root to build the web app
   command = "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @quemiai/web build"
   
-  # Publish directory - Next.js standalone build
-  publish = ".next"
+  # Publish directory - Next.js static export
+  publish = "out"
   
   # Functions directory for serverless backend functions
   functions = "../../netlify/functions"

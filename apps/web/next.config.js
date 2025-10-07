@@ -3,6 +3,10 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   
+  // Output configuration for static export (required for Netlify)
+  output: 'export',
+  trailingSlash: true,
+  
   // Image optimization configuration
   images: {
     remotePatterns: [
@@ -16,6 +20,7 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    unoptimized: true, // Required for static export
   },
 
   // Security headers
