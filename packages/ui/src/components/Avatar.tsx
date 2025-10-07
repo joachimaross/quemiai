@@ -22,12 +22,16 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         className={cn(
           'flex items-center justify-center rounded-full bg-gray-200',
           sizeStyles[size],
-          className
+          className,
         )}
         {...props}
       >
         {src ? (
-          <img src={src} alt={alt} className="h-full w-full rounded-full object-cover" />
+          <img
+            src={src}
+            alt={alt}
+            className="h-full w-full rounded-full object-cover"
+          />
         ) : (
           <span className="font-medium text-gray-600">
             {fallback || alt?.charAt(0).toUpperCase()}
@@ -35,7 +39,7 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Avatar.displayName = 'Avatar';

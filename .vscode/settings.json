@@ -1,0 +1,10 @@
+{
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "jest.runMode": "on-demand",
+    "jest.showCoverageOnLoad": true,
+    "jest.coverageFormatter": "GutterFormatter"
+}
