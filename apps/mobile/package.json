@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "eslint .",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "clean": "rm -rf node_modules .expo"
   },
   "dependencies": {

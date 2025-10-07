@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src --ext .ts --fix",
     "test": "jest --passWithNoTests",
     "clean": "rm -rf dist node_modules"
   },

@@ -10,7 +10,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=18 <21",
+    "node": ">=18",
     "pnpm": ">=8.0.0"
   },
   "scripts": {

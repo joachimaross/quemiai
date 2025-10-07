@@ -12,14 +12,14 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         className={cn(
           'rounded-lg border border-gray-200 bg-white p-6 shadow-sm',
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </div>
     );
-  }
+  },
 );
 
 Card.displayName = 'Card';
